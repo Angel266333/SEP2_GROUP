@@ -2,6 +2,8 @@ package com.via.clms.server.services;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.via.clms.Log;
 import com.via.clms.Utils;
@@ -38,23 +40,55 @@ public class UserService implements IUserService, Service {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean checkPermission(byte[] token, int libraryid, String role) {
+	public boolean checkPermissions(byte[] token, int libraryid, int roles) {
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT COUNT(*) AS cCount " +
-				"FROM permissions p JOIN roles AS r ON r.cId = p.cRoleId JOIN users AS u ON u.cId = p.cUserId" +
-				"WHERE r.cRoleIdentifier=? AND u.cUserToken=? AND (p.cLibraryId=? OR p.cLibraryId=0)", role, tokenStr, libraryid);
+		ResultSet result = db.query("SELECT p.cFlags " +
+				"FROM permissions p JOIN users AS u ON u.cId = p.cUserId" +
+				"WHERE u.cUserToken=? AND (p.cLibraryId=? OR p.cLibraryId=0)", tokenStr, libraryid);
 		
 		try {
-			if (result.first()) {
-				return result.getInt("cCount") > 0;
+			int perms = 0;
+			
+			while (result.next()) {
+				perms |= result.getInt("cFlags");
 			}
+			
+			return (perms & roles) == roles;
 			
 		} catch (SQLException e) {
 			Log.error(e);
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getPermissions(byte[] token, int libraryid) {
+		/* If a user has registered permissions at a specific library (ID > 0), 
+		 * while at the same time being registered as a system administrator (ID = 0), 
+		 * we need to return the permission for the requested library, which means that we must 
+		 * sort descending by library id to skip possible (ID = 0) and return the requested (ID > 0)
+		 */
+		String tokenStr = Utils.tokenToString(token);
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT p.cFlags " +
+				"FROM permissions p JOIN users AS u ON u.cId = p.cUserId" +
+				"WHERE u.cUserToken=? AND (p.cLibraryId=? OR p.cLibraryId=0) ORDER BY p.cLibraryId DESC", tokenStr, libraryid);
+		
+		try {
+			if (result.first()) {
+				return result.getInt("cFlags");
+			}
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
+		return 0;
 	}
 
 	/**
@@ -69,6 +103,20 @@ public class UserService implements IUserService, Service {
 		}
 		
 		return sbchk;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<String,Integer> getRoles() {
+		Map<String,Integer> roles = new LinkedHashMap<>();
+		
+		roles.put("Book Rental System", ROLE_BOOKRENT);
+		roles.put("Book Management", ROLE_BOOKMGR);
+		roles.put("User Management", ROLE_USERMGR);
+		roles.put("Administrator", ROLE_ADMIN);
+		
+		return roles;
 	}
 
 	/**

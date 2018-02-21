@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 20, 2018 at 12:16 PM
+-- Generation Time: Feb 21, 2018 at 11:17 PM
 -- Server version: 5.7.20-0ubuntu0.16.04.1
 -- PHP Version: 7.1.11-1+ubuntu16.04.1+deb.sury.org+1
 
@@ -41,19 +41,7 @@ CREATE TABLE `permissions` (
   `cId` int(11) NOT NULL,
   `cLibraryId` int(11) NOT NULL,
   `cUserId` int(11) NOT NULL,
-  `cRoleId` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `roles`
---
-
-CREATE TABLE `roles` (
-  `cId` int(11) NOT NULL,
-  `cRoleName` varchar(255) COLLATE utf8_danish_ci NOT NULL,
-  `cRoleIdentifier` varchar(255) COLLATE utf8_danish_ci NOT NULL
+  `cFlags` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 -- --------------------------------------------------------
@@ -85,12 +73,6 @@ ALTER TABLE `permissions`
   ADD PRIMARY KEY (`cId`);
 
 --
--- Indexes for table `roles`
---
-ALTER TABLE `roles`
-  ADD PRIMARY KEY (`cId`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -109,11 +91,6 @@ ALTER TABLE `libraries`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `cId` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `roles`
---
-ALTER TABLE `roles`
   MODIFY `cId` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
