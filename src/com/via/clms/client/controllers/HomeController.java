@@ -1,4 +1,7 @@
-package com.via.clms.client.views;
+package com.via.clms.client.controllers;
+import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.Window;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
