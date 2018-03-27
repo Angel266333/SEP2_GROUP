@@ -1,5 +1,6 @@
-package com.via.clms.client.views;
+package com.via.clms.client.controllers;
 
+import com.via.clms.client.views.Controller;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +14,8 @@ public class ProfileController implements Controller {
 	private long cpr;
 	private String name;
 	private String email;
+	Button emailUpdateButton;
+	Button changePasswordButton;
 
 	public ProfileController(long cpr) {
 		this.cpr = cpr;
@@ -45,8 +48,8 @@ public class ProfileController implements Controller {
 		emailTextField.setText(email);
 
 		//Buttons
-		Button emailUpdateButton = new Button("Update");
-		Button changePasswordButton = new Button("Change password");
+		emailUpdateButton = new Button("Update");
+		changePasswordButton = new Button("Change password");
 
 		mainPane.add(nameLabel, 0, 0);
 		mainPane.add(cprLabel, 1, 0);
