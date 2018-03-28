@@ -4,13 +4,13 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class ControllerTesterStart extends Application {
+public class ControllerExecuteStart extends Application {
 
-	public static ControllerTest debugger;
+	public static ControllerExecute debugger;
 	public static String controllerName;
 
-	public ControllerTesterStart() {
-		debugger = new ControllerTest();
+	public ControllerExecuteStart() {
+		debugger = new ControllerExecute();
 		controllerName = debugger.controller;
 
 	}

@@ -2,15 +2,14 @@ package com.via.clms.client.controllers;
 
 import java.util.Scanner;
 
-public class ControllerTest {
+public class ControllerExecute {
 
 	Scanner keyboard = new Scanner(System.in);
 
 	public int selection;
 	public String controller;
-	public boolean loop;
 
-	public ControllerTest() {
+	public ControllerExecute() {
 
 		System.out.println("Controller selection: ");
 		System.out.println("0) Exit application");
@@ -26,8 +25,6 @@ public class ControllerTest {
 		System.out.println("10) InventoryManagementController [UNAVAILABLE]");
 		System.out.println("11) ManageUsersController [UNAVAILABLE]");
 		System.out.println("12) SystemSettingsController [UNAVAILABLE]");
-
-
 		selection = keyboard.nextInt();
 		logicHandler();
 
@@ -98,10 +95,10 @@ public class ControllerTest {
 				System.out.println("SystemSettingsController now running");
 				invalidInput = true;
 			}
+			if (selection > 12 || selection < 1) {
+				System.out.println("Error, enter valid choice!");
+				selection = keyboard.nextInt();
 		}
-		if (selection > 12 || selection < 1) {
-			System.out.println("Error, enter valid choice!");
-			selection = keyboard.nextInt();
 
 		}
 		return selection;
