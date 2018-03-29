@@ -26,10 +26,12 @@ public class ProfileController implements Controller {
 
 	}
 
+	@Override
 	public String getTitle() {
 		return "User profile";
 	}
 
+	@Override
 	public Parent getComponent() {
 		//Labels
 		String labelStyle = "-fx-font-weight: bold";
@@ -64,14 +66,17 @@ public class ProfileController implements Controller {
 		return mainPane;
 	}
 
+	@Override
 	public void onWindowOpen(Window window) {
 
 	}
 
+	@Override
 	public void onWindowClose(Window window) {
 
 	}
 
+	@Override
 	public void onWindowRefresh(Window window) {
 
 	}
