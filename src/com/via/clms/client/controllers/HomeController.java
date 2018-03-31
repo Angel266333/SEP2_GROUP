@@ -118,7 +118,7 @@ public class HomeController implements Controller {
 		
 		userProfileSection.getChildren().add(btn5MyProfile);
 		
-		//\\/\\/\\/\\/\\-=Box Containers And Elements To Panes=-//\\/\\/\\/\\/\\
+		//\\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
 		
 		searchPane.add(lbl1Search, 0, 0);
 		searchPane.add(searchSection, 0, 1);

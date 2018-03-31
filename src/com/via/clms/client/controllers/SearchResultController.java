@@ -154,10 +154,10 @@ public class SearchResultController implements Controller {
 		
 		//\\/\\/\\/\\/\\-=Table Properties=-//\\/\\/\\/\\/\\
 
-		bookNameCol1 = new TableColumn("Name:");
-		bookAuthorNameCol2 = new TableColumn("Author:");
-		bookdateOfIssueCol3 = new TableColumn("Date of issue:");
-		bookAvailabilityCol4 = new TableColumn("Availability:");
+		bookNameCol1 = new TableColumn("Name");
+		bookAuthorNameCol2 = new TableColumn("Author");
+		bookdateOfIssueCol3 = new TableColumn("Date of issue");
+		bookAvailabilityCol4 = new TableColumn("Availability");
 		
 		tbView1BookResults.getColumns().addAll(bookNameCol1, bookAuthorNameCol2, bookdateOfIssueCol3, bookAvailabilityCol4);
 		
