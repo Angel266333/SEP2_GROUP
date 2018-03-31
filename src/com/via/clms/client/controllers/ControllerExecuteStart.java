@@ -62,17 +62,17 @@ public class ControllerExecuteStart extends Application {
 				Runtime.getRuntime().exit(0);
 			}
 		}
-//		if (controllerName == "SearchResultController") {
-//			try {
-//				SearchResultController searchResultController = new SearchResultController();
-//				primaryStage.setScene(new Scene(searchResultController.getComponent()));
-//				primaryStage.setTitle(searchResultController.getTitle());
-//				primaryStage.show();
-//			} catch (Exception e) {
-//				System.out.println("Error in creating controller object.");
-//				Runtime.getRuntime().exit(0);
-//			}
-//		}
+		if (controllerName == "SearchResultController") {
+			try {
+				SearchResultController searchResultController = new SearchResultController();
+				primaryStage.setScene(new Scene(searchResultController.getComponent()));
+				primaryStage.setTitle(searchResultController.getTitle());
+				primaryStage.show();
+			} catch (Exception e) {
+				System.out.println("Error in creating controller object.");
+				Runtime.getRuntime().exit(0);
+			}
+		}
 		if (controllerName == "RentBookController") {
 			try {
 				RentBookController rentBookController = new RentBookController();
@@ -117,17 +117,17 @@ public class ControllerExecuteStart extends Application {
 //			Runtime.getRuntime().exit(0);
 //		}
 //	}	
-//		if (controllerName == "InventoryManagementController") {
-//		try {
-//			InventoryManagementController inventoryManagementController = new InventoryManagementController();
-//			primaryStage.setScene(new Scene(inventoryManagementController.getComponent()));
-//			primaryStage.setTitle(inventoryManagementController.getTitle());
-//			primaryStage.show();
-//		} catch (Exception e) {
-//			System.out.println("Error in creating controller object.");
-//			Runtime.getRuntime().exit(0);
-//		}
-//	}
+		if (controllerName == "InventoryManagementController") {
+		try {
+			InventoryManagementController inventoryManagementController = new InventoryManagementController();
+			primaryStage.setScene(new Scene(inventoryManagementController.getComponent()));
+			primaryStage.setTitle(inventoryManagementController.getTitle());
+			primaryStage.show();
+		} catch (Exception e) {
+			System.out.println("Error in creating controller object.");
+			Runtime.getRuntime().exit(0);
+		}
+	}
 //		if (controllerName == "ManageUsersController") {
 //		try {
 //			InventoryManagementController manageUsersController = new InventoryManagementController();
@@ -155,6 +155,7 @@ public class ControllerExecuteStart extends Application {
 	public static void main(String[] args) {
 
 		Application.launch(controllerName);
+		System.out.println("Session finished");
 
 	}
 }

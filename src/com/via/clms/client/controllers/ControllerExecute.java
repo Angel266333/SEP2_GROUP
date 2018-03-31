@@ -17,12 +17,12 @@ public class ControllerExecute {
 		System.out.println("2) HomeController");
 		System.out.println("3) LoginController");
 		System.out.println("4) ProfileController");
-		System.out.println("5) SearchResultController [UNAVAILABLE]");
+		System.out.println("5) SearchResultController");
 		System.out.println("6) RentBookController");
 		System.out.println("7) ReturnBookController");
 		System.out.println("8) RenewBookController [UNAVAILABLE]");
 		System.out.println("9) LibrarianHomeController [UNAVAILABLE]");
-		System.out.println("10) InventoryManagementController [UNAVAILABLE]");
+		System.out.println("10) InventoryManagementController");
 		System.out.println("11) ManageUsersController [UNAVAILABLE]");
 		System.out.println("12) SystemSettingsController [UNAVAILABLE]");
 		selection = keyboard.nextInt();
@@ -81,18 +81,22 @@ public class ControllerExecute {
 			}
 			if (selection == 9) {
 				System.out.println("LibrarianHomeController now running");
+				controller = "LibrarianHomeController";
 				invalidInput = true;
 			}
 			if (selection == 10) {
 				System.out.println("InventoryManagementController now running");
+				controller = "InventoryManagementController";
 				invalidInput = true;
 			}
 			if (selection == 11) {
 				System.out.println("ManageUsersController now running");
+				controller = "ManageUsersController";
 				invalidInput = true;
 			}
 			if (selection == 12) {
 				System.out.println("SystemSettingsController now running");
+				controller = "SystemSettingsController";
 				invalidInput = true;
 			}
 			if (selection > 12 || selection < 1) {
