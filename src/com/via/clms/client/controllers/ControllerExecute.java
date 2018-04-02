@@ -21,7 +21,7 @@ public class ControllerExecute {
 		System.out.println("6) RentBookController");
 		System.out.println("7) ReturnBookController");
 		System.out.println("8) RenewBookController [UNAVAILABLE]");
-		System.out.println("9) LibrarianHomeController [UNAVAILABLE]");
+		System.out.println("9) LibrarianHomeController");
 		System.out.println("10) InventoryManagementController");
 		System.out.println("11) ManageUsersController [UNAVAILABLE]");
 		System.out.println("12) SystemSettingsController [UNAVAILABLE]");

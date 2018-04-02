@@ -106,17 +106,17 @@ public class ControllerExecuteStart extends Application {
 //				Runtime.getRuntime().exit(0);
 //			}
 //		}
-//		if (controllerName == "LibrarianHomeController") {
-//		try {
-//			LibrarianHomeController librarianHomeController = new LibrarianHomeController();
-//			primaryStage.setScene(new Scene(librarianHomeController.getComponent()));
-//			primaryStage.setTitle(librarianHomeController.getTitle());
-//			primaryStage.show();
-//		} catch (Exception e) {
-//			System.out.println("Error in creating controller object.");
-//			Runtime.getRuntime().exit(0);
-//		}
-//	}	
+		if (controllerName == "LibrarianHomeController") {
+		try {
+			LibrarianHomeController librarianHomeController = new LibrarianHomeController();
+			primaryStage.setScene(new Scene(librarianHomeController.getComponent()));
+			primaryStage.setTitle(librarianHomeController.getTitle());
+			primaryStage.show();
+		} catch (Exception e) {
+			System.out.println("Error in creating controller object.");
+			Runtime.getRuntime().exit(0);
+		}
+	}	
 		if (controllerName == "InventoryManagementController") {
 		try {
 			InventoryManagementController inventoryManagementController = new InventoryManagementController();
