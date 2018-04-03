@@ -1,3 +1,7 @@
+package com.via.clms.client.controllers;
+import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.Window;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
