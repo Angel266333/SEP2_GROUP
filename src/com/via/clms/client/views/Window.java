@@ -63,14 +63,28 @@ public class Window {
 	 * 		The title to set
 	 */
 	public void setTitle(String title) {
-		mStage.setTitle(title);
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.setTitle(title);
+				}
+			}
+		});
 	}
 
 	/**
 	 * Resize the window to match the content
 	 */
 	public void resize() {
-		mStage.sizeToScene();
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.sizeToScene();
+				}
+			}
+		});
 	}
 
 	/**
@@ -83,8 +97,15 @@ public class Window {
 	 * 		The new height of the window
 	 */
 	public void resize(int width, int height) {
-		mStage.setHeight(height);
-		mStage.setWidth(width);
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.setHeight(height);
+					mStage.setWidth(width);
+				}
+			}
+		});
 	}
 
 	/**
@@ -107,10 +128,12 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				initializeWindow();
-				resize(width, height);
-				
-				mStage.show();
+				if (mStage == null) {
+					initializeWindow();
+					resize(width, height);
+					
+					mStage.show();
+				}
 			}
 		});
 	}
@@ -122,10 +145,12 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				initializeWindow();
-				resize();
-				
-				mStage.show();
+				if (mStage == null) {
+					initializeWindow();
+					resize();
+					
+					mStage.show();
+				}
 			}
 		});
 	}
@@ -137,8 +162,10 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				mStage.close();
-				mStage = null;
+				if (mStage != null) {
+					mStage.close();
+					mStage = null;
+				}
 			}
 		});
 	}
