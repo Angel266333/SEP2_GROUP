@@ -42,6 +42,7 @@ public class Window {
             @Override
             public void handle(WindowEvent window) {
             	mController.onWindowOpen(Window.this);
+            	mController.onWindowResume(Window.this);
             	mController.onWindowRefresh(Window.this);
             }
         });
@@ -49,6 +50,7 @@ public class Window {
 		mStage.setOnHiding(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent window) {
+            	mController.onWindowPause(Window.this);
             	mController.onWindowClose(Window.this);
             }
         });

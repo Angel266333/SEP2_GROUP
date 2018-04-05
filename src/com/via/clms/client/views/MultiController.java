@@ -76,4 +76,24 @@ public abstract class MultiController implements Controller {
 			controller.onWindowRefresh(win);
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onWindowResume(Window win) {
+		for (Controller controller : mControllers) {
+			controller.onWindowResume(win);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onWindowPause(Window win) {
+		for (Controller controller : mControllers) {
+			controller.onWindowPause(win);
+		}
+	}
 }

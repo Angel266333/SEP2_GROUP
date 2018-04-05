@@ -34,4 +34,16 @@ public interface Controller {
 	 * should update the UI
 	 */
 	void onWindowRefresh(Window win);
+	
+	/**
+	 * Invoked by the {@link Window} when the controller 
+	 * should pause
+	 */
+	void onWindowResume(Window win);
+	
+	/**
+	 * Invoked by the {@link Window} when the controller 
+	 * should resume
+	 */
+	void onWindowPause(Window win);
 }
