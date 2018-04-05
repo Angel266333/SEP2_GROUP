@@ -61,6 +61,7 @@ public abstract class ResultController<T> implements Controller {
 	public void onWindowClose(Window win) {
 		if (mListener != null) {
 			mListener.onReturnResult(getResult());
+			mListener = null;
 		}
 	}
 	
