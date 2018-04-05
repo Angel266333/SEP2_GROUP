@@ -52,24 +52,29 @@ public final class ApplicationThread extends Application {
 	 * 		The {@link Runnable} to execute on the GUI thread
 	 */
 	public static synchronized void run(Runnable runnable) {
-		if (!Platform.isFxApplicationThread() && !mRunning) {
-			Executors.newSingleThreadExecutor().execute(new Runnable(){
-				@Override
-				public void run() {
-					ApplicationThread.launch(ApplicationThread.class, new String[]{});
-				}
-			});
-			
-			while (!mRunning) {
-				try {
-					synchronized(mLock) {
-						mLock.wait();
+		if (!Platform.isFxApplicationThread()) {
+			if (!mRunning) {
+				Executors.newSingleThreadExecutor().execute(new Runnable(){
+					@Override
+					public void run() {
+						ApplicationThread.launch(ApplicationThread.class, new String[]{});
 					}
-					
-				} catch (Exception e) {}
+				});
+				
+				while (!mRunning) {
+					try {
+						synchronized(mLock) {
+							mLock.wait();
+						}
+						
+					} catch (Exception e) {}
+				}
 			}
+			
+			Platform.runLater(runnable);
+			
+		} else {
+			runnable.run();
 		}
-		
-		Platform.runLater(runnable);
 	}
 }
