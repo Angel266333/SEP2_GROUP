@@ -68,16 +68,11 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public int getPermissions(byte[] token, int libraryid) {
-		/* If a user has registered permissions at a specific library (ID > 0), 
-		 * while at the same time being registered as a system administrator (ID = 0), 
-		 * we need to return the permission for the requested library, which means that we must 
-		 * sort descending by library id to skip possible (ID = 0) and return the requested (ID > 0)
-		 */
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT p.cFlags " +
 				"FROM permissions p JOIN users AS u ON u.cId = p.cUserId" +
-				"WHERE u.cUserToken=? AND (p.cLibraryId=? OR p.cLibraryId=0) ORDER BY p.cLibraryId DESC", tokenStr, libraryid);
+				"WHERE u.cUserToken=? AND p.cLibraryId=?", tokenStr, libraryid);
 		
 		try {
 			if (result.first()) {
