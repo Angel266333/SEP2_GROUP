@@ -1,6 +1,7 @@
 package com.via.clms.shared;
 
 import java.io.Serializable;
+import javafx.scene.image.Image
 
 public class Book implements Serializable {
 	public int bid;
@@ -19,5 +20,9 @@ public class Book implements Serializable {
 		this.inventory = inventory;
 		this.ISBN = ISBN;
 		this.description = description;
+	}
+	
+	public Image getImage() {
+		return null;
 	}
 }
