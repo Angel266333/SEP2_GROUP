@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import com.via.clms.Utils;
+import com.via.clms.shared.User;
 
 /**
  * A user service class that is used to manage multi-user and user permissions
@@ -26,20 +27,16 @@ public interface IUserService extends Remote {
 	public final static int ROLE_ADMIN = 0b11111111; // -1
 	
 	/**
-	 * Validate a user token against the database
+	 * Get a user token that can be used by a user for further 
+	 * access to the server features.
 	 * 
-	 * This is used to ensure that the token is valid and exists 
-	 * in the database.
+	 * @param cpr
+	 * 		The user CPR
 	 * 
-	 * Tokens should be created based on user name and password 
-	 * and can be used to check if a user has been registered with the server. 
-	 * Tokens can be anything, but {@link Utils#getUserToken(String, String)} 
-	 * can be used to create the them. 
-	 * 
-	 * @param token
-	 * 		The user token to validate
+	 * @param passwd 
+	 * 		The user password
 	 */
-	boolean checkUser(byte[] token) throws RemoteException;
+	byte[] getUserToken(long cpr, String passwd) throws RemoteException;
 
 	/**
 	 * Check a specific users permission flags

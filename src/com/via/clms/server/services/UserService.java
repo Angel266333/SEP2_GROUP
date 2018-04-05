@@ -1,5 +1,8 @@
 package com.via.clms.server.services;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -16,24 +19,54 @@ import com.via.clms.server.ServiceManager;
 public class UserService implements IUserService, Service {
 	
 	/**
+	 * Generates a user token that can be used to identify/validate a user
+	 * 
+	 * The idea with tokens is to have something more safe to transfer between 
+	 * server and clients, unlike raw passwords, that should be kept local.
+	 * 
+	 * @param long cpr
+	 * 		The CPR of the user to generate the token for
+	 * 
+	 * @param String passwd
+	 * 		The password used by the user
+	 * 
+	 * @return byte[]
+	 * 		A hash value in raw bytes
+	 */
+	public static byte[] generateUserToken(long cpr, String passwd) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update( (Long.toString(cpr) + passwd).getBytes( StandardCharsets.UTF_8 ) );
+			
+			return md.digest();
+			
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean checkUser(byte[] token) {
+	public byte[] getUserToken(long cpr, String passwd) {
+		byte[] token = generateUserToken(cpr, passwd);
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM users WHERE cUserToken=?", tokenStr);
 		
 		try {
 			if (result.first()) {
-				return result.getInt("cCount") > 0;
+				if (result.getInt("cCount") > 0) {
+					return token;
+				}
 			}
 			
 		} catch (SQLException e) {
 			Log.error(e);
 		}
 		
-		return false;
+		return null;
 	}
 	
 	/**
