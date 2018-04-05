@@ -6,13 +6,23 @@ package com.via.clms.client.views;
  * @param <T>
  * 		The result type that listeners should expect
  */
-public abstract class ResultController<T> extends MultiController {
+public abstract class ResultController<T> implements Controller {
 	
 	/** * */
 	private ResultListener<T> mListener;
 	
 	/** * */
 	private T mResult;
+	
+	/** * */
+	private Window mWindow;
+	
+	/**
+	 * 
+	 */
+	protected final Window getWindow() {
+		return mWindow;
+	}
 	
 	/**
 	 * Attach a result listener to this controller
@@ -47,11 +57,45 @@ public abstract class ResultController<T> extends MultiController {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void onWindowClose(Window win) {
-		super.onWindowClose(win);
-		
 		if (mListener != null) {
 			mListener.onReturnResult(getResult());
 		}
+	}
+	
+	/**
+	 * Invoked by the {@link Window} when it has been opened
+	 */
+	@Override
+	public void onWindowOpen(Window win) {
+		mWindow = win;
+	}
+	
+	/**
+	 * Invoked by the {@link Window} when the controller 
+	 * should update the UI
+	 */
+	@Override
+	public void onWindowRefresh(Window win) {
+		
+	}
+	
+	/**
+	 * Invoked by the {@link Window} when the controller 
+	 * should pause
+	 */
+	@Override
+	public void onWindowResume(Window win) {
+		
+	}
+	
+	/**
+	 * Invoked by the {@link Window} when the controller 
+	 * should resume
+	 */
+	@Override
+	public void onWindowPause(Window win) {
+		
 	}
 }
