@@ -138,6 +138,7 @@ public class Window {
 			@Override
 			public void run() {
 				mStage.close();
+				mStage = null;
 			}
 		});
 	}
