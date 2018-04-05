@@ -12,6 +12,7 @@ import com.via.clms.Log;
 import com.via.clms.Utils;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
+import com.via.clms.shared.User;
 
 /**
  * Implementation of the remote {@link IUserService} service
@@ -153,5 +154,61 @@ public class UserService implements IUserService, Service {
 	@Override
 	public void onShutdown() {
 		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] getSpecialToken(byte[] token, int libraryid) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User[] getUsers(byte[] token, int offset, int length) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User getUserByUID(byte[] token, int uid) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User getUserByCPR(byte[] token, long cpr) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean addUser(byte[] token, long cpr, String passwd) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean updateUser(byte[] token, User data) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] updateUserPasswd(byte[] token, long cpr, String oldPasswd, String newPasswd) {
+		return null;
 	}
 }
