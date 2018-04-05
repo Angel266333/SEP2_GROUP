@@ -8,6 +8,10 @@ public class Book implements Serializable {
 	public int inventory;
 	public String ISBN;
 	public String description;
+	public String image;
+	public long release;
+	public String author;
+	public String location;
 
 	public Book(int bid, String title, int inventory, String ISBN, String description) {
 		this.bid = bid;
