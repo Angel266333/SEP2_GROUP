@@ -114,6 +114,26 @@ public class Window {
 	public Stage getFrame() {
 		return mStage;
 	}
+	
+	/**
+	 * 
+	 */
+	public void launchController(final Controller controller) {
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					if (!(mController instanceof WindowListener)
+							|| !((WindowListener) mController).onLaunchController(controller)) {
+						
+						mStage.hide();
+						mController = controller;
+						mStage.show();
+					}
+				}
+			}
+		});
+	}
 
 	/**
 	 * Open the window
@@ -163,8 +183,12 @@ public class Window {
 			@Override
 			public void run() {
 				if (mStage != null) {
-					mStage.close();
-					mStage = null;
+					if (!(mController instanceof WindowListener)
+							|| !((WindowListener) mController).onRequestExit()) {
+					
+						mStage.close();
+						mStage = null;
+					}
 				}
 			}
 		});

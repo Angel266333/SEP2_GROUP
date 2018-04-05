@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 /**
  * 
  */
-public abstract class StackController implements Controller {
+public abstract class StackController implements Controller, WindowListener {
 	
 	/** * */
 	private final List<Controller> mStack = new ArrayList<Controller>();
@@ -27,6 +27,13 @@ public abstract class StackController implements Controller {
 	 */
 	public StackController(Controller mainController) {
 		mCurrentController = mainController;
+	}
+	
+	/**
+	 * 
+	 */
+	protected final boolean isStacked() {
+		return mStack.size() > 1;
 	}
 	
 	/**
@@ -128,6 +135,42 @@ public abstract class StackController implements Controller {
 	@Override
 	public void onWindowPause(Window win) {
 		mCurrentController.onWindowPause(mWindow);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean onLaunchController(Controller controller) {
+		// We should support nested Window Listeners
+		if (!(mCurrentController instanceof WindowListener)
+				|| !((WindowListener) mCurrentController).onLaunchController(controller)) {
+		
+			pushStack(controller);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean onRequestExit() {
+		// We should support nested Window Listeners
+		if (!(mCurrentController instanceof WindowListener)
+				|| !((WindowListener) mCurrentController).onRequestExit()) {
+		
+			if (isStacked()) {
+				popStack();
+				
+				return true;
+			}
+			
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
