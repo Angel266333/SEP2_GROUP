@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -213,6 +214,7 @@ public class SearchResultController implements Controller {
 		
 		
 		tbView1BookResults.setItems(data);
+		tbView1BookResults.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tbView1BookResults.getColumns().addAll(bookNameCol1, bookAuthorNameCol2, bookYearCol3, bookAvailabilityCol4);
 		
 		//\\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
