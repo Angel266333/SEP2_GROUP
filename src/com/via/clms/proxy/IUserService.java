@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import com.via.clms.Utils;
+import com.via.clms.shared.User;
 
 /**
  * A user service class that is used to manage multi-user and user permissions
@@ -26,20 +27,25 @@ public interface IUserService extends Remote {
 	public final static int ROLE_ADMIN = 0b11111111; // -1
 	
 	/**
-	 * Validate a user token against the database
+	 * Get a user token that can be used by a user for further 
+	 * access to the server features.
 	 * 
-	 * This is used to ensure that the token is valid and exists 
-	 * in the database.
+	 * @param cpr
+	 * 		The user CPR
 	 * 
-	 * Tokens should be created based on user name and password 
-	 * and can be used to check if a user has been registered with the server. 
-	 * Tokens can be anything, but {@link Utils#getUserToken(String, String)} 
-	 * can be used to create the them. 
-	 * 
-	 * @param token
-	 * 		The user token to validate
+	 * @param passwd 
+	 * 		The user password
 	 */
-	boolean checkUser(byte[] token) throws RemoteException;
+	byte[] getUserToken(long cpr, String passwd) throws RemoteException;
+	
+	/**
+	 * Can be used like a user token, but cannot be used to login with 
+	 * 
+	 * This is used to produce tokens that can be used for verification on 
+	 * specific things. For example to lock a client to a renting position
+	 * for renting terminals. 
+	 */
+	byte[] getSpecialToken(byte[] token, int libraryid) throws RemoteException;
 
 	/**
 	 * Check a specific users permission flags
@@ -48,7 +54,7 @@ public interface IUserService extends Remote {
 	 * for a specific library. 
 	 * 
 	 * @param token
-	 * 		The user token
+	 * 		The session token
 	 * 
 	 * @param libraryid
 	 * 		Database id of the library
@@ -65,7 +71,7 @@ public interface IUserService extends Remote {
 	 * The permissions is relative to a specific library. 
 	 * 
 	 * @param token
-	 * 		The user token
+	 * 		The session token
 	 * 
 	 * @param libraryid
 	 * 		Database id of the library
@@ -77,4 +83,90 @@ public interface IUserService extends Remote {
 	 * The map keys are the role labels
 	 */
 	Map<String,Integer> getRoles() throws RemoteException;
+	
+	/**
+	 * Get all users that is registered on the server
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param offset 
+	 * 		Offset row number starting from '0'
+	 * 
+	 * @param length 
+	 * 		Number of total rows to return
+	 */
+	User[] getUsers(byte[] token, int offset, int length) throws RemoteException;
+	
+	/**
+	 * Get data on a specific user via user id
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param uid 
+	 * 		The user id
+	 */
+	User getUserByUID(byte[] token, int uid) throws RemoteException;
+	
+	/**
+	 * Get data on a specific user via the user CPR
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param cpr 
+	 * 		The user CPR
+	 */
+	User getUserByCPR(byte[] token, long cpr) throws RemoteException;
+	
+	/**
+	 * Create a new user
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param cpr 
+	 * 		The user CPR
+	 * 
+	 * @param passwd
+	 * 		The user password
+	 */
+	boolean addUser(byte[] token, long cpr, String passwd) throws RemoteException;
+	
+	/**
+	 * Update information about a user
+	 * 
+	 * This method takes a {@link User} instance. 
+	 * All data within this instance will be changed in the database except 
+	 * the user id, which must be valid.
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param data 
+	 * 		A {@link User} instance containing the data to store
+	 */
+	boolean updateUser(byte[] token, User data) throws RemoteException;
+	
+	/**
+	 * Change a users current password
+	 * 
+	 * This method returns a user token to allow the current user to change he's/her own. 
+	 * Changing the password will generate a new token which in turn will render any old tokens useless. 
+	 * If the token being changes is used by the current session, this needs to be updated. 
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param cpr 
+	 * 		The user CPR
+	 * 
+	 * @param oldPasswd
+	 * 		The old user password
+	 * 
+	 * @param newPasswd
+	 * 		The new user password
+	 */
+	byte[] updateUserPasswd(byte[] token, long cpr, String oldPasswd, String newPasswd) throws RemoteException;
 }

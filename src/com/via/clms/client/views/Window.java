@@ -42,6 +42,7 @@ public class Window {
             @Override
             public void handle(WindowEvent window) {
             	mController.onWindowOpen(Window.this);
+            	mController.onWindowResume(Window.this);
             	mController.onWindowRefresh(Window.this);
             }
         });
@@ -49,6 +50,7 @@ public class Window {
 		mStage.setOnHiding(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent window) {
+            	mController.onWindowPause(Window.this);
             	mController.onWindowClose(Window.this);
             }
         });
@@ -61,14 +63,28 @@ public class Window {
 	 * 		The title to set
 	 */
 	public void setTitle(String title) {
-		mStage.setTitle(title);
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.setTitle(title);
+				}
+			}
+		});
 	}
 
 	/**
 	 * Resize the window to match the content
 	 */
 	public void resize() {
-		mStage.sizeToScene();
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.sizeToScene();
+				}
+			}
+		});
 	}
 
 	/**
@@ -81,8 +97,15 @@ public class Window {
 	 * 		The new height of the window
 	 */
 	public void resize(int width, int height) {
-		mStage.setHeight(height);
-		mStage.setWidth(width);
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					mStage.setHeight(height);
+					mStage.setWidth(width);
+				}
+			}
+		});
 	}
 
 	/**
@@ -90,6 +113,26 @@ public class Window {
 	 */
 	public Stage getFrame() {
 		return mStage;
+	}
+	
+	/**
+	 * 
+	 */
+	public void launchController(final Controller controller) {
+		ApplicationThread.run(new Runnable(){
+			@Override
+			public void run() {
+				if (mStage != null) {
+					if (!(mController instanceof WindowListener)
+							|| !((WindowListener) mController).onLaunchController(controller)) {
+						
+						mStage.hide();
+						mController = controller;
+						mStage.show();
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -105,10 +148,12 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				initializeWindow();
-				resize(width, height);
-				
-				mStage.show();
+				if (mStage == null) {
+					initializeWindow();
+					resize(width, height);
+					
+					mStage.show();
+				}
 			}
 		});
 	}
@@ -120,10 +165,12 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				initializeWindow();
-				resize();
-				
-				mStage.show();
+				if (mStage == null) {
+					initializeWindow();
+					resize();
+					
+					mStage.show();
+				}
 			}
 		});
 	}
@@ -135,7 +182,14 @@ public class Window {
 		ApplicationThread.run(new Runnable(){
 			@Override
 			public void run() {
-				mStage.close();
+				if (mStage != null) {
+					if (!(mController instanceof WindowListener)
+							|| !((WindowListener) mController).onRequestExit()) {
+					
+						mStage.close();
+						mStage = null;
+					}
+				}
 			}
 		});
 	}
