@@ -13,7 +13,7 @@ CREATE TABLE Books (
   isbn VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   image VARCHAR(255) NOT NULL,
-  release VARCHAR(255) NOT NULL,
+  release BIGINT NOT NULL,
   author VARCHAR(255) NOT NULL,
   PRIMARY KEY(bid),
 
