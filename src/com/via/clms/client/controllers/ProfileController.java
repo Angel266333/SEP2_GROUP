@@ -1,12 +1,13 @@
 package com.via.clms.client.controllers;
 
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.Window;
+
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Window;
 
 public class ProfileController implements Controller {
 	private GridPane mainPane;
@@ -79,6 +80,16 @@ public class ProfileController implements Controller {
 	@Override
 	public void onWindowRefresh(Window window) {
 
+	}
+
+	@Override
+	public void onWindowResume(Window win) {
+		
+	}
+	
+	@Override
+	public void onWindowPause(Window win) {
+		
 	}
 
 	private void getData() {

@@ -149,8 +149,6 @@ public class SearchResultController implements Controller {
 		
 	}
 	
-	
-	
 	public void receiveSearchResults() {
 		
 		bookName = dataOutput.getBookName();
@@ -343,6 +341,16 @@ public class SearchResultData {
 
 	@Override
 	public void onWindowRefresh(Window win) {
+		
+	}
+	
+	@Override
+	public void onWindowResume(Window win) {
+		
+	}
+
+	@Override
+	public void onWindowPause(Window win) {
 		
 	}
 }

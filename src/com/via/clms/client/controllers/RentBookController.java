@@ -1,6 +1,7 @@
 package com.via.clms.client.controllers;
 
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.Window;
 
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -8,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.stage.Window;
 
 public class RentBookController implements Controller {
 	private BorderPane mainPane;
@@ -62,5 +62,15 @@ public class RentBookController implements Controller {
 	@Override
 	public void onWindowRefresh(Window window) {
 
+	}
+
+	@Override
+	public void onWindowResume(Window win) {
+		
+	}
+
+	@Override
+	public void onWindowPause(Window win) {
+		
 	}
 }

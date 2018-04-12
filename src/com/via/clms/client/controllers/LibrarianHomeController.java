@@ -163,4 +163,18 @@ public class LibrarianHomeController implements Controller {
 		
 	}
 
+
+	@Override
+	public void onWindowResume(Window win) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onWindowPause(Window win) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

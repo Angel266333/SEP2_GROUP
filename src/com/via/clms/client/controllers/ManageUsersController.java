@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.stage.Window;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
@@ -183,5 +182,17 @@ public class ManageUsersController implements Controller {
 			System.out.println("by name");
 		}
 		//ulPane.populate(searchResult);
+	}
+
+	@Override
+	public void onWindowResume(Window win) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onWindowPause(Window win) {
+		// TODO Auto-generated method stub
+		
 	}
 }
