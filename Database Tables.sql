@@ -1,102 +1,84 @@
--- phpMyAdmin SQL Dump
--- version 4.5.4.1deb2ubuntu2
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Feb 21, 2018 at 11:17 PM
--- Server version: 5.7.20-0ubuntu0.16.04.1
--- PHP Version: 7.1.11-1+ubuntu16.04.1+deb.sury.org+1
+CREATE TABLE Users (
+    cUid int NOT NULL,
+    cCpr bigint NOT NULL,
+    cName varchar(255) NOT NULL,
+    cToken varchar(255) NOT NULL,
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+    PRIMARY KEY (cUid),
+    UNIQUE (cCpr,cToken)
+);
+
+CREATE TABLE UserRoles (
+    cUid int NOT NULL,
+    cLid int NOT NULL,
+    cRole int NOT NULL,
+
+    CONSTRAINT Duplicates CHECK NOT EXISTS (
+        SELECT * FROM UserRoles tmp
+        WHERE UserRoles.cUid == tmp.cUid
+            AND UserRoles.cLid == tmp.cLid
+    ),
+
+    FOREIGN KEY (cUid) REFERENCES UserRoles (cUid)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (cLid) REFERENCES Libraries (cLid)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Libraries (
+    cLid int NOT NULL,
+    cName varchar(255) NOT NULL,
+
+    PRIMARY KEY (cLid),
+    UNIQUE (cName)
+);
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+CREATE TABLE BookInventory (
+  cBid int NOT NULL,
+  cLid int NOT NULL,
+  cInventory int NOT NULL,
+  cLocation varchar(256) DEFAULT NULL,
+  PRIMARY KEY (cBid),
 
---
--- Database: `clms`
---
+  FOREIGN KEY (cBid) REFERENCES Books (cBid)
+      ON DELETE CASCADE
+);
 
--- --------------------------------------------------------
+CREATE TABLE BookRental (
+  cBid int NOT NULL,
+  cLid int NOT NULL,
+  cUid int NOT NULL,
+  cDateoffset bigint NOT NULL,
+  cDateduration bigint NOT NULL, 
+  PRIMARY KEY(cBid),
 
---
--- Table structure for table `libraries`
---
+  FOREIGN KEY (cBid,cLid) REFERENCES BookInventory (cBid,cLid)
+      ON DELETE CASCADE
+);
 
-CREATE TABLE `libraries` (
-  `cId` int(11) NOT NULL,
-  `cName` varchar(255) COLLATE utf8_danish_ci NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+CREATE TABLE BookReservation (
+  cBid int NOT NULL,
+  cLid int NOT NULL,
+  cUid int NOT NULL,
+  PRIMARY KEY (cBid),
 
--- --------------------------------------------------------
+  FOREIGN KEY (cBid,cLid) REFERENCES BookInventory (cBid,cLid)
+      ON DELETE CASCADE
+);
 
---
--- Table structure for table `permissions`
---
+CREATE TRIGGER bookinventory_zero AFTER UPDATE ON BookInventory FOR EACH ROW DELETE FROM BookRental WHERE BookRental.cBid = NEW.cBid AND NEW.cInventory = 0;
+CREATE TRIGGER bookinventory_zero2 AFTER UPDATE ON BookInventory FOR EACH ROW DELETE FROM BookReservation WHERE bookreservations.cBid = NEW.cBid AND NEW.cInventory = 0;
 
-CREATE TABLE `permissions` (
-  `cId` int(11) NOT NULL,
-  `cLibraryId` int(11) NOT NULL,
-  `cUserId` int(11) NOT NULL,
-  `cFlags` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+CREATE TABLE Books (
+  cBid int NOT NULL,
+  cTitle varchar(255) NOT NULL,
+  cIsbn varchar(255) NOT NULL,
+  cDescription varchar(255) NOT NULL,
+  cImage varchar(255) NOT NULL,
+  cRelease bigint NOT NULL,
+  cAuthor varchar(255) NOT NULL,
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `cId` int(11) NOT NULL,
-  `cUserName` varchar(255) COLLATE utf8_danish_ci NOT NULL,
-  `cUserToken` varchar(255) COLLATE utf8_danish_ci NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `libraries`
---
-ALTER TABLE `libraries`
-  ADD PRIMARY KEY (`cId`);
-
---
--- Indexes for table `permissions`
---
-ALTER TABLE `permissions`
-  ADD PRIMARY KEY (`cId`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`cId`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `libraries`
---
-ALTER TABLE `libraries`
-  MODIFY `cId` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `permissions`
---
-ALTER TABLE `permissions`
-  MODIFY `cId` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `cId` int(11) NOT NULL AUTO_INCREMENT;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+  PRIMARY KEY(cBid)
+);
