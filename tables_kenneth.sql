@@ -11,14 +11,15 @@ CREATE TABLE `bookrental` (
   `lid` int NOT NULL,
   `uid` int NOT NULL,
   `dateoffset` bigint NOT NULL,
-  `dateduration` bigint NOT NULL
+  `dateduration` bigint NOT NULL, 
+  PRIMARY KEY(`bid`)
 );
 
 CREATE TABLE `bookreservations` (
   `bid` int NOT NULL,
   `lid` int NOT NULL,
   `uid` int NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`bid`)
 )
 
 CREATE TRIGGER bookinventory_zero AFTER UPDATE ON bookinventory FOR EACH ROW DELETE FROM bookrental WHERE bookrental.bid = NEW.bid AND NEW.inventory = 0;
