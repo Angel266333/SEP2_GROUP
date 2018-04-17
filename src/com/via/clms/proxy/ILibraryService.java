@@ -16,5 +16,6 @@ public interface ILibraryService extends Remote {
 	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException;
 	
 	public Library[] getLibraries(byte[] reqToken, int offset, int length) throws RemoteException;
+
 	
 }

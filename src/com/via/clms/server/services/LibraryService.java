@@ -1,6 +1,9 @@
 package com.via.clms.server.services;
 
-import java.util.Arrays;
+import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.shared.Library;
@@ -10,63 +13,58 @@ import com.via.clms.shared.Library;
  */
 public class LibraryService implements ILibraryService, Service {
 	
-	/** * */
-	public int libraryCapacity;
-	
-	/** * */
-	public int currentLibrary;
-	
-	/** * */
-	Library[] libraryList;
+	DatabaseService dbs;
 
 	public LibraryService() {
-		libraryList = new Library[libraryCapacity];
+		dbs = new DatabaseService();
 	}
-
+	
 	@Override
-	public boolean createLibrary(byte[] reqToken, String name) {
-		if (currentLibrary >= 0 && currentLibrary < libraryCapacity) {
-		libraryList[currentLibrary] = new Library(currentLibrary, name);
-		currentLibrary++;
-		return true;
-		
-		} 
-		if (currentLibrary < 0 
-				|| currentLibrary > libraryCapacity) {
-			throw new IndexOutOfBoundsException();
-		}
-		return false;
-		}
-
-	@Override
-	public Library getLibraryByLID(byte[] reqToken, int lid) {
-		for (Library l : libraryList) {
-			if (l.lid == lid) {
-				return l;
+	public boolean createLibrary(byte[] reqToken, String name) throws RemoteException {
+		String q = "INSERT INTO 'Libraries' (cName)VALUES (?);";
+		int result = dbs.execute(q, name);
+		if (result == 1) {
+			return true;
+		} else {
+				return false;
 			}
+		}
+	
+	@Override
+	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException {
+		String q = "SELECT * FROM 'Libraries' WHERE 'lid' = ?;";
+		ResultSet result = dbs.query(q, lid);
+		try {
+			while(result.next()) {
+				int lLid = result.getInt(1);
+				String lName = result.getString(2);
+				return new Library(lLid, lName);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
 		}
 		return null;
 	}
 
 	@Override
-	public Library[] getLibraries(byte[] reqToken, int offset, int length) {
-		return Arrays.copyOfRange(libraryList, offset, offset + length);
-	}
-
-	public void setLibraryCapacity(int libraryCapacity) {
-		this.libraryCapacity = libraryCapacity;
-	}
-
-	public int getLibraryCapacity() {
-		return libraryCapacity;
-	}
-
-	public void setCurrentLibrary(int currentLibrary) {
-		this.currentLibrary = currentLibrary;
-	}
-	
-	public int getCurrentLibrary() {
-		return currentLibrary;
+	public Library[] getLibraries(byte[] reqToken, int offset, int length) throws RemoteException {
+		String q = "SELECT * FROM 'Library' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+		ResultSet result = dbs.query(q, offset, length);
+		ArrayList<Library> lbrList = new ArrayList<>();
+		try {
+			while(result.next()) {
+			int lLid = result.getInt(1);
+			String lName = result.getString(2);
+			lbrList.add(new Library(lLid, lName));
+			}
+			Library[] lbrArray = new Library[lbrList.size()];
+			lbrList.toArray(lbrArray);
+			return lbrArray;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 	
 	@Override
@@ -77,8 +75,7 @@ public class LibraryService implements ILibraryService, Service {
 
 	@Override
 	public void onShutdown() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }
