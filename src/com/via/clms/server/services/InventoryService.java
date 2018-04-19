@@ -6,11 +6,12 @@ import com.via.clms.server.ServiceManager;
 import com.via.clms.shared.Book;
 import com.via.clms.shared.BookRental;
 import com.via.clms.shared.BookReservation;
-
 import java.rmi.RemoteException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class InventoryService implements IInventoryService, Service {
 	DatabaseService dbs;
@@ -21,7 +22,7 @@ public class InventoryService implements IInventoryService, Service {
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookRental> brList = new ArrayList<>();
 		try {
-			while(result.next()) {
+			while (result.next()) {
 				int nBid = result.getInt(1);
 				int nLid = result.getInt(2);
 				int nUid = result.getInt(3);
@@ -33,7 +34,7 @@ public class InventoryService implements IInventoryService, Service {
 			BookRental[] brArray = new BookRental[brList.size()];
 			brList.toArray(brArray);
 			return brArray;
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -45,7 +46,7 @@ public class InventoryService implements IInventoryService, Service {
 		ResultSet result = dbs.query(q, uid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
 		try {
-			while(result.next()) {
+			while (result.next()) {
 				int nBid = result.getInt(1);
 				int nLid = result.getInt(2);
 				int nUid = result.getInt(3);
@@ -55,7 +56,7 @@ public class InventoryService implements IInventoryService, Service {
 			BookReservation[] brArray = new BookReservation[brList.size()];
 			brList.toArray(brArray);
 			return brArray;
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -67,7 +68,7 @@ public class InventoryService implements IInventoryService, Service {
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
 		try {
-			while(result.next()) {
+			while (result.next()) {
 				int nBid = result.getInt(1);
 				int nLid = result.getInt(2);
 				int nUid = result.getInt(3);
@@ -77,7 +78,7 @@ public class InventoryService implements IInventoryService, Service {
 			BookReservation[] brArray = new BookReservation[brList.size()];
 			brList.toArray(brArray);
 			return brArray;
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -86,10 +87,9 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public int addBook(byte[] reqToken, int lid, Book book) {
-		if(book.bid == -1) {
+		if (book.bid == -1) {
 			return fullAddBook(reqToken, lid, book);
-		}
-		else {
+		} else {
 			return simpleAddBook(reqToken, lid, book);
 		}
 	}
@@ -118,7 +118,6 @@ public class InventoryService implements IInventoryService, Service {
 		return dbs.execute(q, bid, lid, uid);
 	}
 
-	@Override
 	public Book[] getAllBooks(byte[] reqToken, int offset, int length) throws RemoteException {
 
 		String q = "SELECT * FROM `BookInventory` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
@@ -147,26 +146,33 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book[] getBooks(byte[] reqToken, int lid, int offset, int length) throws RemoteException {
 
-		String q = "SELECT * FROM `BookInventory` WHERE 'cLid' = ?  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
-		ResultSet result = dbs.query(q, lid, offset, length);
-		ArrayList<Book> bookList = new ArrayList<>();
-		try {
+		if (lid == 0) {
+			return getAllBooks(reqToken, offset, length);
+		}
 
-			while (result.next()) {
-				int nBid = result.getInt(1);
-				String nTitle = result.getString(2);
-				int nInventory = result.getInt(3);
-				String nISBN = result.getString(4);
-				String nDescription = result.getString(5);
+		else {
+			String q = "SELECT * FROM `BookInventory` WHERE 'cLid' = ?  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+			ResultSet result = dbs.query(q, lid, offset, length);
+			ArrayList<Book> bookList = new ArrayList<>();
+			try {
 
-				bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
+				while (result.next()) {
+					int nBid = result.getInt(1);
+					String nTitle = result.getString(2);
+					int nInventory = result.getInt(3);
+					String nISBN = result.getString(4);
+					String nDescription = result.getString(5);
+
+					bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
+				}
+				Book[] bookArray = new Book[bookList.size()];
+				bookList.toArray(bookArray);
+				return bookArray;
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				return null;
 			}
-			Book[] bookArray = new Book[bookList.size()];
-			bookList.toArray(bookArray);
-			return bookArray;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			return null;
+
 		}
 
 	}
@@ -224,15 +230,19 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book[] getBooksByDate(byte[] reqToken, int lid, long timeLength) throws RemoteException {
 
-		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cRelease` = ?;";
+		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cRelease` BETWEEN ? AND ?;";
 
-		/*
-		 * Maybe years should be used here instead of timeLength?
-		 */
-//		int years = new Long((timeLength - (timeLength % 31557600L)) / 31557600L).intValue();
-//		years = Math.min(20, years);
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date(timeLength));
+		int year = c.get(Calendar.YEAR);
+		c.setTime(new Date(0));
+		long begin = c.getTime().getTime();
+		c.set(Calendar.YEAR, year);
+		c.set(Calendar.MONTH, Calendar.DECEMBER);
+		c.set(Calendar.DAY_OF_MONTH, 31);
+		long end = c.getTime().getTime();
 
-		ResultSet result = dbs.query(q, lid, timeLength);
+		ResultSet result = dbs.query(q, lid, begin, end);
 		ArrayList<Book> bookList = new ArrayList<>();
 		try {
 
@@ -302,7 +312,6 @@ public class InventoryService implements IInventoryService, Service {
 			return null;
 		}
 	}
-
 
 	@Override
 	public boolean onConfigure() {

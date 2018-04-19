@@ -8,9 +8,7 @@ import java.rmi.RemoteException;
 
 public interface IInventoryService extends Remote {
 
-	Book[] getAllBooks(byte[] reqToken, int offset, int length) throws RemoteException;
 	Book[] getBooks(byte[] reqToken, int lid, int offset, int length) throws RemoteException;
-
 	Book[] getBooksByTitle(byte[] reqToken, int lid, String title) throws RemoteException;
 	Book  getBookByISBN(byte[] reqToken, int lid, String isbn) throws RemoteException;
 	Book[] getBooksByDate(byte[] reqToken, int lid, long timeLength) throws RemoteException;
