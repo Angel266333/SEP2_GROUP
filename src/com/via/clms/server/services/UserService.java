@@ -13,6 +13,7 @@ import com.via.clms.Utils;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
 import com.via.clms.shared.User;
+import com.via.clms.shared.UserRoles;
 
 /**
  * Implementation of the remote {@link IUserService} service
@@ -163,13 +164,63 @@ public class UserService implements IUserService, Service {
 	public byte[] getSpecialToken(byte[] token, int libraryid) {
 		return null;
 	}
+	
+	/**
+	 * 
+	 */
+	public UserRoles[] getUserRoles(byte[] token, int uid) {
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT * FROM UserRoles WHERE cUid=?", uid);
+		
+		try {
+			UserRoles[] roles = new UserRoles[ result.getFetchSize() ];
+			int i=0;
+			
+			while (result.next()) {
+				UserRoles role = new UserRoles(result.getInt("cUid"), result.getInt("cLid"));
+				role.role = result.getInt("cRole");
+				
+				roles[i++] = role;
+			}
+			
+			return roles;
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
+		return new UserRoles[0];
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public User[] getUsers(byte[] token, int offset, int length) {
-		return null;
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT * FROM Users LIMIT ?,?", offset, length);
+		
+		try {
+			User[] users = new User[ result.getFetchSize() ];
+			int i=0;
+			
+			while (result.next()) {
+				User user = new User(result.getInt("cUid"));
+				user.cpr = result.getLong("cCpr");
+				user.name = result.getString("cName");
+				user.email = result.getString("cEmail");
+				user.roles = getUserRoles(token, result.getInt("cUid"));
+				
+				users[i++] = user;
+			}
+			
+			return users;
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
+		return new User[0];
 	}
 
 	/**
@@ -177,6 +228,24 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public User getUserByUID(byte[] token, int uid) {
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT * FROM Users WHERE cUid = ?", uid);
+		
+		try {
+			if (result.first()) {
+				User user = new User(result.getInt("cUid"));
+				user.cpr = result.getLong("cCpr");
+				user.name = result.getString("cName");
+				user.email = result.getString("cEmail");
+				user.roles = getUserRoles(token, result.getInt("cUid"));
+				
+				return user;
+			}
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
 		return null;
 	}
 
@@ -185,6 +254,24 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public User getUserByCPR(byte[] token, long cpr) {
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT * FROM Users WHERE cCpr = ?", cpr);
+		
+		try {
+			if (result.first()) {
+				User user = new User(result.getInt("cUid"));
+				user.cpr = result.getLong("cCpr");
+				user.name = result.getString("cName");
+				user.email = result.getString("cEmail");
+				user.roles = getUserRoles(token, result.getInt("cUid"));
+				
+				return user;
+			}
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
 		return null;
 	}
 
