@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.45-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/daniel/School VIA/SEP 2/Workspace/CLMS SEP2 Dev/libs/postgresql-42.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
