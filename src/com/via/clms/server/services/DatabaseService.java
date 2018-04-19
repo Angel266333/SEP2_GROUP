@@ -10,6 +10,7 @@ import java.sql.Types;
 
 import com.via.clms.Log;
 import com.via.clms.Utils;
+import com.via.clms.server.services.util.DatabaseSetup;
 
 /**
  * Local service that can be used to access the database
@@ -20,7 +21,10 @@ public class DatabaseService implements Service {
 	private Connection mConnection;
 	
 	/** * */
-	private String mDriver = "mysql";
+	private String mClass = "org.postgresql.Driver";
+	
+	/** * */
+	private String mDriver = "postgresql";
 	
 	/** * */
 	private String mDbUser;
@@ -43,14 +47,16 @@ public class DatabaseService implements Service {
 		
 		try {
 			// Load Driver
-			Class.forName("com." + mDriver + ".jdbc.Driver");
+			Class.forName(mClass);
 			
 			// Establish connection
-			mConnection = DriverManager.getConnection("jdbc:" + mDriver + "://localhost:3306/" + mDbRelation +
+			mConnection = DriverManager.getConnection("jdbc:" + mDriver + "://localhost/" + mDbRelation +
 					"?useSSL=false" +
 					"&characterEncoding=utf8" +
 					"&user=" + mDbUser + "" +
 					"&password=" + mDbPasswd);
+			
+			DatabaseSetup.configureTables(this, mDbRelation);
 			
 			return true;
 			
