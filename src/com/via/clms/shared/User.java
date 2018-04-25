@@ -13,9 +13,6 @@ public class User implements Serializable {
 	/** Database UserID */
 	public final int uid;
 	
-	/** Collection of roles/permissions */
-	public UserRoles[] roles;
-	
 	/** Users CPR Nr. */
 	public long cpr;
 	

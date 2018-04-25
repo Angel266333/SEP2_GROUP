@@ -1,13 +1,11 @@
 package com.via.clms.server.services;
 
-import java.security.spec.KeySpec;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.crypto.Mac;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.via.clms.Log;
@@ -15,7 +13,6 @@ import com.via.clms.Utils;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
 import com.via.clms.shared.User;
-import com.via.clms.shared.UserRoles;
 
 /**
  * Implementation of the remote {@link IUserService} service
@@ -59,7 +56,7 @@ public class UserService implements IUserService, Service {
 		byte[] token = generateUserToken(cpr, passwd);
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM users WHERE cUserToken=?", tokenStr);
+		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM Users WHERE cToken = ?", tokenStr);
 		
 		try {
 			if (result.first()) {
@@ -82,9 +79,9 @@ public class UserService implements IUserService, Service {
 	public boolean checkPermissions(byte[] token, int libraryid, int roles) {
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT p.cFlags " +
-				"FROM permissions p JOIN users AS u ON u.cId = p.cUserId" +
-				"WHERE u.cUserToken=? AND (p.cLibraryId=? OR p.cLibraryId=0)", tokenStr, libraryid);
+		ResultSet result = db.query("SELECT ur.cRole " +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+				"WHERE u.cToken = ? AND (ur.cLid = ? OR ur.cLid = 0)", tokenStr, libraryid);
 		
 		try {
 			int perms = 0;
@@ -109,13 +106,13 @@ public class UserService implements IUserService, Service {
 	public int getPermissions(byte[] token, int libraryid) {
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT p.cFlags " +
-				"FROM permissions p JOIN users AS u ON u.cId = p.cUserId" +
-				"WHERE u.cUserToken=? AND p.cLibraryId=?", tokenStr, libraryid);
+		ResultSet result = db.query("SELECT ur.cRole " +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+				"WHERE u.cToken = ? AND ur.cLid = ?", tokenStr, libraryid);
 		
 		try {
 			if (result.first()) {
-				return result.getInt("cFlags");
+				return result.getInt("cRole");
 			}
 			
 		} catch (SQLException e) {
@@ -168,33 +165,6 @@ public class UserService implements IUserService, Service {
 	public byte[] getSpecialToken(byte[] token, int libraryid) {
 		return null;
 	}
-	
-	/**
-	 * 
-	 */
-	public UserRoles[] getUserRoles(byte[] token, int uid) {
-		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT * FROM UserRoles WHERE cUid=?", uid);
-		
-		try {
-			UserRoles[] roles = new UserRoles[ result.getFetchSize() ];
-			int i=0;
-			
-			while (result.next()) {
-				UserRoles role = new UserRoles(result.getInt("cUid"), result.getInt("cLid"));
-				role.role = result.getInt("cRole");
-				
-				roles[i++] = role;
-			}
-			
-			return roles;
-			
-		} catch (SQLException e) {
-			Log.error(e);
-		}
-		
-		return new UserRoles[0];
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -213,7 +183,6 @@ public class UserService implements IUserService, Service {
 				user.cpr = result.getLong("cCpr");
 				user.name = result.getString("cName");
 				user.email = result.getString("cEmail");
-				user.roles = getUserRoles(token, result.getInt("cUid"));
 				
 				users[i++] = user;
 			}
@@ -241,7 +210,6 @@ public class UserService implements IUserService, Service {
 				user.cpr = result.getLong("cCpr");
 				user.name = result.getString("cName");
 				user.email = result.getString("cEmail");
-				user.roles = getUserRoles(token, result.getInt("cUid"));
 				
 				return user;
 			}
@@ -267,7 +235,6 @@ public class UserService implements IUserService, Service {
 				user.cpr = result.getLong("cCpr");
 				user.name = result.getString("cName");
 				user.email = result.getString("cEmail");
-				user.roles = getUserRoles(token, result.getInt("cUid"));
 				
 				return user;
 			}
