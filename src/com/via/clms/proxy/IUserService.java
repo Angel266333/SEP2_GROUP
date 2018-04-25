@@ -73,10 +73,13 @@ public interface IUserService extends Remote {
 	 * @param token
 	 * 		The session token
 	 * 
+	 * @param uid
+	 * 		The user id to get permissions for
+	 * 
 	 * @param libraryid
 	 * 		Database id of the library
 	 */
-	int getPermissions(byte[] token, int libraryid) throws RemoteException;
+	int getPermissions(byte[] token, int uid, int libraryid) throws RemoteException;
 	
 	/**
 	 * Get a list of all available roles used by the system. 

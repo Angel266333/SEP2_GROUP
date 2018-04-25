@@ -103,12 +103,11 @@ public class UserService implements IUserService, Service {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getPermissions(byte[] token, int libraryid) {
-		String tokenStr = Utils.tokenToString(token);
+	public int getPermissions(byte[] token, int uid, int libraryid) {
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT ur.cRole " +
 				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
-				"WHERE u.cToken = ? AND ur.cLid = ?", tokenStr, libraryid);
+				"WHERE u.cUid = ? AND ur.cLid = ?", uid, libraryid);
 		
 		try {
 			if (result.first()) {
