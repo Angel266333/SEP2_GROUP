@@ -1,12 +1,14 @@
 package com.via.clms.server.services;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.via.clms.Log;
 import com.via.clms.Utils;
@@ -37,12 +39,14 @@ public class UserService implements IUserService, Service {
 	 */
 	public static byte[] generateUserToken(long cpr, String passwd) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			md.update( (Long.toString(cpr) + passwd).getBytes( StandardCharsets.UTF_8 ) );
+			SecretKeySpec keySpec = new SecretKeySpec(passwd.getBytes(), "HmacSHA256");
+			Mac mac = Mac.getInstance("HmacSHA256");
+			mac.init(keySpec);
+			mac.update((Long.toString(cpr) + passwd).getBytes());
+
+			return mac.doFinal();
 			
-			return md.digest();
-			
-		} catch (NoSuchAlgorithmException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
