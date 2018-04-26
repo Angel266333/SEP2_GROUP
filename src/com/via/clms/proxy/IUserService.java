@@ -45,7 +45,15 @@ public interface IUserService extends Remote {
 	 * specific things. For example to lock a client to a renting position
 	 * for renting terminals. 
 	 */
-	byte[] getSpecialToken(byte[] token, int libraryid) throws RemoteException;
+	byte[] getSpecialToken(byte[] token, int libraryid, int roles) throws RemoteException;
+	
+	/**
+	 * Checks is a specified token is a special token
+	 * 
+	 * @param token
+	 * 		Token to check
+	 */
+	boolean isSpecialToken(byte[] token);
 
 	/**
 	 * Check a specific users permission flags

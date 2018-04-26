@@ -2,8 +2,11 @@ package com.via.clms.server.services;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -18,6 +21,17 @@ import com.via.clms.shared.User;
  * Implementation of the remote {@link IUserService} service
  */
 public class UserService implements IUserService, Service {
+	
+	/** * */
+	private Map<String,SpecialToken> mSpecialTokens = new HashMap<>();
+	
+	/**
+	 * 
+	 */
+	private class SpecialToken {
+		public int lid;
+		public int roles;
+	}
 	
 	/**
 	 * Generates a user token that can be used to identify/validate a user
@@ -78,6 +92,15 @@ public class UserService implements IUserService, Service {
 	@Override
 	public boolean checkPermissions(byte[] token, int libraryid, int roles) {
 		String tokenStr = Utils.tokenToString(token);
+		
+		if (mSpecialTokens.containsKey(tokenStr)) {
+			SpecialToken st = mSpecialTokens.get(tokenStr);
+			
+			if (st.lid == 0 || libraryid == 0 || st.lid == libraryid) {
+				return (st.roles & roles) == roles;
+			}
+		}
+		
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT ur.cRole " +
 				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
@@ -156,12 +179,59 @@ public class UserService implements IUserService, Service {
 	public void onShutdown() {
 		
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSpecialToken(byte[] token) {
+		return mSpecialTokens.containsKey(Utils.tokenToString(token));
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] getSpecialToken(byte[] token, int libraryid) {
+	public byte[] getSpecialToken(byte[] token, int libraryid, int roles) {
+		String tokenStr = Utils.tokenToString(token);
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT ur.cRole " +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+				"WHERE u.cToken = ? AND (ur.cLid = ? OR ur.cLid = 0)", tokenStr, libraryid);
+		
+		try {
+			int perms = 0;
+			
+			while (result.next()) {
+				perms |= result.getInt("cFlags");
+			}
+			
+			// Users cannot create a token with more permissions than they originally have themselves 
+			roles &= perms;
+			
+			for (Entry<String,SpecialToken> entry : mSpecialTokens.entrySet()) {
+				SpecialToken st = entry.getValue();
+				
+				if (st.lid == libraryid && (st.roles & roles) == st.roles) {
+					return Utils.tokenToBytes(entry.getKey());
+				}
+			}
+			
+			byte[] rand = new byte[64];
+			new Random().nextBytes(rand);
+			
+			SpecialToken st = new SpecialToken();
+			st.lid = libraryid;
+			st.roles = roles;
+			
+			mSpecialTokens.put(Utils.tokenToString(rand), st);
+			
+			return rand;
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
 		return null;
 	}
 
