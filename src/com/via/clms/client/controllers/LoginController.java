@@ -1,8 +1,11 @@
 package com.via.clms.client.controllers;
 
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.ResultController;
 import com.via.clms.client.views.Window;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,12 +13,20 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-public class LoginController implements Controller {
+public class LoginController extends ResultController<byte[]> {
 	private GridPane mainPane;
 	private String userName;
 	private String password;
 
 	public LoginController() {
+
+	}
+
+	public String getTitle() {
+		return "Login";
+	}
+
+	public Parent getComponent() {
 
 		mainPane = new GridPane();
 
@@ -40,6 +51,19 @@ public class LoginController implements Controller {
 
 		// Buttons
 		Button loginButton = new Button("Login");
+		loginButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				// Check user name and password later;
+
+				setResult(new byte[0]);
+				getWindow().close();
+
+			}
+
+		});
 
 		mainPane.add(loginLabel, 0, 0);
 		mainPane.add(userName, 0, 2);
@@ -47,38 +71,9 @@ public class LoginController implements Controller {
 		mainPane.add(password, 0, 4);
 		mainPane.add(passwordField, 0, 5);
 		mainPane.add(loginButton, 0, 6);
-	}
-
-	public String getTitle() {
-		return "Login";
-	}
-
-	public Parent getComponent() {
 		return mainPane;
 	}
 
-	@Override
-	public void onWindowResume(Window win) {
-
-	}
-
-	@Override
-	public void onWindowPause(Window win) {
-
-	}
-
-	@Override
-	public void onWindowOpen(Window win) {
-
-	}
-
-	@Override
-	public void onWindowClose(Window win) {
-
-	}
-
-	@Override
-	public void onWindowRefresh(Window win) {
-
-	}
+	
+	
 }

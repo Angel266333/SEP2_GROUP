@@ -1,8 +1,12 @@
 package com.via.clms.client.controllers;
 
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.DialogWindow;
+import com.via.clms.client.views.ResultListener;
 import com.via.clms.client.views.Window;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -14,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class HomeController implements Controller {
+
 	private GridPane mainPane;
 	private GridPane searchPane;
 	private GridPane actionPane;
@@ -23,24 +28,50 @@ public class HomeController implements Controller {
 	private HBox actionSection;
 	private VBox userNotificationsSection;
 	private HBox userProfileSection;
+	private Window window;
 
 	private TextField tf1Search;
 	private TextField tf2Notifications;
 
-	private final Label lbl1Search;
-	private final Label lbl2SearchResults;
-	private final Label lbl3Actions;
-	private final Label lbl4Notifications;
-
+	private Label lbl1Search;
+	private Label lbl2SearchResults;
+	private Label lbl3Actions;
+	private Label lbl4Notifications;
 	private Button btn1Search;
 	private Button btn2Rent;
 	private Button btn3Return;
 	private Button btn4Renew;
 	private Button btn5MyProfile;
+	private Button btn6Lock;
+	private Button btn7Unlock;
+	private boolean temp = true;
+
+	private class ResultHandler implements ResultListener<byte[]> {
+
+		@Override
+		public void onReturnResult(byte[] result) {
+
+			if (result == null) {
+				return;
+			}
+
+			temp = true;
+			updateUI();
+		}
+
+	}
 
 	// Add book search filters in main section of program (?)
 
 	public HomeController() {
+
+	}
+
+	public String getTitle() {
+		return "Main section";
+	}
+
+	public Parent getComponent() {
 
 		mainPane = new GridPane();
 		searchPane = new GridPane();
@@ -60,14 +91,6 @@ public class HomeController implements Controller {
 		actionSection = new HBox();
 		userNotificationsSection = new VBox();
 		userProfileSection = new HBox();
-
-	}
-
-	public String getTitle() {
-		return "Main section";
-	}
-
-	public Parent getComponent() {
 
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 
@@ -105,6 +128,36 @@ public class HomeController implements Controller {
 		btn3Return = new Button("Return");
 		btn4Renew = new Button("Renew");
 		btn5MyProfile = new Button("My Profile");
+		btn6Lock = new Button("Lock session");
+		btn7Unlock = new Button("Unlock session");
+
+		btn6Lock.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				// Check user name and password later;
+
+				temp = false;
+				updateUI();
+
+			}
+
+		});
+
+		btn7Unlock.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				LoginController lc = new LoginController();
+				lc.setResultListener(new ResultHandler());
+				Window w = new DialogWindow(lc);
+				w.open();
+
+			}
+
+		});
 
 		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
@@ -136,7 +189,10 @@ public class HomeController implements Controller {
 		mainPane.add(actionPane, 0, 1);
 		mainPane.add(notificationPane, 0, 2);
 		mainPane.add(profilePane, 0, 3);
+		mainPane.add(btn6Lock, 0, 4);
+		mainPane.add(btn7Unlock, 0, 5);
 
+		updateUI();
 		return mainPane;
 	}
 
@@ -147,6 +203,8 @@ public class HomeController implements Controller {
 
 	@Override
 	public void onWindowOpen(Window win) {
+
+		this.window = win;
 
 	}
 
@@ -169,6 +227,12 @@ public class HomeController implements Controller {
 	@Override
 	public void onWindowPause(Window win) {
 		// TODO Auto-generated method stub
+
+	}
+
+	public void updateUI() {
+		btn6Lock.setVisible(temp);
+		btn7Unlock.setVisible(!temp);
 
 	}
 
