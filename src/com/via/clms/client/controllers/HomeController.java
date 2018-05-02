@@ -131,18 +131,85 @@ public class HomeController implements Controller {
 		btn6Lock = new Button("Lock session");
 		btn7Unlock = new Button("Unlock session");
 
-		btn6Lock.setOnAction(new EventHandler<ActionEvent>() {
+		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
+		
+		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 
-				// Check user name and password later;
-
-				temp = false;
-				updateUI();
+				SearchResultController src = new SearchResultController();
+				Window w = new DialogWindow(src);
+				w.open();
 
 			}
 
+		});
+		
+		btn2Rent.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				RentBookController rbc = new RentBookController();
+				Window w = new DialogWindow(rbc);
+				w.open();
+
+			}
+
+		});
+		
+		btn3Return.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				ReturnBookController rtrnbc = new ReturnBookController();
+				Window w = new DialogWindow(rtrnbc);
+				w.open();
+
+			}
+
+		});
+		
+//		btn4Renew.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//
+//				RenewBookController rnwbc = new RenewBookController();
+//				Window w = new DialogWindow(rnwb);
+//				w.open();
+//
+//			}
+//
+//		});
+		
+		btn5MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				ProfileController pc = new ProfileController(4424);
+				Window w = new DialogWindow(pc);
+				w.open();
+
+			}
+
+		});
+		
+		btn6Lock.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+				// Check user name and password later;
+				
+				temp = false;
+				updateUI();
+				
+			}
+			
 		});
 
 		btn7Unlock.setOnAction(new EventHandler<ActionEvent>() {
@@ -169,7 +236,8 @@ public class HomeController implements Controller {
 
 		userNotificationsSection.getChildren().addAll(lbl4Notifications, tf2Notifications);
 
-		userProfileSection.getChildren().add(btn5MyProfile);
+		userProfileSection.getChildren().addAll(btn5MyProfile, btn6Lock, btn7Unlock);
+		userProfileSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
 
@@ -189,8 +257,6 @@ public class HomeController implements Controller {
 		mainPane.add(actionPane, 0, 1);
 		mainPane.add(notificationPane, 0, 2);
 		mainPane.add(profilePane, 0, 3);
-		mainPane.add(btn6Lock, 0, 4);
-		mainPane.add(btn7Unlock, 0, 5);
 
 		updateUI();
 		return mainPane;
@@ -233,7 +299,5 @@ public class HomeController implements Controller {
 	public void updateUI() {
 		btn6Lock.setVisible(temp);
 		btn7Unlock.setVisible(!temp);
-
 	}
-
 }

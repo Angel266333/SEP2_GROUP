@@ -1,6 +1,7 @@
 package com.via.clms.client.controllers;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.shared.User;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;

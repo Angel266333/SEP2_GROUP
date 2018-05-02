@@ -1,15 +1,23 @@
 package com.via.clms.client.controllers;
 
+import java.util.Optional;
+
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.Window;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -24,11 +32,18 @@ import javafx.scene.layout.VBox;
 public class SearchResultController implements Controller {	
 	
 	/*
-	 * Credits for code example: Oracle Corporation.
+	 * Credits for code example: Oracle Corporation
 	 * Example used:
 	 * https://docs.oracle.com/javafx/2/ui_controls/table-view.htm
 	 * 
-	 */	
+	 */
+	
+	/*
+	 * Credits for code example: http://code.makery.ch
+	 * Example used:
+	 * http://code.makery.ch/blog/javafx-dialogs-official/
+	 * 
+	 */
 	
 	private SearchResultData dataOutput;
 
@@ -63,6 +78,8 @@ public class SearchResultController implements Controller {
 	public String bookYear;
 	public String bookAvailability;
 	
+	Window windowInstance;
+	
 	
 	private TableView<SearchResultData> tbView1BookResults;
 	private final ObservableList<SearchResultData> data = FXCollections.observableArrayList(
@@ -78,8 +95,8 @@ public class SearchResultController implements Controller {
 	private Button btn1Search;
 	private Button btn2RentSelectedBooks;
 	private Button btn3ViewBookDetails;
-	private Button btn4MyProfile;
-	private Button btn5HomeSection;	
+	private Button btn5MyProfile;
+	private Button btn4HomeSection;	
 	
 
 	public SearchResultController() {		
@@ -220,8 +237,103 @@ public class SearchResultController implements Controller {
 		btn1Search = new Button("Search");
 		btn2RentSelectedBooks = new Button("Rent selected books");
 		btn3ViewBookDetails = new Button("View book details");
-		btn4MyProfile = new Button("My Profile");
-		btn5HomeSection = new Button("Home secton");
+		btn5MyProfile = new Button("My Profile");
+		btn4HomeSection = new Button("Home secton");
+		
+		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
+		
+		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// Need to display results based on search criteria NOT open a new instance of controller
+				windowInstance.close();
+
+			}
+
+		});
+		
+		btn2RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				if (tableValueGuardNoBooks()) {
+				Alert promptConfirmation = new Alert(AlertType.CONFIRMATION);
+				promptConfirmation.setTitle("Book rent confirm");
+				promptConfirmation.setHeaderText("Rent selected books");
+				promptConfirmation.setContentText("You are about to rent the following books:\n" + "'ABC' and 'XYZ'" + " \n" + "Continue?");
+				if (isRentPossible()) {
+				Optional<ButtonType> result = promptConfirmation.showAndWait();
+				if (result.get() == ButtonType.OK) {
+					// Has to perform an if-statement that checks if rent is possible and get book time frame.
+					Alert alertSuccess = new Alert(AlertType.INFORMATION);
+					alertSuccess.setTitle("Information Dialog");
+					alertSuccess.setHeaderText("Selected books have been successfully rented");
+					alertSuccess.setContentText("You have rented XYZ books for an XYZ period");
+					alertSuccess.showAndWait();
+				} else {
+				   return;
+				}
+				
+				} else {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Selected book rental error");
+					alertFailiure.setContentText("Could not rent selected books!");
+					alertFailiure.showAndWait();
+				}
+			} else {
+				Alert alertFailiure = new Alert(AlertType.ERROR);
+				alertFailiure.setTitle("Error Dialog");
+				alertFailiure.setHeaderText("No selected books");
+				alertFailiure.setContentText("Please select a book first!");
+				alertFailiure.showAndWait();
+			}
+
+		}
+		});
+		
+		btn3ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				if (tableValueGuardMultiBooks()) {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Selection failiure");
+					alertFailiure.setContentText("Cannot display information about multiple books!\nPlease select one book!");
+					alertFailiure.showAndWait();
+				}
+				else {
+					// TODO
+					ViewBookDetailsController bookDetails = new ViewBookDetailsController();
+				}
+			}
+
+		});
+		
+		btn4HomeSection.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+			}
+
+		});
+		
+		btn5MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				ProfileController prc = new ProfileController(0);
+				Window w = new DialogWindow(prc);
+				w.open();
+
+			}
+
+		});
 		
 		//\\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
@@ -239,7 +351,7 @@ public class SearchResultController implements Controller {
 		bookSearchFiltersSection.setPadding(new Insets(0, 5, 0, 0));
 		bookSearchFiltersSection.setSpacing(5);
 
-		innerFooterUserActionsSection.getChildren().addAll(btn2RentSelectedBooks, btn3ViewBookDetails, btn5HomeSection, btn4MyProfile);
+		innerFooterUserActionsSection.getChildren().addAll(btn2RentSelectedBooks, btn3ViewBookDetails, btn4HomeSection, btn5MyProfile);
 		innerFooterUserActionsSection.setSpacing(5);
 		
 		//\\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
@@ -263,6 +375,9 @@ public class SearchResultController implements Controller {
 		
 		return mainPane;
 	}
+	
+	
+	
 	// Getters for filter selection.
 	public int getCb1BookGenreFilterSelection() {
 		return cb1BookGenre.getSelectionModel().getSelectedIndex();
@@ -279,6 +394,28 @@ public class SearchResultController implements Controller {
 	public int getCb4BookLibraryLocation() {
 		return cb4BookLibraryLocation.getSelectionModel().getSelectedIndex();
 	}
+	
+	public boolean isRentPossible() {
+		// Method has to return a result based on user properties and book properties.
+		return true;
+	}
+
+	public boolean tableValueGuardMultiBooks() {
+		ObservableList<SearchResultData> multiCells = tbView1BookResults.getSelectionModel().getSelectedItems();
+		if (multiCells.size() > 1) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean tableValueGuardNoBooks() {
+		ObservableList<SearchResultData> noCells = tbView1BookResults.getSelectionModel().getSelectedItems();
+		if (noCells.size() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 public class SearchResultData {
 		
@@ -331,7 +468,7 @@ public class SearchResultData {
 
 	@Override
 	public void onWindowOpen(Window win) {
-		
+		windowInstance = win;
 	}
 
 	@Override

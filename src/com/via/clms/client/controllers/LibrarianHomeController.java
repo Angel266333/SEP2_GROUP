@@ -1,7 +1,10 @@
 package com.via.clms.client.controllers;
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.Window;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -105,6 +108,101 @@ public class LibrarianHomeController implements Controller {
 		btn4Renew = new Button("Renew");
 		btn6ManageUsers = new Button("Manage users");
 		btn5MyProfile = new Button("My Profile");
+		
+		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
+		
+		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				SearchResultController src = new SearchResultController();
+				Window w = new DialogWindow(src);
+				w.open();
+
+			}
+
+		});
+		
+		btn2Rent.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				RentBookController rbc = new RentBookController();
+				Window w = new DialogWindow(rbc);
+				w.open();
+
+			}
+
+		});
+		
+		btn3Return.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				ReturnBookController rtrnbc = new ReturnBookController();
+				Window w = new DialogWindow(rtrnbc);
+				w.open();
+
+			}
+
+		});
+		
+//		btn4Renew.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//
+//				RenewBookController rnwbc = new RenewBookController();
+//				Window w = new DialogWindow(rnwb);
+//				w.open();
+//
+//			}
+//
+//		});
+		
+		btn5MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				ProfileController pc = new ProfileController(4424);
+				Window w = new DialogWindow(pc);
+				w.open();
+
+			}
+
+		});
+		
+//		btn6Lock.setOnAction(new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//				
+//				// Check user name and password later;
+//				
+//				temp = false;
+//				updateUI();
+//				
+//			}
+//			
+//		});
+//
+//		btn7Unlock.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//
+//				LoginController lc = new LoginController();
+//				lc.setResultListener(new ResultHandler());
+//				Window w = new DialogWindow(lc);
+//				w.open();
+//
+//			}
+//
+//		});
 		
 		//\\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 		

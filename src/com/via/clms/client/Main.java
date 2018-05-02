@@ -36,9 +36,8 @@ public class Main {
 			}
 
 			Controller home = new HomeController();
-
 			Controller controller = new BaseController(home);
-
+			
 			Window window = new Window(controller);
 			window.open();
 

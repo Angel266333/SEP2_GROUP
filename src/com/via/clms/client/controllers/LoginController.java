@@ -1,8 +1,6 @@
 package com.via.clms.client.controllers;
 
-import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.ResultController;
-import com.via.clms.client.views.Window;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
