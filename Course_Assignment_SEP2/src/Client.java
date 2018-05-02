@@ -26,8 +26,15 @@ public class Client {
 		cHandler.run();
 	}
 
-	public ArrayList<String> getAllUnpaidMembers() {
-		return input;
+	public String getAllUnpaidMembers() {
+
+		StringBuilder builder = new StringBuilder();
+
+		for (String s : input) {
+			builder.append(s);
+			builder.append(System.lineSeparator());
+		}
+		return builder.toString();
 	}
 
 	private class ClientHandler extends Thread {
@@ -52,7 +59,7 @@ public class Client {
 				}
 				input.add(line);
 			}
-			listener.onOutput(input);
+			listener.onOutput(getAllUnpaidMembers());
 		}
 	}
 }

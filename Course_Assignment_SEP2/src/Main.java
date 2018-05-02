@@ -18,12 +18,8 @@ public class Main {
 		case 0:
 			break;
 		case 1:
-			Client client = new Client(new Listener() {
-				@Override
-				public void onOutput(ArrayList<String> userList) {
-					System.out.println(userList);
-				}
-			});
+			ConcreteListener listener = new ConcreteListener();
+			Client client = new Client(listener);
 		}
-	}
+	};
 }
