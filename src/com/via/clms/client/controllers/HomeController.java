@@ -10,9 +10,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -137,13 +139,21 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
+				String resultParse = tf1Search.getText();
+				if (tf1Search.getText().isEmpty() == false) {
 				SearchResultController src = new SearchResultController();
 				Window w = new DialogWindow(src);
+				src.tf1Search.setText(resultParse);
 				w.open();
-
+			} else {
+				Alert alertFailiure = new Alert(AlertType.ERROR);
+				alertFailiure.setTitle("Error Dialog");
+				alertFailiure.setHeaderText("Search unsuccessful");
+				alertFailiure.setContentText("Please enter a book title!");
+				alertFailiure.showAndWait();
 			}
 
+		}
 		});
 		
 		btn2Rent.setOnAction(new EventHandler<ActionEvent>() {

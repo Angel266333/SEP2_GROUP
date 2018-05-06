@@ -3,7 +3,10 @@ package com.via.clms.client.controllers;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -12,9 +15,9 @@ import javafx.scene.shape.Rectangle;
 public class ViewBookDetailsController implements Controller {
 
 	private GridPane mainPane;
-	private GridPane picturePane;
-	private GridPane quickDetailsPane;
+	private GridPane picturePanePlusDescription;
 	private GridPane descriptionPane;
+	private GridPane footerSectionPane;
 	private VBox pictureSection;
 	private VBox quickDetailsSection;
 	private VBox descriptionSection;
@@ -28,13 +31,14 @@ public class ViewBookDetailsController implements Controller {
 	public String bookYear;
 	public String bookAvailability;
 	
+	private Button btn1HomeSection;
+	
 	Rectangle r;
 	
 	public ViewBookDetailsController() {
 
 	mainPane = new GridPane();
-	picturePane = new GridPane();
-	quickDetailsPane = new GridPane();
+	picturePanePlusDescription = new GridPane();
 	descriptionPane = new GridPane();
 		
 	r.setX(50);
@@ -53,8 +57,25 @@ public class ViewBookDetailsController implements Controller {
 
 	@Override
 	public Parent getComponent() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		//\\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
+
+		mainPane.setAlignment(Pos.CENTER);
+		mainPane.setPadding(new Insets(20, 5, 20, 5));
+		
+		picturePanePlusDescription.setAlignment(Pos.CENTER_LEFT);
+		
+		descriptionPane.setAlignment(Pos.CENTER_RIGHT);
+		
+		footerSectionPane.setAlignment(Pos.BOTTOM_CENTER);
+		
+		picturePanePlusDescription.add(lbl1Preview, 0, 0);
+		picturePanePlusDescription.add(r, 0, 1);
+		picturePanePlusDescription.add(quickDetailsSection, 0, 2);
+		
+		mainPane.add(picturePanePlusDescription, 0, 1);
+		
+		return mainPane;
 	}
 
 	@Override

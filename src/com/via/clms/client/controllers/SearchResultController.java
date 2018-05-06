@@ -61,7 +61,7 @@ public class SearchResultController implements Controller {
 	private VBox bookListResultsSection;
 	private HBox innerFooterUserActionsSection;
 
-	private TextField tf1Search;
+	public TextField tf1Search;
 	
 	private Label lbl1Search;
 	private Label lbl2BookOptions;
@@ -93,10 +93,11 @@ public class SearchResultController implements Controller {
     private TableColumn<SearchResultData, String> bookAvailabilityCol4;
     
 	private Button btn1Search;
-	private Button btn2RentSelectedBooks;
-	private Button btn3ViewBookDetails;
-	private Button btn5MyProfile;
-	private Button btn4HomeSection;	
+	private Button btn2UpdatePreferences;
+	private Button btn3RentSelectedBooks;
+	private Button btn4ViewBookDetails;
+	private Button btn6MyProfile;
+	private Button btn5HomeSection;	
 	
 
 	public SearchResultController() {		
@@ -235,10 +236,11 @@ public class SearchResultController implements Controller {
 		//\\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 		
 		btn1Search = new Button("Search");
-		btn2RentSelectedBooks = new Button("Rent selected books");
-		btn3ViewBookDetails = new Button("View book details");
-		btn5MyProfile = new Button("My Profile");
-		btn4HomeSection = new Button("Home secton");
+		btn2UpdatePreferences = new Button("Update preferences");
+		btn3RentSelectedBooks = new Button("Rent selected books");
+		btn4ViewBookDetails = new Button("View book details");
+		btn5HomeSection = new Button("Home secton");
+		btn6MyProfile = new Button("My Profile");
 		
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 		
@@ -246,14 +248,44 @@ public class SearchResultController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				// Need to display results based on search criteria NOT open a new instance of controller
+				String resultParse = tf1Search.getText();
+				if (tf1Search.getText().isEmpty() == false) {
 				windowInstance.close();
-
+				SearchResultController src = new SearchResultController();
+				Window w = new DialogWindow(src);
+				src.tf1Search.setText(resultParse);
+				w.open();
+			} else {
+				Alert alertFailiure = new Alert(AlertType.ERROR);
+				alertFailiure.setTitle("Error Dialog");
+				alertFailiure.setHeaderText("Search unsuccessful");
+				alertFailiure.setContentText("Please enter a book title!");
+				alertFailiure.showAndWait();
 			}
 
+		}
 		});
 		
-		btn2RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
+		
+		btn2UpdatePreferences.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1
+				&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
+					Alert alertInformation = new Alert(AlertType.INFORMATION);
+					alertInformation.setTitle("Information Dialog");
+					alertInformation.setHeaderText("No search preferences selected");
+					alertInformation.setContentText("Please select search preferences to filter results!");
+					alertInformation.showAndWait();
+				} else {
+					// Preferences here
+				}
+			}
+			});
+		
+		
+		btn3RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -293,7 +325,7 @@ public class SearchResultController implements Controller {
 		}
 		});
 		
-		btn3ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
+		btn4ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -313,16 +345,16 @@ public class SearchResultController implements Controller {
 
 		});
 		
-		btn4HomeSection.setOnAction(new EventHandler<ActionEvent>() {
+		btn5HomeSection.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
+				windowInstance.close();
 			}
 
 		});
 		
-		btn5MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+		btn6MyProfile.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -342,16 +374,17 @@ public class SearchResultController implements Controller {
 		
 		searchSection.getChildren().addAll(lbl1Search, innerSearchSection);		
 		
-		labelBookFiltersLeftSection.getChildren().add(lbl2BookOptions);
-		labelSearchResultsRightSection.getChildren().add(lbl3SearchResults);
+		labelBookFiltersLeftSection.getChildren().addAll(lbl2BookOptions, lbl3SearchResults);
 				
 		bookListResultsSection.getChildren().addAll(tbView1BookResults);
 
-		bookSearchFiltersSection.getChildren().addAll(cb1BookGenre, cb2BookYear, cb3BookLanguage, cb4BookLibraryLocation);
+		bookSearchFiltersSection.getChildren().addAll(cb1BookGenre, cb2BookYear, cb3BookLanguage, cb4BookLibraryLocation, btn2UpdatePreferences);
+		btn2UpdatePreferences.setPrefSize(cb4BookLibraryLocation.getPrefWidth(), cb4BookLibraryLocation.getPrefHeight());
+		btn2UpdatePreferences.setStyle("-fx-color: #7EC0EE;");
 		bookSearchFiltersSection.setPadding(new Insets(0, 5, 0, 0));
 		bookSearchFiltersSection.setSpacing(5);
 
-		innerFooterUserActionsSection.getChildren().addAll(btn2RentSelectedBooks, btn3ViewBookDetails, btn4HomeSection, btn5MyProfile);
+		innerFooterUserActionsSection.getChildren().addAll(btn3RentSelectedBooks, btn4ViewBookDetails, btn5HomeSection, btn6MyProfile);
 		innerFooterUserActionsSection.setSpacing(5);
 		
 		//\\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
@@ -359,7 +392,6 @@ public class SearchResultController implements Controller {
 		searchPane.add(searchSection, 0, 0);
 		
 		labelBookSearchFiltersPane.add(labelBookFiltersLeftSection, 0, 0);
-		labelBookSearchFiltersPane.add(labelSearchResultsRightSection, 1, 0);
 
 		bookListResultsPane.add(bookSearchFiltersSection, 0, 0);
 		bookListResultsPane.add(bookListResultsSection, 1, 0);
