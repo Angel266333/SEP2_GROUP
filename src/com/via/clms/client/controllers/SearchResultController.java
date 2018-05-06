@@ -128,7 +128,7 @@ public class SearchResultController implements Controller {
 	     cb1BookGenre.getItems().addAll(
 	     "Action", "Thriller", "Comedy",
 	     "Horror", "Sci-Fi", "Culture",
-	     "Histoty", "Fantasy", "Mythology"
+	     "History", "Fantasy", "Mythology"
 	     );
 	     
 	     cb2BookYear = new ComboBox();
@@ -252,8 +252,8 @@ public class SearchResultController implements Controller {
 				if (tf1Search.getText().isEmpty() == false) {
 				windowInstance.close();
 				SearchResultController src = new SearchResultController();
-				Window w = new DialogWindow(src);
 				src.tf1Search.setText(resultParse);
+				Window w = new DialogWindow(src);
 				w.open();
 			} else {
 				Alert alertFailiure = new Alert(AlertType.ERROR);
@@ -271,13 +271,12 @@ public class SearchResultController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1
-				&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
-					Alert alertInformation = new Alert(AlertType.INFORMATION);
-					alertInformation.setTitle("Information Dialog");
-					alertInformation.setHeaderText("No search preferences selected");
-					alertInformation.setContentText("Please select search preferences to filter results!");
-					alertInformation.showAndWait();
+				if (filterSelectionGuard()) {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("No search preferences selected");
+					alertFailiure.setContentText("Please select search preferences to filter results!");
+					alertFailiure.showAndWait();
 				} else {
 					// Preferences here
 				}
@@ -430,6 +429,14 @@ public class SearchResultController implements Controller {
 	public boolean isRentPossible() {
 		// Method has to return a result based on user properties and book properties.
 		return true;
+	}
+	
+	public boolean filterSelectionGuard() {
+		if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1
+				&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean tableValueGuardMultiBooks() {
