@@ -29,22 +29,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SearchResultController implements Controller {	
-	
+public class SearchResultController implements Controller {
+
 	/*
-	 * Credits for code example: Oracle Corporation
-	 * Example used:
+	 * Credits for code example: Oracle Corporation Example used:
 	 * https://docs.oracle.com/javafx/2/ui_controls/table-view.htm
 	 * 
 	 */
-	
+
 	/*
-	 * Credits for code example: http://code.makery.ch
-	 * Example used:
+	 * Credits for code example: http://code.makery.ch Example used:
 	 * http://code.makery.ch/blog/javafx-dialogs-official/
 	 * 
 	 */
-	
+
 	private SearchResultData dataOutput;
 
 	private GridPane mainPane;
@@ -56,211 +54,194 @@ public class SearchResultController implements Controller {
 	private VBox searchSection;
 	private HBox innerSearchSection;
 	private HBox labelBookFiltersLeftSection;
-	private HBox labelSearchResultsRightSection;
 	private VBox bookSearchFiltersSection;
 	private VBox bookListResultsSection;
 	private HBox innerFooterUserActionsSection;
 
 	public TextField tf1Search;
-	
+
 	private Label lbl1Search;
 	private Label lbl2BookOptions;
 	private Label lbl3SearchResults;
 
 	// For future reference, this element can implement ArrayLists.
-	public ComboBox cb1BookGenre;
-	public ComboBox cb2BookYear;
-	public ComboBox cb3BookLanguage;
-	public ComboBox cb4BookLibraryLocation;
-	
+	public ComboBox<String> cb1BookGenre;
+	public ComboBox<String> cb2BookYear;
+	public ComboBox<String> cb3BookLanguage;
+	public ComboBox<String> cb4BookLibraryLocation;
+
 	public String bookName;
 	public String bookAuthor;
 	public String bookYear;
 	public String bookAvailability;
-	
+
 	Window windowInstance;
-	
+
 	private TableView<SearchResultData> tbView1BookResults;
 	private final ObservableList<SearchResultData> data = updateTableUI();
-	
-    private TableColumn<SearchResultData, String> bookNameCol1;
-    private TableColumn<SearchResultData, String> bookAuthorNameCol2;
-    private TableColumn<SearchResultData, String> bookYearCol3;
-    private TableColumn<SearchResultData, String> bookAvailabilityCol4;
-    
+
+	private TableColumn<SearchResultData, String> bookNameCol1;
+	private TableColumn<SearchResultData, String> bookAuthorNameCol2;
+	private TableColumn<SearchResultData, String> bookYearCol3;
+	private TableColumn<SearchResultData, String> bookAvailabilityCol4;
+
 	private Button btn1Search;
 	private Button btn2UpdatePreferences;
 	private Button btn3RentSelectedBooks;
 	private Button btn4ViewBookDetails;
 	private Button btn6MyProfile;
-	private Button btn5HomeSection;	
-	
+	private Button btn5HomeSection;
 
-	public SearchResultController() {		
-				
+	public SearchResultController() {
+
 		mainPane = new GridPane();
 		searchPane = new GridPane();
 		labelBookSearchFiltersPane = new GridPane();
 		bookSearchResultOptionsPane = new GridPane();
 		bookListResultsPane = new GridPane();
 		footerSectionPane = new GridPane();
-		
+
 		tf1Search = new TextField();
-		
+
 		lbl1Search = new Label("Search for books:");
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
 		lbl2BookOptions = new Label("Book search filters:");
 		lbl2BookOptions.setPadding(new Insets(0, 0, 5, 0));
 		lbl3SearchResults = new Label("Search results:");
 		lbl3SearchResults.setPadding(new Insets(0, 0, 5, 40));
-		
+
 		// Placeholders. Actual Strings need to be retrieved from
 		// database where user has, for example, specified that
 		// there are 2 libraries with location "Vejle", "Malmo" etc.
-		
-		cb1BookGenre = new ComboBox();
+
+		cb1BookGenre = new ComboBox<String>();
 		cb1BookGenre.setPromptText("Book genre");
 		cb1BookGenre.setPrefWidth(135);
-	     cb1BookGenre.getItems().addAll(
-	     "Action", "Thriller", "Comedy",
-	     "Horror", "Sci-Fi", "Culture",
-	     "History", "Fantasy", "Mythology"
-	     );
-	     
-	     cb2BookYear = new ComboBox();
-	     cb2BookYear.setPromptText("Book year");
-	     cb2BookYear.setPrefWidth(135);
-	     cb2BookYear.getItems().addAll(
-	    "2018", "2017", "2016", "2015", "2014",
-	    "2013", "2012", "2011", "2010", "2009",
-	    "2008", "2007", "2006", "2005", "2004",
-	    "2003", "2002", "2001", "2000", "Before 2000"
-	    );
-	     
-	     cb3BookLanguage = new ComboBox();
-	     cb3BookLanguage.setPromptText("Book language");
-	     cb3BookLanguage.setPrefWidth(135);
-	     cb3BookLanguage.getItems().addAll(
-	    "English", "Danish", "Bulgarian","German",
-	    "Dutch", "French", "Russian", "Polish");
-	     
-	     cb4BookLibraryLocation = new ComboBox();
-	     cb4BookLibraryLocation.setPromptText("Book location");
-	     cb4BookLibraryLocation.setPrefWidth(135);
-	     cb4BookLibraryLocation.getItems().addAll(
-	    "Horsens", "Aarhus", "Aalborg", "Copenhagen"
-	    );
-		
+		cb1BookGenre.getItems().addAll("Action", "Thriller", "Comedy", "Horror", "Sci-Fi", "Culture", "History",
+				"Fantasy", "Mythology");
+
+		cb2BookYear = new ComboBox<String>();
+		cb2BookYear.setPromptText("Book year");
+		cb2BookYear.setPrefWidth(135);
+		cb2BookYear.getItems().addAll("2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009",
+				"2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "Before 2000");
+
+		cb3BookLanguage = new ComboBox<String>();
+		cb3BookLanguage.setPromptText("Book language");
+		cb3BookLanguage.setPrefWidth(135);
+		cb3BookLanguage.getItems().addAll("English", "Danish", "Bulgarian", "German", "Dutch", "French", "Russian",
+				"Polish");
+
+		cb4BookLibraryLocation = new ComboBox<String>();
+		cb4BookLibraryLocation.setPromptText("Book location");
+		cb4BookLibraryLocation.setPrefWidth(135);
+		cb4BookLibraryLocation.getItems().addAll("Horsens", "Aarhus", "Aalborg", "Copenhagen");
+
 		tbView1BookResults = new TableView<SearchResultData>();
-		
+
 		searchSection = new VBox();
 		innerSearchSection = new HBox();
 		labelBookFiltersLeftSection = new HBox();
-		labelSearchResultsRightSection = new HBox();
 		bookSearchFiltersSection = new VBox();
 		bookListResultsSection = new VBox();
 		innerFooterUserActionsSection = new HBox();
-		
+
 	}
-	
+
 	public void receiveSearchResults() {
-		
+
 		bookName = dataOutput.getBookName();
 		bookAuthor = dataOutput.getBookAuthor();
 		bookYear = dataOutput.getBookYear();
 		bookAvailability = dataOutput.getBookAvailability();
-		
+
 	}
-	
-	
+
 	public String getTitle() {
 		return "Results from book search";
 	}
 
 	public Parent getComponent() {
-		
-		//\\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
-		
+
+		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
+
 		mainPane.setAlignment(Pos.CENTER);
 		mainPane.setPadding(new Insets(20, 5, 20, 5));
 
 		searchPane.setAlignment(Pos.TOP_CENTER);
 		searchPane.setPadding(new Insets(0, 0, 5, 0));
-		
+
 		labelBookSearchFiltersPane.setAlignment(Pos.TOP_LEFT);
 		labelBookSearchFiltersPane.setPadding(new Insets(5, 0, 0, 0));
-		
+
 		bookListResultsPane.setAlignment(Pos.CENTER);
 		bookListResultsPane.setPadding(new Insets(0, 5, 0, 0));
-		
+
 		bookSearchResultOptionsPane.setAlignment(Pos.TOP_CENTER);
 		bookSearchResultOptionsPane.setPadding(new Insets(5, 0, 0, 0));
-		
+
 		footerSectionPane.setAlignment(Pos.BOTTOM_CENTER);
 		footerSectionPane.setPadding(new Insets(10, 5, 0, 0));
-						
-		//\\/\\/\\/\\/\\-=TextFields=-//\\/\\/\\/\\/\\
-		
-		tf1Search.setPrefColumnCount(34);
-		
-		//\\/\\/\\/\\/\\-=Table Column Properties=-//\\/\\/\\/\\/\\
 
-		bookNameCol1 = new TableColumn("Name");
+		// \\/\\/\\/\\/\\-=TextFields=-//\\/\\/\\/\\/\\
+
+		tf1Search.setPrefColumnCount(34);
+
+		// \\/\\/\\/\\/\\-=Table Column Properties=-//\\/\\/\\/\\/\\
+
+		bookNameCol1 = new TableColumn<SearchResultData, String>("Name");
 		bookNameCol1.setPrefWidth(110);
 		bookNameCol1.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookName"));
-		
-		
-		bookAuthorNameCol2 = new TableColumn("Author");
+
+		bookAuthorNameCol2 = new TableColumn<SearchResultData, String>("Author");
 		bookAuthorNameCol2.setPrefWidth(110);
 		bookAuthorNameCol2.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAuthor"));
-		
-		bookYearCol3 = new TableColumn("Year");
+
+		bookYearCol3 = new TableColumn<SearchResultData, String>("Year");
 		bookYearCol3.setPrefWidth(40);
 		bookYearCol3.setStyle("-fx-alignment: CENTER;");
 		bookYearCol3.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookYear"));
-		
-		bookAvailabilityCol4 = new TableColumn("Available");
+
+		bookAvailabilityCol4 = new TableColumn<SearchResultData, String>("Available");
 		bookAvailabilityCol4.setPrefWidth(65);
 		bookAvailabilityCol4.setStyle("-fx-alignment: CENTER;");
-		bookAvailabilityCol4.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
-		
-		
+		bookAvailabilityCol4
+				.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
+
 		tbView1BookResults.setItems(data);
 		tbView1BookResults.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tbView1BookResults.getColumns().addAll(bookNameCol1, bookAuthorNameCol2, bookYearCol3, bookAvailabilityCol4);
-		
-		//\\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
-		
+
+		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
+
 		btn1Search = new Button("Search");
 		btn2UpdatePreferences = new Button("Update preferences");
 		btn3RentSelectedBooks = new Button("Rent selected books");
 		btn4ViewBookDetails = new Button("View book details");
 		btn5HomeSection = new Button("Home secton");
 		btn6MyProfile = new Button("My Profile");
-		
+
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
-		
+
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				String resultParse = tf1Search.getText();
 				if (tf1Search.getText().isEmpty() == false) {
-				updateTableUI();
-				// Test data insertion:
-				data.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
-			} else {
-				Alert alertFailiure = new Alert(AlertType.ERROR);
-				alertFailiure.setTitle("Error Dialog");
-				alertFailiure.setHeaderText("Search unsuccessful");
-				alertFailiure.setContentText("Please enter a book title!");
-				alertFailiure.showAndWait();
-			}
+					updateTableUI();
+					// Test data insertion:
+					data.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
+				} else {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Search unsuccessful");
+					alertFailiure.setContentText("Please enter a book title!");
+					alertFailiure.showAndWait();
+				}
 
-		}
+			}
 		});
-		
-		
+
 		btn2UpdatePreferences.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -275,49 +256,50 @@ public class SearchResultController implements Controller {
 					data.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
 				}
 			}
-			});
-		
-		
+		});
+
 		btn3RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				if (tableValueGuardNoBooks()) {
-				Alert promptConfirmation = new Alert(AlertType.CONFIRMATION);
-				promptConfirmation.setTitle("Book rent confirm");
-				promptConfirmation.setHeaderText("Rent selected books");
-				promptConfirmation.setContentText("You are about to rent the following books:\n" + "'ABC' and 'XYZ'" + " \n" + "Continue?");
-				if (isRentPossible()) {
-				Optional<ButtonType> result = promptConfirmation.showAndWait();
-				if (result.get() == ButtonType.OK) {
-					// Has to perform an if-statement that checks if rent is possible and get book time frame.
-					Alert alertSuccess = new Alert(AlertType.INFORMATION);
-					alertSuccess.setTitle("Information Dialog");
-					alertSuccess.setHeaderText("Selected books have been successfully rented");
-					alertSuccess.setContentText("You have rented XYZ books for an XYZ period");
-					alertSuccess.showAndWait();
-				} else {
-				   return;
-				}
-				
+					Alert promptConfirmation = new Alert(AlertType.CONFIRMATION);
+					promptConfirmation.setTitle("Book rent confirm");
+					promptConfirmation.setHeaderText("Rent selected books");
+					promptConfirmation.setContentText(
+							"You are about to rent the following books:\n" + "'ABC' and 'XYZ'" + " \n" + "Continue?");
+					if (isRentPossible()) {
+						Optional<ButtonType> result = promptConfirmation.showAndWait();
+						if (result.get() == ButtonType.OK) {
+							// Has to perform an if-statement that checks if rent is possible and get book
+							// time frame.
+							Alert alertSuccess = new Alert(AlertType.INFORMATION);
+							alertSuccess.setTitle("Information Dialog");
+							alertSuccess.setHeaderText("Selected books have been successfully rented");
+							alertSuccess.setContentText("You have rented XYZ books for an XYZ period");
+							alertSuccess.showAndWait();
+						} else {
+							return;
+						}
+
+					} else {
+						Alert alertFailiure = new Alert(AlertType.ERROR);
+						alertFailiure.setTitle("Error Dialog");
+						alertFailiure.setHeaderText("Selected book rental error");
+						alertFailiure.setContentText("Could not rent selected books!");
+						alertFailiure.showAndWait();
+					}
 				} else {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
-					alertFailiure.setHeaderText("Selected book rental error");
-					alertFailiure.setContentText("Could not rent selected books!");
+					alertFailiure.setHeaderText("No selected books");
+					alertFailiure.setContentText("Please select a book first!");
 					alertFailiure.showAndWait();
 				}
-			} else {
-				Alert alertFailiure = new Alert(AlertType.ERROR);
-				alertFailiure.setTitle("Error Dialog");
-				alertFailiure.setHeaderText("No selected books");
-				alertFailiure.setContentText("Please select a book first!");
-				alertFailiure.showAndWait();
-			}
 
-		}
+			}
 		});
-		
+
 		btn4ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -327,17 +309,16 @@ public class SearchResultController implements Controller {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Selection failiure");
-					alertFailiure.setContentText("Cannot display information about multiple books!\nPlease select one book!");
+					alertFailiure.setContentText(
+							"Cannot display information about multiple books!\nPlease select one book!");
 					alertFailiure.showAndWait();
-				}
-				else if (tableValueGuardNoBooks() == false) {
+				} else if (tableValueGuardNoBooks() == false) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Selection failiure");
 					alertFailiure.setContentText("Please select a book!");
 					alertFailiure.showAndWait();
-				}
-				else {
+				} else {
 					ViewBookDetailsController bookDetails = new ViewBookDetailsController();
 					Window w = new DialogWindow(bookDetails);
 					w.open();
@@ -345,7 +326,7 @@ public class SearchResultController implements Controller {
 			}
 
 		});
-		
+
 		btn5HomeSection.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -354,7 +335,7 @@ public class SearchResultController implements Controller {
 			}
 
 		});
-		
+
 		btn6MyProfile.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -367,31 +348,34 @@ public class SearchResultController implements Controller {
 			}
 
 		});
-		
-		//\\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
+
+		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
 		innerSearchSection.getChildren().addAll(tf1Search, btn1Search);
 		innerSearchSection.setSpacing(5);
-		
-		searchSection.getChildren().addAll(lbl1Search, innerSearchSection);		
-		
+
+		searchSection.getChildren().addAll(lbl1Search, innerSearchSection);
+
 		labelBookFiltersLeftSection.getChildren().addAll(lbl2BookOptions, lbl3SearchResults);
-				
+
 		bookListResultsSection.getChildren().addAll(tbView1BookResults);
 
-		bookSearchFiltersSection.getChildren().addAll(cb1BookGenre, cb2BookYear, cb3BookLanguage, cb4BookLibraryLocation, btn2UpdatePreferences);
-		btn2UpdatePreferences.setPrefSize(cb4BookLibraryLocation.getPrefWidth(), cb4BookLibraryLocation.getPrefHeight());
+		bookSearchFiltersSection.getChildren().addAll(cb1BookGenre, cb2BookYear, cb3BookLanguage,
+				cb4BookLibraryLocation, btn2UpdatePreferences);
+		btn2UpdatePreferences.setPrefSize(cb4BookLibraryLocation.getPrefWidth(),
+				cb4BookLibraryLocation.getPrefHeight());
 		btn2UpdatePreferences.setStyle("-fx-color: #7EC0EE;");
 		bookSearchFiltersSection.setPadding(new Insets(0, 5, 0, 0));
 		bookSearchFiltersSection.setSpacing(5);
 
-		innerFooterUserActionsSection.getChildren().addAll(btn3RentSelectedBooks, btn4ViewBookDetails, btn5HomeSection, btn6MyProfile);
+		innerFooterUserActionsSection.getChildren().addAll(btn3RentSelectedBooks, btn4ViewBookDetails, btn5HomeSection,
+				btn6MyProfile);
 		innerFooterUserActionsSection.setSpacing(5);
-		
-		//\\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
+
+		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
 
 		searchPane.add(searchSection, 0, 0);
-		
+
 		labelBookSearchFiltersPane.add(labelBookFiltersLeftSection, 0, 0);
 
 		bookListResultsPane.add(bookSearchFiltersSection, 0, 0);
@@ -399,43 +383,41 @@ public class SearchResultController implements Controller {
 
 		footerSectionPane.add(innerFooterUserActionsSection, 0, 0);
 
-		//\\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\
-		
+		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\
+
 		mainPane.add(searchPane, 0, 0);
 		mainPane.add(labelBookSearchFiltersPane, 0, 1);
 		mainPane.add(bookListResultsPane, 0, 2);
 		mainPane.add(footerSectionPane, 0, 3);
-		
+
 		return mainPane;
 	}
-	
-	
-	
+
 	// Getters for filter selection.
 	public int getCb1BookGenreFilterSelection() {
 		return cb1BookGenre.getSelectionModel().getSelectedIndex();
 	}
-	
-	public int getCb2BookYear() {	
+
+	public int getCb2BookYear() {
 		return cb2BookYear.getSelectionModel().getSelectedIndex();
 	}
-	
+
 	public int getCb3BookLanguage() {
 		return cb3BookLanguage.getSelectionModel().getSelectedIndex();
 	}
-	
+
 	public int getCb4BookLibraryLocation() {
 		return cb4BookLibraryLocation.getSelectionModel().getSelectedIndex();
 	}
-	
+
 	public boolean isRentPossible() {
 		// Method has to return a result based on user properties and book properties.
 		return true;
 	}
-	
+
 	public boolean filterSelectionGuard() {
-		if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1
-		&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
+		if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1 && getCb3BookLanguage() == -1
+				&& getCb4BookLibraryLocation() == -1) {
 			return true;
 		}
 		return false;
@@ -456,17 +438,16 @@ public class SearchResultController implements Controller {
 		}
 		return true;
 	}
-	
+
 	public ObservableList<SearchResultData> updateTableUI() {
 		return FXCollections.observableArrayList(
-		new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
-		new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
-		new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
+				new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
+				new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
+				new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
 	}
-	
-	
-public class SearchResultData {
-		
+
+	public class SearchResultData {
+
 		private final SimpleStringProperty bookName;
 		private final SimpleStringProperty bookAuthor;
 		private final SimpleStringProperty bookYear;
@@ -498,7 +479,7 @@ public class SearchResultData {
 		public String getBookYear() {
 			return bookYear.get();
 		}
-		
+
 		public void setBookYear(int bkYear) {
 			String bookYearHolder = Integer.toString(bkYear);
 			bookYear.set(bookYearHolder);
@@ -521,21 +502,21 @@ public class SearchResultData {
 
 	@Override
 	public void onWindowClose(Window win) {
-		
+
 	}
 
 	@Override
 	public void onWindowRefresh(Window win) {
-		
+
 	}
-	
+
 	@Override
 	public void onWindowResume(Window win) {
-		
+
 	}
 
 	@Override
 	public void onWindowPause(Window win) {
-		
+
 	}
 }
