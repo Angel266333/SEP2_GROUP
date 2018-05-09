@@ -30,6 +30,7 @@ public class Window {
 	 */
 	protected void initializeWindow() {
 		mStage = new Stage();
+		mStage.setResizable(false);
 		mStage.setScene(
 				new Scene(
 						mController.getComponent()		

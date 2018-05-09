@@ -80,12 +80,8 @@ public class SearchResultController implements Controller {
 	
 	Window windowInstance;
 	
-	
 	private TableView<SearchResultData> tbView1BookResults;
-	private final ObservableList<SearchResultData> data = FXCollections.observableArrayList(
-	new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
-	new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
-	new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
+	private final ObservableList<SearchResultData> data = updateTableUI();
 	
     private TableColumn<SearchResultData, String> bookNameCol1;
     private TableColumn<SearchResultData, String> bookAuthorNameCol2;
@@ -250,11 +246,9 @@ public class SearchResultController implements Controller {
 			public void handle(ActionEvent arg0) {
 				String resultParse = tf1Search.getText();
 				if (tf1Search.getText().isEmpty() == false) {
-				windowInstance.close();
-				SearchResultController src = new SearchResultController();
-				src.tf1Search.setText(resultParse);
-				Window w = new DialogWindow(src);
-				w.open();
+				updateTableUI();
+				// Test data insertion:
+				data.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
 			} else {
 				Alert alertFailiure = new Alert(AlertType.ERROR);
 				alertFailiure.setTitle("Error Dialog");
@@ -278,7 +272,7 @@ public class SearchResultController implements Controller {
 					alertFailiure.setContentText("Please select search preferences to filter results!");
 					alertFailiure.showAndWait();
 				} else {
-					// Preferences here
+					data.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
 				}
 			}
 			});
@@ -336,9 +330,17 @@ public class SearchResultController implements Controller {
 					alertFailiure.setContentText("Cannot display information about multiple books!\nPlease select one book!");
 					alertFailiure.showAndWait();
 				}
+				else if (tableValueGuardNoBooks() == false) {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Selection failiure");
+					alertFailiure.setContentText("Please select a book!");
+					alertFailiure.showAndWait();
+				}
 				else {
-					// TODO
 					ViewBookDetailsController bookDetails = new ViewBookDetailsController();
+					Window w = new DialogWindow(bookDetails);
+					w.open();
 				}
 			}
 
@@ -433,7 +435,7 @@ public class SearchResultController implements Controller {
 	
 	public boolean filterSelectionGuard() {
 		if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1
-				&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
+		&& getCb3BookLanguage() == -1 && getCb4BookLibraryLocation() == -1) {
 			return true;
 		}
 		return false;
@@ -453,6 +455,13 @@ public class SearchResultController implements Controller {
 			return false;
 		}
 		return true;
+	}
+	
+	public ObservableList<SearchResultData> updateTableUI() {
+		return FXCollections.observableArrayList(
+		new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
+		new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
+		new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
 	}
 	
 	
