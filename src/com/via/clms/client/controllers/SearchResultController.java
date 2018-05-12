@@ -446,15 +446,12 @@ public class SearchResultController implements Controller {
 		for (int i = 0; i < selectionCells.size(); i++) {
 			selectionCellsBookName.add(selectionCells.get(i).getBookName());
 		}
-		for (int y = 0; y < selectionCellsBookName.size(); y++) {
 				String receiveValues = selectionCellsBookName.toString();
 				String removeInvalidStringBracketLeft = receiveValues.replace("[", "\n ");
 				String seperateItemsToNewLines = removeInvalidStringBracketLeft.replace(",", ";\n");
 				String removeInvalidStringBracketRight = seperateItemsToNewLines.replace("]", "\n");
 				String finalOutput = removeInvalidStringBracketRight;
 				return finalOutput;
-			}
-		return null;
 	}
 
 	public ObservableList<SearchResultData> updateTableUI() {
@@ -462,6 +459,10 @@ public class SearchResultController implements Controller {
 				new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
 				new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
 				new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
+	}
+	
+	public void populateTable(String dataFeed) {
+		// Get results from database and display them to table.
 	}
 
 	public class SearchResultData {

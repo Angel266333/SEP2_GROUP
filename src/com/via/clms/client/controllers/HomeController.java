@@ -145,6 +145,7 @@ public class HomeController implements Controller {
 				String resultParse = tf1Search.getText();
 				if (tf1Search.getText().isEmpty() == false) {
 				SearchResultController src = new SearchResultController();
+				src.populateTable(resultParse);
 				Window w = new DialogWindow(src);
 				src.tf1Search.setText(resultParse);
 				w.open();
