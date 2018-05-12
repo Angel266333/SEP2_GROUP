@@ -1,5 +1,11 @@
 package com.via.clms.client.controllers;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.ResultListener;
@@ -15,6 +21,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -47,6 +55,7 @@ public class HomeController implements Controller {
 	private Button btn6MyProfile;
 	private Button btn7Lock;
 	private Button btn8Unlock;
+	private Button btn9Help;
 	private boolean temp = true;
 
 	private class ResultHandler implements ResultListener<byte[]> {
@@ -124,6 +133,18 @@ public class HomeController implements Controller {
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
 		lbl3Actions.setPadding(new Insets(0, 0, 5, 0));
 
+		// \\/\\/\\/\\/\\-=File Fetcher=-//\\/\\/\\/\\/\\
+		
+		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		String filePath = f.toString();
+		String removeInvalidTargetPath = "bin";
+		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
+		String outputPath = "file:" + synchronizedPath + File.separator + "com" + File.separator + "via"
+				+ File.separator + "clms" + File.separator + "client" + File.separator + "graphics" + File.separator
+				+ "help.png";
+		Image imageDir = new Image(outputPath);
+		
+		
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
 		btn1Search = new Button("Search");
@@ -135,7 +156,7 @@ public class HomeController implements Controller {
 		btn6MyProfile = new Button("My Profile");
 		btn7Lock = new Button("Lock session");
 		btn8Unlock = new Button("Unlock session");
-
+		btn9Help = new Button("", new ImageView(imageDir));
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 		
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
@@ -239,6 +260,35 @@ public class HomeController implements Controller {
 			}
 
 		});
+		
+		btn9Help.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+				String filePath = f.toString();
+				String removeInvalidTargetPath = "bin";
+				String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
+				String outputPath = synchronizedPath + File.separator + "com" + File.separator + "via"
+						+ File.separator + "clms" + File.separator + "client" + File.separator + "help" + File.separator
+						+ "DemoGuide.pdf";
+				if (Desktop.isDesktopSupported()) {
+				    try {
+				        File myFile = new File(outputPath);
+				        Desktop.getDesktop().open(myFile);
+				    } catch (IOException e) {
+				    	Alert alertFailiure = new Alert(AlertType.ERROR);
+						alertFailiure.setTitle("Error Dialog");
+						alertFailiure.setHeaderText("Load resource failiure");
+						alertFailiure.setContentText("Could not load selected resource!");
+						alertFailiure.showAndWait();
+						e.printStackTrace();
+				    }
+				}
+				}
+
+		});
 
 		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
@@ -250,7 +300,7 @@ public class HomeController implements Controller {
 
 		userNotificationsSection.getChildren().addAll(lbl4Notifications, tf2Notifications);
 
-		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock);
+		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock, btn9Help);
 		userProfileSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\

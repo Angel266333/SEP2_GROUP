@@ -65,7 +65,6 @@ public class SearchResultController implements Controller {
 	private Label lbl2BookOptions;
 	private Label lbl3SearchResults;
 
-	// For future reference, this element can implement ArrayLists.
 	public ComboBox<String> cb1BookGenre;
 	public ComboBox<String> cb2BookYear;
 	public ComboBox<String> cb3BookLanguage;
@@ -79,7 +78,7 @@ public class SearchResultController implements Controller {
 	Window windowInstance;
 
 	private TableView<SearchResultData> tbView1BookResults;
-	private final ObservableList<SearchResultData> data = updateTableUI();
+	private final ObservableList<SearchResultData> tableData = updateTableBookResultsUI();
 
 	private TableColumn<SearchResultData, String> bookNameCol1;
 	private TableColumn<SearchResultData, String> bookAuthorNameCol2;
@@ -90,8 +89,8 @@ public class SearchResultController implements Controller {
 	private Button btn2UpdatePreferences;
 	private Button btn3RentSelectedBooks;
 	private Button btn4ViewBookDetails;
-	private Button btn6MyProfile;
 	private Button btn5HomeSection;
+	private Button btn6MyProfile;
 
 	public SearchResultController() {
 
@@ -164,7 +163,7 @@ public class SearchResultController implements Controller {
 
 	public Parent getComponent() {
 
-		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
+
 
 		mainPane.setAlignment(Pos.CENTER);
 		mainPane.setPadding(new Insets(20, 5, 20, 5));
@@ -206,10 +205,9 @@ public class SearchResultController implements Controller {
 		bookAvailabilityCol4 = new TableColumn<SearchResultData, String>("Available");
 		bookAvailabilityCol4.setPrefWidth(65);
 		bookAvailabilityCol4.setStyle("-fx-alignment: CENTER;");
-		bookAvailabilityCol4
-				.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
+		bookAvailabilityCol4.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
 
-		tbView1BookResults.setItems(data);
+		tbView1BookResults.setItems(tableData);
 		tbView1BookResults.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tbView1BookResults.getColumns().addAll(bookNameCol1, bookAuthorNameCol2, bookYearCol3, bookAvailabilityCol4);
 
@@ -221,7 +219,6 @@ public class SearchResultController implements Controller {
 		btn4ViewBookDetails = new Button("View book details");
 		btn5HomeSection = new Button("Home secton");
 		btn6MyProfile = new Button("My Profile");
-
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
@@ -229,9 +226,9 @@ public class SearchResultController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 				if (tf1Search.getText().isEmpty() == false) {
-					updateTableUI();
+					updateTableBookResultsUI();
 					// Test data insertion:
-					data.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
+					tableData.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
 				} else {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
@@ -254,7 +251,7 @@ public class SearchResultController implements Controller {
 					alertFailiure.setContentText("Please select search preferences to filter results!");
 					alertFailiure.showAndWait();
 				} else {
-					data.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
+					tableData.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
 				}
 			}
 		});
@@ -277,7 +274,7 @@ public class SearchResultController implements Controller {
 							Alert alertSuccess = new Alert(AlertType.INFORMATION);
 							alertSuccess.setTitle("Information Dialog");
 							alertSuccess.setHeaderText("Selected books have been successfully rented");
-							alertSuccess.setContentText("You have rented XYZ books for an XYZ period");
+							alertSuccess.setContentText("You have now rented:\n" + getUserBookSelections());
 							alertSuccess.showAndWait();
 						} else {
 							return;
@@ -454,7 +451,7 @@ public class SearchResultController implements Controller {
 				return finalOutput;
 	}
 
-	public ObservableList<SearchResultData> updateTableUI() {
+	public ObservableList<SearchResultData> updateTableBookResultsUI() {
 		return FXCollections.observableArrayList(
 				new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
 				new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),

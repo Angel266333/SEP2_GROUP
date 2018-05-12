@@ -74,7 +74,7 @@ public class ViewBookDetailsController implements Controller {
 
 	@Override
 	public Parent getComponent() {
-
+		
 		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
