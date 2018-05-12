@@ -1,5 +1,6 @@
 package com.via.clms.client.controllers;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import com.via.clms.client.views.Controller;
@@ -266,8 +267,8 @@ public class SearchResultController implements Controller {
 					Alert promptConfirmation = new Alert(AlertType.CONFIRMATION);
 					promptConfirmation.setTitle("Book rent confirm");
 					promptConfirmation.setHeaderText("Rent selected books");
-					promptConfirmation.setContentText(
-							"You are about to rent the following books:\n" + "'ABC' and 'XYZ'" + " \n" + "Continue?");
+					promptConfirmation.setContentText("You are about to rent the following books:\n"
+							+ getUserBookSelections() + " \n" + "Continue?");
 					if (isRentPossible()) {
 						Optional<ButtonType> result = promptConfirmation.showAndWait();
 						if (result.get() == ButtonType.OK) {
@@ -437,6 +438,23 @@ public class SearchResultController implements Controller {
 			return false;
 		}
 		return true;
+	}
+
+	public String getUserBookSelections() {
+		ObservableList<SearchResultData> selectionCells = tbView1BookResults.getSelectionModel().getSelectedItems();
+		ArrayList<String> selectionCellsBookName = new ArrayList<String>();
+		for (int i = 0; i < selectionCells.size(); i++) {
+			selectionCellsBookName.add(selectionCells.get(i).getBookName());
+		}
+		for (int y = 0; y < selectionCellsBookName.size(); y++) {
+				String receiveValues = selectionCellsBookName.toString();
+				String removeInvalidStringBracketLeft = receiveValues.replace("[", "\n ");
+				String seperateItemsToNewLines = removeInvalidStringBracketLeft.replace(",", ";\n");
+				String removeInvalidStringBracketRight = seperateItemsToNewLines.replace("]", "\n");
+				String finalOutput = removeInvalidStringBracketRight;
+				return finalOutput;
+			}
+		return null;
 	}
 
 	public ObservableList<SearchResultData> updateTableUI() {

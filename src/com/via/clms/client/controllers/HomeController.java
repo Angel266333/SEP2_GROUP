@@ -43,9 +43,10 @@ public class HomeController implements Controller {
 	private Button btn2Rent;
 	private Button btn3Return;
 	private Button btn4Renew;
-	private Button btn5MyProfile;
-	private Button btn6Lock;
-	private Button btn7Unlock;
+	private Button btn5GodMode;
+	private Button btn6MyProfile;
+	private Button btn7Lock;
+	private Button btn8Unlock;
 	private boolean temp = true;
 
 	private class ResultHandler implements ResultListener<byte[]> {
@@ -129,9 +130,11 @@ public class HomeController implements Controller {
 		btn2Rent = new Button("Rent");
 		btn3Return = new Button("Return");
 		btn4Renew = new Button("Renew");
-		btn5MyProfile = new Button("My Profile");
-		btn6Lock = new Button("Lock session");
-		btn7Unlock = new Button("Unlock session");
+		btn5GodMode = new Button("Administrative features");
+		btn5GodMode.setVisible(false);
+		btn6MyProfile = new Button("My Profile");
+		btn7Lock = new Button("Lock session");
+		btn8Unlock = new Button("Unlock session");
 
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 		
@@ -181,21 +184,21 @@ public class HomeController implements Controller {
 			}
 
 		});
+
+		btn5GodMode.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+				AdministrativeFeatureSetController admftrsetcntrl = new AdministrativeFeatureSetController();
+				Window w = new DialogWindow(admftrsetcntrl);
+				w.open();
+				
+			}
+		});
+
 		
-//		btn4Renew.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//
-//				RenewBookController rnwbc = new RenewBookController();
-//				Window w = new DialogWindow(rnwb);
-//				w.open();
-//
-//			}
-//
-//		});
-		
-		btn5MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+		btn6MyProfile.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -208,7 +211,7 @@ public class HomeController implements Controller {
 
 		});
 		
-		btn6Lock.setOnAction(new EventHandler<ActionEvent>() {
+		btn7Lock.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -222,7 +225,7 @@ public class HomeController implements Controller {
 			
 		});
 
-		btn7Unlock.setOnAction(new EventHandler<ActionEvent>() {
+		btn8Unlock.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -241,12 +244,12 @@ public class HomeController implements Controller {
 		searchSection.getChildren().addAll(tf1Search, btn1Search);
 		searchSection.setSpacing(5);
 
-		actionSection.getChildren().addAll(btn2Rent, btn3Return, btn4Renew);
+		actionSection.getChildren().addAll(btn2Rent, btn3Return, btn4Renew, btn5GodMode);
 		actionSection.setSpacing(5);
 
 		userNotificationsSection.getChildren().addAll(lbl4Notifications, tf2Notifications);
 
-		userProfileSection.getChildren().addAll(btn5MyProfile, btn6Lock, btn7Unlock);
+		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock);
 		userProfileSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
@@ -307,7 +310,8 @@ public class HomeController implements Controller {
 	}
 
 	public void updateUI() {
-		btn6Lock.setVisible(temp);
-		btn7Unlock.setVisible(!temp);
+		btn5GodMode.setVisible(temp);
+		btn7Lock.setVisible(temp);
+		btn8Unlock.setVisible(!temp);
 	}
 }

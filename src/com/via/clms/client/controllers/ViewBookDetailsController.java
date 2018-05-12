@@ -56,7 +56,7 @@ public class ViewBookDetailsController implements Controller {
 		lbl1BookName = new Label("Book name:");
 		lbl2BookAuthor = new Label("Book author:");
 		lbl3BookYear = new Label("Book year:");
-		lbl4BookISBN = new Label("ISBN");
+		lbl4BookISBN = new Label("ISBN:");
 		lbl5BookDescription = new Label("Description:");
 		lbl5BookDescription.setPadding(new Insets(0, 0, 5, 0));
 
@@ -75,8 +75,7 @@ public class ViewBookDetailsController implements Controller {
 	@Override
 	public Parent getComponent() {
 
-		final File f = new File(
-				ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
