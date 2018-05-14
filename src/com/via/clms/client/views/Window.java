@@ -195,6 +195,10 @@ public class Window {
 		});
 	}
 	
+	public void minimize() {
+		mStage.setIconified(true);
+	}
+	
 	/**
 	 * Execute a {@link Runnable} on the UI Thread
 	 * 

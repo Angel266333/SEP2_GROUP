@@ -3,6 +3,7 @@ package com.via.clms.client.controllers;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.sun.glass.events.MouseEvent;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.Window;
@@ -23,6 +24,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -63,7 +65,8 @@ public class SearchResultController implements Controller {
 
 	private Label lbl1Search;
 	private Label lbl2BookOptions;
-	private Label lbl3SearchResults;
+	private Label lbl3SearchOptions;
+	private Label lbl4SearchResults;
 
 	public ComboBox<String> cb1BookGenre;
 	public ComboBox<String> cb2BookYear;
@@ -87,10 +90,11 @@ public class SearchResultController implements Controller {
 
 	private Button btn1Search;
 	private Button btn2UpdatePreferences;
-	private Button btn3RentSelectedBooks;
-	private Button btn4ViewBookDetails;
-	private Button btn5HomeSection;
-	private Button btn6MyProfile;
+	private Button btn3ClearSearchResults;
+	private Button btn4RentSelectedBooks;
+	private Button btn5ViewBookDetails;
+	private Button btn6HomeSection;
+	private Button btn7MyProfile;
 
 	public SearchResultController() {
 
@@ -107,8 +111,10 @@ public class SearchResultController implements Controller {
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
 		lbl2BookOptions = new Label("Book search filters:");
 		lbl2BookOptions.setPadding(new Insets(0, 0, 5, 0));
-		lbl3SearchResults = new Label("Search results:");
-		lbl3SearchResults.setPadding(new Insets(0, 0, 5, 40));
+		lbl3SearchOptions = new Label("Search options:");
+		lbl3SearchOptions.setPadding(new Insets(5, 0, 0, 0));
+		lbl4SearchResults = new Label("Search results:");
+		lbl4SearchResults.setPadding(new Insets(0, 0, 5, 40));
 
 		// Placeholders. Actual Strings need to be retrieved from
 		// database where user has, for example, specified that
@@ -148,22 +154,11 @@ public class SearchResultController implements Controller {
 
 	}
 
-	public void receiveSearchResults() {
-
-		bookName = dataOutput.getBookName();
-		bookAuthor = dataOutput.getBookAuthor();
-		bookYear = dataOutput.getBookYear();
-		bookAvailability = dataOutput.getBookAvailability();
-
-	}
-
 	public String getTitle() {
 		return "Results from book search";
 	}
 
 	public Parent getComponent() {
-
-
 
 		mainPane.setAlignment(Pos.CENTER);
 		mainPane.setPadding(new Insets(20, 5, 20, 5));
@@ -194,7 +189,7 @@ public class SearchResultController implements Controller {
 		bookNameCol1.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookName"));
 
 		bookAuthorNameCol2 = new TableColumn<SearchResultData, String>("Author");
-		bookAuthorNameCol2.setPrefWidth(110);
+		bookAuthorNameCol2.setPrefWidth(108);
 		bookAuthorNameCol2.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAuthor"));
 
 		bookYearCol3 = new TableColumn<SearchResultData, String>("Year");
@@ -205,7 +200,8 @@ public class SearchResultController implements Controller {
 		bookAvailabilityCol4 = new TableColumn<SearchResultData, String>("Available");
 		bookAvailabilityCol4.setPrefWidth(65);
 		bookAvailabilityCol4.setStyle("-fx-alignment: CENTER;");
-		bookAvailabilityCol4.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
+		bookAvailabilityCol4
+				.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
 
 		tbView1BookResults.setItems(tableData);
 		tbView1BookResults.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -215,11 +211,25 @@ public class SearchResultController implements Controller {
 
 		btn1Search = new Button("Search");
 		btn2UpdatePreferences = new Button("Update preferences");
-		btn3RentSelectedBooks = new Button("Rent selected books");
-		btn4ViewBookDetails = new Button("View book details");
-		btn5HomeSection = new Button("Home secton");
-		btn6MyProfile = new Button("My Profile");
+		btn3ClearSearchResults = new Button("Reset search");
+		btn4RentSelectedBooks = new Button("Rent selected books");
+		btn5ViewBookDetails = new Button("View book details");
+		btn6HomeSection = new Button("Home section");
+		btn7MyProfile = new Button("My Profile");
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
+
+		tbView1BookResults.setRowFactory(tv -> {
+			TableRow<SearchResultData> row = new TableRow<>();
+			row.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2 && (!row.isEmpty()) && tableValueGuardMultiBooks() == false) {
+					System.out.println(tbView1BookResults.getSelectionModel().getSelectedItem().bookName);
+					ViewBookDetailsController bookDetails = new ViewBookDetailsController();
+					Window w = new DialogWindow(bookDetails);
+					w.open();
+				}
+			});
+			return row;
+		});
 
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -252,11 +262,23 @@ public class SearchResultController implements Controller {
 					alertFailiure.showAndWait();
 				} else {
 					tableData.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
+					System.out.println("Data needs to be fed at this point.");
 				}
 			}
 		});
 
-		btn3RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
+		btn3ClearSearchResults.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				for (int i = 0; i < tbView1BookResults.getItems().size(); i++) {
+					tbView1BookResults.getItems().clear();
+
+				}
+			}
+		});
+
+		btn4RentSelectedBooks.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -298,7 +320,7 @@ public class SearchResultController implements Controller {
 			}
 		});
 
-		btn4ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
+		btn5ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -325,7 +347,7 @@ public class SearchResultController implements Controller {
 
 		});
 
-		btn5HomeSection.setOnAction(new EventHandler<ActionEvent>() {
+		btn6HomeSection.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -334,7 +356,7 @@ public class SearchResultController implements Controller {
 
 		});
 
-		btn6MyProfile.setOnAction(new EventHandler<ActionEvent>() {
+		btn7MyProfile.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -354,20 +376,22 @@ public class SearchResultController implements Controller {
 
 		searchSection.getChildren().addAll(lbl1Search, innerSearchSection);
 
-		labelBookFiltersLeftSection.getChildren().addAll(lbl2BookOptions, lbl3SearchResults);
+		labelBookFiltersLeftSection.getChildren().addAll(lbl2BookOptions, lbl4SearchResults);
 
 		bookListResultsSection.getChildren().addAll(tbView1BookResults);
 
 		bookSearchFiltersSection.getChildren().addAll(cb1BookGenre, cb2BookYear, cb3BookLanguage,
-				cb4BookLibraryLocation, btn2UpdatePreferences);
+				cb4BookLibraryLocation, btn2UpdatePreferences,lbl3SearchOptions, btn3ClearSearchResults);
 		btn2UpdatePreferences.setPrefSize(cb4BookLibraryLocation.getPrefWidth(),
 				cb4BookLibraryLocation.getPrefHeight());
 		btn2UpdatePreferences.setStyle("-fx-color: #7EC0EE;");
+		btn3ClearSearchResults.setPrefSize(btn2UpdatePreferences.getPrefWidth(), btn2UpdatePreferences.getPrefHeight());
+		btn3ClearSearchResults.setStyle("-fx-color: #FF9999");
 		bookSearchFiltersSection.setPadding(new Insets(0, 5, 0, 0));
 		bookSearchFiltersSection.setSpacing(5);
 
-		innerFooterUserActionsSection.getChildren().addAll(btn3RentSelectedBooks, btn4ViewBookDetails, btn5HomeSection,
-				btn6MyProfile);
+		innerFooterUserActionsSection.getChildren().addAll(btn4RentSelectedBooks, btn5ViewBookDetails, btn6HomeSection,
+				btn7MyProfile);
 		innerFooterUserActionsSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\
@@ -443,12 +467,12 @@ public class SearchResultController implements Controller {
 		for (int i = 0; i < selectionCells.size(); i++) {
 			selectionCellsBookName.add(selectionCells.get(i).getBookName());
 		}
-				String receiveValues = selectionCellsBookName.toString();
-				String removeInvalidStringBracketLeft = receiveValues.replace("[", "\n ");
-				String seperateItemsToNewLines = removeInvalidStringBracketLeft.replace(",", ";\n");
-				String removeInvalidStringBracketRight = seperateItemsToNewLines.replace("]", "\n");
-				String finalOutput = removeInvalidStringBracketRight;
-				return finalOutput;
+		String receiveValues = selectionCellsBookName.toString();
+		String removeInvalidStringBracketLeft = receiveValues.replace("[", "\n ");
+		String seperateItemsToNewLines = removeInvalidStringBracketLeft.replace(",", ";\n");
+		String removeInvalidStringBracketRight = seperateItemsToNewLines.replace("]", "\n");
+		String finalOutput = removeInvalidStringBracketRight;
+		return finalOutput;
 	}
 
 	public ObservableList<SearchResultData> updateTableBookResultsUI() {
@@ -457,7 +481,7 @@ public class SearchResultController implements Controller {
 				new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
 				new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
 	}
-	
+
 	public void populateTable(String dataFeed) {
 		// Get results from database and display them to table.
 	}

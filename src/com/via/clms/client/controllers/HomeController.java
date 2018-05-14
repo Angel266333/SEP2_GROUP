@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import com.sun.scenario.effect.impl.prism.PrImage;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.ResultListener;
@@ -276,6 +277,7 @@ public class HomeController implements Controller {
 				if (Desktop.isDesktopSupported()) {
 				    try {
 				        File myFile = new File(outputPath);
+				        window.minimize();
 				        Desktop.getDesktop().open(myFile);
 				    } catch (IOException e) {
 				    	Alert alertFailiure = new Alert(AlertType.ERROR);
