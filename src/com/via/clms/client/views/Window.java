@@ -195,6 +195,9 @@ public class Window {
 		});
 	}
 	
+	/**
+	 * Minimize the window
+	 */
 	public void minimize() {
 		mStage.setIconified(true);
 	}

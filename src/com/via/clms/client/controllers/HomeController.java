@@ -165,18 +165,18 @@ public class HomeController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 				String resultParse = tf1Search.getText();
-				if (tf1Search.getText().isEmpty() == false) {
+				if (tf1Search.getText().isEmpty()) {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Search unsuccessful");
+					alertFailiure.setContentText("Please enter a book title!");
+					alertFailiure.showAndWait();
+			} else {
 				SearchResultController src = new SearchResultController();
 				src.populateTable(resultParse);
 				Window w = new DialogWindow(src);
 				src.tf1Search.setText(resultParse);
 				w.open();
-			} else {
-				Alert alertFailiure = new Alert(AlertType.ERROR);
-				alertFailiure.setTitle("Error Dialog");
-				alertFailiure.setHeaderText("Search unsuccessful");
-				alertFailiure.setContentText("Please enter a book title!");
-				alertFailiure.showAndWait();
 			}
 
 		}
@@ -238,9 +238,6 @@ public class HomeController implements Controller {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
-				
-				// Check user name and password later;
-				
 				temp = false;
 				updateUI();
 				

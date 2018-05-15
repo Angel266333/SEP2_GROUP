@@ -542,7 +542,7 @@ public class SearchResultController implements Controller {
 
 	@Override
 	public void onWindowClose(Window win) {
-
+		
 	}
 
 	@Override

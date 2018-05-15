@@ -14,7 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-public class ViewBookDetailsController implements Controller {
+public class AddBookController implements Controller {
+	
+	Window windowInstance;
 
 	private GridPane mainPane;
 	private GridPane picturePane;
@@ -38,18 +40,13 @@ public class ViewBookDetailsController implements Controller {
 	public String bookYear;
 	public String bookAvailability;
 
-	public ViewBookDetailsController() {
+	public AddBookController() {
 
 		tf1BookName = new TextField();
-		tf1BookName.setEditable(false);
 		tf2BookAuthor = new TextField();
-		tf2BookAuthor.setEditable(false);
 		tf3BookYear = new TextField();
-		tf3BookYear.setEditable(false);
 		tf4BookISBN = new TextField();
-		tf4BookISBN.setEditable(false);
 		tf5BookDescription = new TextField();
-		tf5BookDescription.setEditable(false);
 		tf5BookDescription.setPrefColumnCount(20);
 		tf5BookDescription.setPrefHeight(252);
 
@@ -69,13 +66,13 @@ public class ViewBookDetailsController implements Controller {
 
 	@Override
 	public String getTitle() {
-		return "Book details";
+		return "Add a book";
 	}
 
 	@Override
 	public Parent getComponent() {
 		
-		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
