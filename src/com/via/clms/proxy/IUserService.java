@@ -53,7 +53,7 @@ public interface IUserService extends Remote {
 	 * @param token
 	 * 		Token to check
 	 */
-	boolean isSpecialToken(byte[] token);
+	boolean isSpecialToken(byte[] token) throws RemoteException;
 
 	/**
 	 * Check a specific users permission flags
