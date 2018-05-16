@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import com.via.clms.Utils;
 import com.via.clms.shared.User;
 
 /**
@@ -18,13 +17,11 @@ public interface IUserService extends Remote {
 	/** Allow access to book management, including rental system */
 	public final static int ROLE_BOOKMGR = 0b0100001; // 32 + 1
 	
-	/** Allow access to user management.
-	 *  This only allows creating regular users, 
-	 *  handling permissions requires {@link #ROLE_ADMIN} */
+	/** Allow access to user management */
 	public final static int ROLE_USERMGR = 0b1000000; // 64
 	
 	/** Allow full administrative access */
-	public final static int ROLE_ADMIN = 0b11111111; // -1
+	public final static int ROLE_ADMIN = ~0; // Include ALL roles
 	
 	/**
 	 * Get a user token that can be used by a user for further 
@@ -37,6 +34,11 @@ public interface IUserService extends Remote {
 	 * 		The user password
 	 */
 	byte[] getUserToken(long cpr, String passwd) throws RemoteException;
+	
+	/**
+	 * Check to see if a token is valid (Exists)
+	 */
+	boolean checkToken(byte[] token);
 	
 	/**
 	 * Can be used like a user token, but cannot be used to login with 
@@ -170,8 +172,8 @@ public interface IUserService extends Remote {
 	 * @param token
 	 * 		The session token
 	 * 
-	 * @param cpr 
-	 * 		The user CPR
+	 * @param uid 
+	 * 		The user id
 	 * 
 	 * @param oldPasswd
 	 * 		The old user password
@@ -179,5 +181,22 @@ public interface IUserService extends Remote {
 	 * @param newPasswd
 	 * 		The new user password
 	 */
-	byte[] updateUserPasswd(byte[] token, long cpr, String oldPasswd, String newPasswd) throws RemoteException;
+	byte[] updateUserPasswd(byte[] token, int uid, String oldPasswd, String newPasswd) throws RemoteException;
+	
+	/**
+	 * Change a users permissions
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param uid 
+	 * 		The user id
+	 * 
+	 * @param libraryid
+	 * 		Library id pertaining the new permissions
+	 * 
+	 * @param role
+	 * 		The new permissions
+	 */
+	boolean updateUserPermissions(byte[] token, int uid, int libraryid, int role);
 }

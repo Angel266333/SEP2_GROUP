@@ -63,7 +63,7 @@ public class ManageUsersController implements Controller {
 		leftPane.add(submitButton, 0, 10);
 		mainPane.setLeft(leftPane);
 
-		User[] testUsers = {new User(1001, "John Hansen", 1212801111L, "john@john.dk", 0), new User(1002, "Arne Larsen", 1010872323L, "arne@arne.dk", 0)};
+		User[] testUsers = {new User(1001), new User(1002)};
 		ArrayList<User> alu = new ArrayList<>();
 		alu.addAll(Arrays.asList(testUsers));
 		alu.addAll(Arrays.asList(testUsers));

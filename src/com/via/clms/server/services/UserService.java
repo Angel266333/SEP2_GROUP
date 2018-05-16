@@ -26,7 +26,7 @@ public class UserService implements IUserService, Service {
 	private Map<String,SpecialToken> mSpecialTokens = new HashMap<>();
 	
 	/**
-	 * 
+	 * {@inheritDoc}
 	 */
 	private class SpecialToken {
 		public int lid;
@@ -90,6 +90,33 @@ public class UserService implements IUserService, Service {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean checkToken(byte[] token) {
+		if (isSpecialToken(token)) {
+			return true;
+		}
+		
+		String tokenStr = Utils.tokenToString(token);
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM Users WHERE cToken = ?", tokenStr);
+		
+		try {
+			if (result.first()) {
+				if (result.getInt("cCount") > 0) {
+					return true;
+				}
+			}
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean checkPermissions(byte[] token, int libraryid, int roles) {
 		String tokenStr = Utils.tokenToString(token);
 		
@@ -127,18 +154,20 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public int getPermissions(byte[] token, int uid, int libraryid) {
-		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT ur.cRole " +
-				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
-				"WHERE u.cUid = ? AND ur.cLid = ?", uid, libraryid);
-		
-		try {
-			if (result.first()) {
-				return result.getInt("cRole");
-			}
+		if (checkToken(token)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			ResultSet result = db.query("SELECT ur.cRole " +
+					"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+					"WHERE u.cUid = ? AND ur.cLid = ?", uid, libraryid);
 			
-		} catch (SQLException e) {
-			Log.error(e);
+			try {
+				if (result.first()) {
+					return result.getInt("cRole");
+				}
+				
+			} catch (SQLException e) {
+				Log.error(e);
+			}
 		}
 		
 		return 0;
@@ -240,26 +269,28 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public User[] getUsers(byte[] token, int offset, int length) {
-		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT * FROM Users LIMIT ?,?", offset, length);
-		
-		try {
-			User[] users = new User[ result.getFetchSize() ];
-			int i=0;
+		if (checkToken(token)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			ResultSet result = db.query("SELECT * FROM Users LIMIT ?,?", offset, length);
 			
-			while (result.next()) {
-				User user = new User(result.getInt("cUid"));
-				user.cpr = result.getLong("cCpr");
-				user.name = result.getString("cName");
-				user.email = result.getString("cEmail");
+			try {
+				User[] users = new User[ result.getFetchSize() ];
+				int i=0;
 				
-				users[i++] = user;
+				while (result.next()) {
+					User user = new User(result.getInt("cUid"));
+					user.cpr = result.getLong("cCpr");
+					user.name = result.getString("cName");
+					user.email = result.getString("cEmail");
+					
+					users[i++] = user;
+				}
+				
+				return users;
+				
+			} catch (SQLException e) {
+				Log.error(e);
 			}
-			
-			return users;
-			
-		} catch (SQLException e) {
-			Log.error(e);
 		}
 		
 		return new User[0];
@@ -270,21 +301,23 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public User getUserByUID(byte[] token, int uid) {
-		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT * FROM Users WHERE cUid = ?", uid);
-		
-		try {
-			if (result.first()) {
-				User user = new User(result.getInt("cUid"));
-				user.cpr = result.getLong("cCpr");
-				user.name = result.getString("cName");
-				user.email = result.getString("cEmail");
-				
-				return user;
-			}
+		if (checkToken(token)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			ResultSet result = db.query("SELECT * FROM Users WHERE cUid = ?", uid);
 			
-		} catch (SQLException e) {
-			Log.error(e);
+			try {
+				if (result.first()) {
+					User user = new User(result.getInt("cUid"));
+					user.cpr = result.getLong("cCpr");
+					user.name = result.getString("cName");
+					user.email = result.getString("cEmail");
+					
+					return user;
+				}
+				
+			} catch (SQLException e) {
+				Log.error(e);
+			}
 		}
 		
 		return null;
@@ -295,21 +328,23 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public User getUserByCPR(byte[] token, long cpr) {
-		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		ResultSet result = db.query("SELECT * FROM Users WHERE cCpr = ?", cpr);
-		
-		try {
-			if (result.first()) {
-				User user = new User(result.getInt("cUid"));
-				user.cpr = result.getLong("cCpr");
-				user.name = result.getString("cName");
-				user.email = result.getString("cEmail");
-				
-				return user;
-			}
+		if (checkToken(token)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			ResultSet result = db.query("SELECT * FROM Users WHERE cCpr = ?", cpr);
 			
-		} catch (SQLException e) {
-			Log.error(e);
+			try {
+				if (result.first()) {
+					User user = new User(result.getInt("cUid"));
+					user.cpr = result.getLong("cCpr");
+					user.name = result.getString("cName");
+					user.email = result.getString("cEmail");
+					
+					return user;
+				}
+				
+			} catch (SQLException e) {
+				Log.error(e);
+			}
 		}
 		
 		return null;
@@ -335,7 +370,15 @@ public class UserService implements IUserService, Service {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] updateUserPasswd(byte[] token, long cpr, String oldPasswd, String newPasswd) {
+	public byte[] updateUserPasswd(byte[] token, int uid, String oldPasswd, String newPasswd) {
 		return null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean updateUserPermissions(byte[] token, int uid, int libraryid, int role) {
+		return false;
 	}
 }

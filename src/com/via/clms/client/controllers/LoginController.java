@@ -1,6 +1,8 @@
 package com.via.clms.client.controllers;
 
+import com.via.clms.client.ServiceManager;
 import com.via.clms.client.views.ResultController;
+import com.via.clms.proxy.IUserService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -41,10 +43,10 @@ public class LoginController extends ResultController<byte[]> {
 		password.setStyle(labelStyle);
 
 		// TextFields
-		TextField userNameField = new TextField();
+		final TextField userNameField = new TextField();
 		userNameField.setPrefColumnCount(20);
 
-		PasswordField passwordField = new PasswordField();
+		final PasswordField passwordField = new PasswordField();
 		passwordField.setPrefColumnCount(20);
 
 		// Buttons
@@ -54,11 +56,26 @@ public class LoginController extends ResultController<byte[]> {
 			@Override
 			public void handle(ActionEvent arg0) {
 
-				// Check user name and password later;
+				// Get the cpr and password from the input fields
+				String cpr = userNameField.getText();
+				String passwd = passwordField.getText();
+				
+				// Get the user service
+				IUserService service = (IUserService) ServiceManager.getService("user");
+				
+				try {
+					// Get the users token, if the information is valid
+					byte[] token = service.getUserToken(Long.parseLong(cpr), passwd);
+					
+					// If the information is valid, pass the token to the caller
+					if (token != null) {
+						setResult(token);
+						getWindow().close();
+					}
+					
+				} catch (Exception e) {}
 
-				setResult(new byte[0]);
-				getWindow().close();
-
+				// Not valid, print an error message to the user
 			}
 
 		});
