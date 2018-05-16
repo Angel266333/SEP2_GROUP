@@ -16,7 +16,9 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		ResultController<byte[]> controller = new LoginController();
+		// This should be selected somehow
+		int lid = 0;
+		ResultController<byte[]> controller = new LoginController(lid);
 
 		controller.setResultListener(new ResultHandler());
 
