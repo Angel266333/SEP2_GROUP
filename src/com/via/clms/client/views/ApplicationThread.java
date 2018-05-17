@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * This is used to start a GUI Thread that can be used 
@@ -69,6 +70,33 @@ public final class ApplicationThread extends Application {
 						
 					} catch (Exception e) {}
 				}
+				
+				/*
+				 * JavaFX on some platforms does not finalize building/preparing
+				 * window controls and decorations until a normal stage is being rendered. 
+				 * This means that the first stage cannot be of the type UTILITY, UNDECORATED etc. 
+				 * This hack will ensure that this is done right after the application thread has been started, 
+				 * ensuring that any stage type can be used.
+				 * 
+				 * This is an error in JavaFX, one of many, but may not be fixed in the near future. 
+				 * The people behind JavaFX is more interested in adding features rather than making 
+				 * the current ones work as expected. 
+				 */
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						Stage stage = new Stage(StageStyle.TRANSPARENT);
+						stage.setHeight(1);
+						stage.setWidth(1);
+						stage.show();
+						Platform.runLater(new Runnable() {
+					        @Override
+					        public void run() {
+					        	stage.close();
+					        }
+					    });
+					}
+				});
 			}
 			
 			Platform.runLater(runnable);
