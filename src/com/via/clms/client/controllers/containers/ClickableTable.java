@@ -1,3 +1,5 @@
+package com.via.clms.client.controllers.containers;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
