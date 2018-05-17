@@ -1,6 +1,8 @@
 package com.via.clms.client.views;
 
+import javafx.application.Platform;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
@@ -38,13 +40,14 @@ public class DialogWindow extends Window {
 	@Override
 	protected void initializeWindow() {
 		super.initializeWindow();
-		
+
 		mStage.initStyle(StageStyle.UTILITY);
 		mStage.setResizable(false);
 		
 		if (mParent != null) {
 			mStage.initOwner(mParent.getFrame());
 			mStage.initModality(Modality.WINDOW_MODAL);
+			mStage.setAlwaysOnTop(true);
 			
 		} else {
 			mStage.initModality(Modality.APPLICATION_MODAL);
