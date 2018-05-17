@@ -39,8 +39,6 @@ public class Main {
 	public static void main(String[] args) {
 		print("Wellcome to CLMS Server", "Type 'help' to get a list of options");
 		
-		print("Value = " + (~0));
-		
 		daemon:
 		for (;;) {
 			switch ( Utils.readInput("CLMS Shell $ ") ) {

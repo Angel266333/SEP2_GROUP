@@ -38,7 +38,7 @@ public interface IUserService extends Remote {
 	/**
 	 * Check to see if a token is valid (Exists)
 	 */
-	boolean checkToken(byte[] token);
+	boolean checkToken(byte[] token) throws RemoteException;
 	
 	/**
 	 * Can be used like a user token, but cannot be used to login with 
@@ -198,5 +198,5 @@ public interface IUserService extends Remote {
 	 * @param role
 	 * 		The new permissions
 	 */
-	boolean updateUserPermissions(byte[] token, int uid, int libraryid, int role);
+	boolean updateUserPermissions(byte[] token, int uid, int libraryid, int role) throws RemoteException;
 }

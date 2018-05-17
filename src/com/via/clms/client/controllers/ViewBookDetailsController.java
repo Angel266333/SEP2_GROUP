@@ -9,23 +9,29 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 public class ViewBookDetailsController implements Controller {
+	
+	Window windowInstance;
 
 	private GridPane mainPane;
 	private GridPane picturePane;
 	private GridPane picturePanePlusBookDetails;
+	private VBox descriptionSection;
 	private GridPane descriptionPane;
 
 	private TextField tf1BookName;
 	private TextField tf2BookAuthor;
 	private TextField tf3BookYear;
 	private TextField tf4BookISBN;
-	private TextField tf5BookDescription;
+	
+	private TextArea tAR5BookDescription;
 
 	private Label lbl1BookName;
 	private Label lbl2BookAuthor;
@@ -48,11 +54,12 @@ public class ViewBookDetailsController implements Controller {
 		tf3BookYear.setEditable(false);
 		tf4BookISBN = new TextField();
 		tf4BookISBN.setEditable(false);
-		tf5BookDescription = new TextField();
-		tf5BookDescription.setEditable(false);
-		tf5BookDescription.setPrefColumnCount(20);
-		tf5BookDescription.setPrefHeight(252);
-
+		
+		tAR5BookDescription = new TextArea();
+		tAR5BookDescription.setPrefHeight(250);
+		tAR5BookDescription.setPrefWidth(250);
+		tAR5BookDescription.setEditable(false);
+		
 		lbl1BookName = new Label("Book name:");
 		lbl2BookAuthor = new Label("Book author:");
 		lbl3BookYear = new Label("Book year:");
@@ -63,19 +70,20 @@ public class ViewBookDetailsController implements Controller {
 		mainPane = new GridPane();
 		picturePane = new GridPane();
 		picturePanePlusBookDetails = new GridPane();
+		descriptionSection = new VBox();
 		descriptionPane = new GridPane();
-
+		
 	}
 
 	@Override
 	public String getTitle() {
-		return "Book details";
+		return "Add a book";
 	}
 
 	@Override
 	public Parent getComponent() {
 		
-		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
@@ -90,14 +98,22 @@ public class ViewBookDetailsController implements Controller {
 
 		mainPane.setAlignment(Pos.CENTER);
 		mainPane.setPadding(new Insets(20, 5, 20, 5));
-
-		descriptionPane.setAlignment(Pos.TOP_LEFT);
+		
+		picturePanePlusBookDetails.setPadding(new Insets(0, 2, 0, 0));
+		
+		descriptionSection.setPadding(new Insets(0, 0, 5, 0));
+		
 		descriptionPane.setPadding(new Insets(0, 0, 0, 5));
 
 		picturePane.add(viewImg, 0, 0);
 		picturePane.setPadding(new Insets(0, 0, 5, 24));
-
+		
+		descriptionSection.getChildren().addAll(lbl5BookDescription, tAR5BookDescription);
+		descriptionSection.setSpacing(5);
+		
 		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\
+		
+		descriptionPane.add(descriptionSection, 0, 0);
 
 		picturePanePlusBookDetails.add(picturePane, 0, 0);
 		picturePanePlusBookDetails.add(lbl1BookName, 0, 1);
@@ -108,9 +124,6 @@ public class ViewBookDetailsController implements Controller {
 		picturePanePlusBookDetails.add(tf3BookYear, 0, 6);
 		picturePanePlusBookDetails.add(lbl4BookISBN, 0, 7);
 		picturePanePlusBookDetails.add(tf4BookISBN, 0, 8);
-
-		descriptionPane.add(lbl5BookDescription, 0, 0);
-		descriptionPane.add(tf5BookDescription, 0, 1);
 
 		mainPane.add(picturePanePlusBookDetails, 0, 0);
 		mainPane.add(descriptionPane, 1, 0);

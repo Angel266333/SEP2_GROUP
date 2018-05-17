@@ -128,17 +128,17 @@ public class ControllerExecuteStart extends Application {
 			Runtime.getRuntime().exit(0);
 		}
 	}
-//		if (controllerName == "ManageUsersController") {
-//		try {
-//			InventoryManagementController manageUsersController = new InventoryManagementController();
-//			primaryStage.setScene(new Scene(manageUsersController.getComponent()));
-//			primaryStage.setTitle(manageUsersController.getTitle());
-//			primaryStage.show();
-//		} catch (Exception e) {
-//			System.out.println("Error in creating controller object.");
-//			Runtime.getRuntime().exit(0);
-//		}
-//	}
+		if (controllerName == "ManageUsersController") {
+		try {
+			InventoryManagementController manageUsersController = new InventoryManagementController();
+			primaryStage.setScene(new Scene(manageUsersController.getComponent()));
+			primaryStage.setTitle(manageUsersController.getTitle());
+			primaryStage.show();
+		} catch (Exception e) {
+			System.out.println("Error in creating controller object.");
+			Runtime.getRuntime().exit(0);
+		}
+	}
 //		if (controllerName == "SystemSettingsController") {
 //		try {
 //			SystemSettingsController systemSettingsController = new SystemSettingController();

@@ -23,7 +23,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class AddBookController implements Controller {
+public class EditBookDetailsController implements Controller {
 	
 	Window windowInstance;
 
@@ -52,10 +52,10 @@ public class AddBookController implements Controller {
 	public String bookYear;
 	public String bookAvailability;
 	
-	private Button btn1AddBook;
+	private Button btn1Update;
 	private Button btn2Cancel;
 
-	public AddBookController() {
+	public EditBookDetailsController() {
 
 		tf1BookName = new TextField();
 		tf2BookAuthor = new TextField();
@@ -84,13 +84,13 @@ public class AddBookController implements Controller {
 
 	@Override
 	public String getTitle() {
-		return "Add a book";
+		return "Edit a book";
 	}
 
 	@Override
 	public Parent getComponent() {
 		
-		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(EditBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
@@ -103,10 +103,10 @@ public class AddBookController implements Controller {
 		
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 		
-		btn1AddBook = new Button("Add book");
+		btn1Update = new Button("Update information");
 		btn2Cancel = new Button("Cancel");
 		
-		btn1AddBook.setOnAction(new EventHandler<ActionEvent>() {
+		btn1Update.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -140,7 +140,7 @@ public class AddBookController implements Controller {
 		descriptionSection.getChildren().addAll(lbl5BookDescription, tAR5BookDescription);
 		descriptionSection.setSpacing(5);
 
-		operationsSection.getChildren().addAll(btn1AddBook, btn2Cancel);
+		operationsSection.getChildren().addAll(btn1Update, btn2Cancel);
 		operationsSection.setSpacing(5);
 		
 		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\

@@ -1,6 +1,7 @@
 package com.via.clms.shared;
 
 import java.io.Serializable;
+
 import javafx.scene.image.Image;
 
 public class Book implements Serializable {
@@ -23,6 +24,7 @@ public class Book implements Serializable {
 	}
 	
 	public Image getImage() {
+		// TODO - Future feature to be implemented.
 		return null;
 	}
 }

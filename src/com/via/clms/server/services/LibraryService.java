@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.sun.org.apache.bcel.internal.generic.LLOAD;
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.shared.Library;
 
@@ -38,7 +39,8 @@ public class LibraryService implements ILibraryService, Service {
 			while(result.next()) {
 				int lLid = result.getInt(1);
 				String lName = result.getString(2);
-				return new Library(lLid, lName);
+				String lLocation = result.getString(3);
+				return new Library(lLid, lName, lLocation);
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -56,7 +58,8 @@ public class LibraryService implements ILibraryService, Service {
 			while(result.next()) {
 			int lLid = result.getInt(1);
 			String lName = result.getString(2);
-			lbrList.add(new Library(lLid, lName));
+			String lLocation = result.getString(3);
+			lbrList.add(new Library(lLid, lName, lLocation));
 			}
 			Library[] lbrArray = new Library[lbrList.size()];
 			lbrList.toArray(lbrArray);

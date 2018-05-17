@@ -8,6 +8,7 @@ import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.Window;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -73,11 +74,6 @@ public class SearchResultController implements Controller {
 	public ComboBox<String> cb3BookLanguage;
 	public ComboBox<String> cb4BookLibraryLocation;
 
-	public String bookName;
-	public String bookAuthor;
-	public String bookYear;
-	public String bookAvailability;
-
 	Window windowInstance;
 
 	private TableView<SearchResultData> tbView1BookResults;
@@ -85,8 +81,8 @@ public class SearchResultController implements Controller {
 
 	private TableColumn<SearchResultData, String> bookNameCol1;
 	private TableColumn<SearchResultData, String> bookAuthorNameCol2;
-	private TableColumn<SearchResultData, String> bookYearCol3;
-	private TableColumn<SearchResultData, String> bookAvailabilityCol4;
+	private TableColumn<SearchResultData, Integer> bookYearCol3;
+	private TableColumn<SearchResultData, Integer> bookAvailabilityCol4;
 
 	private Button btn1Search;
 	private Button btn2UpdatePreferences;
@@ -192,16 +188,16 @@ public class SearchResultController implements Controller {
 		bookAuthorNameCol2.setPrefWidth(108);
 		bookAuthorNameCol2.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAuthor"));
 
-		bookYearCol3 = new TableColumn<SearchResultData, String>("Year");
+		bookYearCol3 = new TableColumn<SearchResultData, Integer>("Year");
 		bookYearCol3.setPrefWidth(40);
 		bookYearCol3.setStyle("-fx-alignment: CENTER;");
-		bookYearCol3.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookYear"));
+		bookYearCol3.setCellValueFactory(new PropertyValueFactory<SearchResultData, Integer>("bookYear"));
 
-		bookAvailabilityCol4 = new TableColumn<SearchResultData, String>("Available");
+		bookAvailabilityCol4 = new TableColumn<SearchResultData, Integer>("Available");
 		bookAvailabilityCol4.setPrefWidth(65);
 		bookAvailabilityCol4.setStyle("-fx-alignment: CENTER;");
 		bookAvailabilityCol4
-				.setCellValueFactory(new PropertyValueFactory<SearchResultData, String>("bookAvailability"));
+				.setCellValueFactory(new PropertyValueFactory<SearchResultData, Integer>("bookAvailability"));
 
 		tbView1BookResults.setItems(tableData);
 		tbView1BookResults.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -216,6 +212,10 @@ public class SearchResultController implements Controller {
 		btn5ViewBookDetails = new Button("View book details");
 		btn6HomeSection = new Button("Home section");
 		btn7MyProfile = new Button("My Profile");
+		
+		btn2UpdatePreferences.setStyle("-fx-color: #7EC0EE;");
+		btn3ClearSearchResults.setStyle("-fx-color: #FF9999");
+
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 
 		tbView1BookResults.setRowFactory(tv -> {
@@ -238,7 +238,7 @@ public class SearchResultController implements Controller {
 				if (tf1Search.getText().isEmpty() == false) {
 					updateTableBookResultsUI();
 					// Test data insertion:
-					tableData.add(new SearchResultData("A book search result", "Angel Petrov", "2018", "25"));
+					tableData.add(new SearchResultData("A book search result", "Angel Petrov", 2018, 25));
 				} else {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
@@ -261,7 +261,7 @@ public class SearchResultController implements Controller {
 					alertFailiure.setContentText("Please select search preferences to filter results!");
 					alertFailiure.showAndWait();
 				} else {
-					tableData.add(new SearchResultData("A book update result", "Angel Petrov", "2018", "25"));
+					tableData.add(new SearchResultData("A book update result", "Angel Petrov", 2018, 25));
 					System.out.println("Data needs to be fed at this point.");
 				}
 			}
@@ -384,9 +384,7 @@ public class SearchResultController implements Controller {
 				cb4BookLibraryLocation, btn2UpdatePreferences,lbl3SearchOptions, btn3ClearSearchResults);
 		btn2UpdatePreferences.setPrefSize(cb4BookLibraryLocation.getPrefWidth(),
 				cb4BookLibraryLocation.getPrefHeight());
-		btn2UpdatePreferences.setStyle("-fx-color: #7EC0EE;");
 		btn3ClearSearchResults.setPrefSize(btn2UpdatePreferences.getPrefWidth(), btn2UpdatePreferences.getPrefHeight());
-		btn3ClearSearchResults.setStyle("-fx-color: #FF9999");
 		bookSearchFiltersSection.setPadding(new Insets(0, 5, 0, 0));
 		bookSearchFiltersSection.setSpacing(5);
 
@@ -477,9 +475,9 @@ public class SearchResultController implements Controller {
 
 	public ObservableList<SearchResultData> updateTableBookResultsUI() {
 		return FXCollections.observableArrayList(
-				new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", "1843", "3"),
-				new SearchResultData("A Daughter of Thought", "Maryana Marrash", "1893", "2"),
-				new SearchResultData("The Iron Candlestick", "Dimitar Talev", "1952", "1"));
+				new SearchResultData("The Ugly Duckling", "Hans Christian Andersen", 1843, 3),
+				new SearchResultData("A Daughter of Thought", "Maryana Marrash", 1893, 2),
+				new SearchResultData("The Iron Candlestick", "Dimitar Talev", 1952, 1));
 	}
 
 	public void populateTable(String dataFeed) {
@@ -490,48 +488,46 @@ public class SearchResultController implements Controller {
 
 		private final SimpleStringProperty bookName;
 		private final SimpleStringProperty bookAuthor;
-		private final SimpleStringProperty bookYear;
-		private final SimpleStringProperty bookAvailability;
+		private final SimpleIntegerProperty bookYear;
+		private final SimpleIntegerProperty bookAvailability;
 
-		public SearchResultData(String bookName, String bookAuthor, String bookYear, String bookAvailability) {
+		public SearchResultData(String bookName, String bookAuthor, int bookYear, int bookAvailability) {
 			this.bookName = new SimpleStringProperty(bookName);
 			this.bookAuthor = new SimpleStringProperty(bookAuthor);
-			this.bookYear = new SimpleStringProperty(bookYear);
-			this.bookAvailability = new SimpleStringProperty(bookAvailability);
+			this.bookYear = new SimpleIntegerProperty(bookYear);
+			this.bookAvailability = new SimpleIntegerProperty(bookAvailability);
 		}
 
 		public String getBookName() {
-			return bookName.get();
+			return this.bookName.get();
 		}
 
 		public void setBookName(String bkName) {
-			bookName.set(bkName);
+			this.bookName.set(bkName);
 		}
 
 		public String getBookAuthor() {
-			return bookAuthor.get();
+			return this.bookAuthor.get();
 		}
 
-		public void setBookAuthor(String bkAuthor) {
-			bookAuthor.set(bkAuthor);
+		public void setBookAuthor(String bookAuthor) {
+			this.bookAuthor.set(bookAuthor);
 		}
 
-		public String getBookYear() {
-			return bookYear.get();
+		public int getBookYear() {
+			return this.bookYear.get();
 		}
 
-		public void setBookYear(int bkYear) {
-			String bookYearHolder = Integer.toString(bkYear);
-			bookYear.set(bookYearHolder);
+		public void setBookYear(int bookYear) {
+			this.bookYear.set(bookYear);
 		}
 
-		public String getBookAvailability() {
-			return bookAvailability.get();
+		public int getBookAvailability() {
+			return this.bookAvailability.get();
 		}
 
-		public void setBookAvailability(int bkAvailability) {
-			String bookAvailabilityHolder = Integer.toString(bkAvailability);
-			bookAvailability.set(bookAvailabilityHolder);
+		public void setBookAvailability(int bookAvailability) {
+			this.bookAvailability.set(bookAvailability);
 		}
 	}
 

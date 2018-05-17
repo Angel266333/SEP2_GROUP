@@ -15,10 +15,10 @@ public interface IInventoryService extends Remote {
 	Book getBookByBID(byte[] reqToken, int bid) throws RemoteException;
 	BookRental[] getRentalsByUID(byte[] reqToken, int lid, int uid) throws RemoteException;
 	BookRental[] getRentalsByBID(byte[] reqToken, int lid, int bid) throws RemoteException;
-	BookReservation[] getReservationsByUID(byte[] reqToken, int lid, int uid);
-	BookReservation[] getReservationsByBID(byte[] reqToken, int lid, int bid);
-	int addBook(byte[] reqToken, int lid, Book book);
-	int removeBook(byte[] reqToken, int lid, int bid);
-	int addReservation(byte[] reqToken, int lid, int bid, int uid);
+	BookReservation[] getReservationsByUID(byte[] reqToken, int lid, int uid) throws RemoteException;
+	BookReservation[] getReservationsByBID(byte[] reqToken, int lid, int bid) throws RemoteException;
+	int addBook(byte[] reqToken, int lid, Book book) throws RemoteException;
+	int removeBook(byte[] reqToken, int lid, int bid) throws RemoteException;
+	int addReservation(byte[] reqToken, int lid, int bid, int uid) throws RemoteException;
 
 }
