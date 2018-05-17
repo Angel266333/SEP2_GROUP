@@ -42,7 +42,7 @@ public abstract class ClickableTable<T> extends GridPane {
 			if(listener != null) {
 				int i = getRowIndex((Node) arg0.getSource());
 				if(arg0.getClickCount() == 2) {
-					listener.doubleClick(i);
+					listener.doubleClick(i - 1);
 					return;
 				}
 				listener.click(i - 1);
