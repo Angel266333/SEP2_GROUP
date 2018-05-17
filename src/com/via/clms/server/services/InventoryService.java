@@ -18,6 +18,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public BookRental[] getRentalsByBID(byte[] reqToken, int lid, int bid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_BOOKMGR)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookRental` WHERE `cBid` = ? AND `cLid` = ?;";
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookRental> brList = new ArrayList<>();
@@ -41,7 +45,11 @@ public class InventoryService implements IInventoryService, Service {
 	}
 
 	@Override
-	public BookReservation[] getReservationsByUID(byte[] reqToken, int lid, int uid) {
+	public BookReservation[] getReservationsByUID(byte[] reqToken, int lid, int uid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkToken(reqToken)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookReservation` WHERE `cUid` = ? AND `cLid` = ?;";
 		ResultSet result = dbs.query(q, uid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
@@ -63,7 +71,11 @@ public class InventoryService implements IInventoryService, Service {
 	}
 
 	@Override
-	public BookReservation[] getReservationsByBID(byte[] reqToken, int lid, int bid) {
+	public BookReservation[] getReservationsByBID(byte[] reqToken, int lid, int bid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_BOOKMGR)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookReservation` WHERE `cBid` = ? AND `cLid` = ?;";
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
@@ -86,39 +98,58 @@ public class InventoryService implements IInventoryService, Service {
 	}
 
 	@Override
-	public int addBook(byte[] reqToken, int lid, Book book) {
-		if (book.bid == -1) {
-			return fullAddBook(reqToken, lid, book);
-		} else {
-			return simpleAddBook(reqToken, lid, book);
+	public int addBook(byte[] reqToken, int lid, Book book) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_BOOKMGR)) {
+			return -1;
 		}
+
+		if (book.bid == -1) {
+			return fullAddBook(lid, book);
+		} else {
+			return simpleAddBook(lid, book);
+		}
+
 	}
 
-	private int fullAddBook(byte[] reqToken, int lid, Book book) {
+	private int fullAddBook(int lid, Book book) throws RemoteException {
 		String q = "INSERT INTO `Books` (cTitle, cISBN, cDescription, cImage, cRelease, cAuthor) VALUES(?, ?, ?, ?, ?, ?);";
 		int r = dbs.execute(q, book.title, book.ISBN, book.description, book.image, book.release, book.author);
-		int s = simpleAddBook(reqToken, lid, book);
+		int s = simpleAddBook(lid, book);
 		return r * s;
 	}
 
-	private int simpleAddBook(byte[] reqToken, int lid, Book book) {
+	private int simpleAddBook(int lid, Book book) {
 		String q = "UPDATE `BookInventory` SET `cInventory` = `cInventory + 1` WHERE `cBid` = ?;";
 		return dbs.execute(q, book.bid);
 	}
 
 	@Override
-	public int removeBook(byte[] reqToken, int lid, int bid) {
+	public int removeBook(byte[] reqToken, int lid, int bid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_BOOKMGR)) {
+			return -1;
+		}
 		String q = "UPDATE `BookInventory` SET `cInventory` = `cInventory - 1` WHERE `cBid` = ? AND `cLid` = ? AND `cInventory` != 0;";
 		return dbs.execute(q, bid, lid);
 	}
 
 	@Override
-	public int addReservation(byte[] reqToken, int lid, int bid, int uid) {
+	public int addReservation(byte[] reqToken, int lid, int bid, int uid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkToken(reqToken)) {
+			return -1;
+		}
+
 		String q = "INSERT INTO `BookReservations` VALUES(?, ?, ?);";
 		return dbs.execute(q, bid, lid, uid);
 	}
 
 	public Book[] getAllBooks(byte[] reqToken, int offset, int length) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkToken(reqToken)) {
+			return null;
+		}
 
 		String q = "SELECT * FROM `BookInventory` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
 		ResultSet result = dbs.query(q, offset, length);
@@ -146,7 +177,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book[] getBooks(byte[] reqToken, int lid, int offset, int length) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkToken(reqToken)) {
+		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
 		if (lid == 0) {
@@ -183,7 +214,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book[] getBooksByTitle(byte[] reqToken, int lid, String title) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkToken(reqToken)) {
+		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
 		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cTitle` = ?;";
@@ -212,7 +243,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book getBookByISBN(byte[] reqToken, int lid, String isbn) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkToken(reqToken)) {
+		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
 		String q = "SELECT FROM `BookInventory` WHERE `cLid` = ? AND `cIsbn` = ?;";
@@ -239,7 +270,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book[] getBooksByDate(byte[] reqToken, int lid, long timeLength) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkToken(reqToken)) {
+		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
 		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cRelease` BETWEEN ? AND ?;";
@@ -279,7 +310,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public Book getBookByBID(byte[] reqToken, int bid) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkToken(reqToken)) {
+		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
 		String q = "SELECT FROM `BookInventory` WHERE `cBid` = ?;";
@@ -305,7 +336,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public BookRental[] getRentalsByUID(byte[] reqToken, int lid, int uid) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if(!userService.checkPermissions(reqToken, lid, IUserService.ROLE_USERMGR)) {
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_USERMGR)) {
 			return null;
 		}
 		String q = "SELECT * FROM `BookRental` WHERE `cLid` = ? AND `cUid` = ?;";
