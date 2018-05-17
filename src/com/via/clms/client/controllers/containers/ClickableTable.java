@@ -1,6 +1,3 @@
-package com.via.clms.client.controllers.containers;
-
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -12,7 +9,7 @@ public abstract class ClickableTable<T> extends GridPane {
 	public abstract Label[] makeHeaderLabels();
 	
 	public int firstEmpty = 1;
-	ClickListener listener = null;
+	private ClickListener listener = null;
 	
 	public ClickableTable() {
 		populateHeaders();
@@ -47,6 +44,9 @@ public abstract class ClickableTable<T> extends GridPane {
 			if(listener != null) {
 				int i = getRowIndex((Node) arg0.getSource());
 				listener.click(i - 1);
+				if(arg0.getClickCount() == 2) {
+					listener.doubleClick(i);
+				}
 			}
 		}
 	};	
