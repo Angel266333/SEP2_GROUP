@@ -7,12 +7,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 public abstract class ClickableTable<T> extends GridPane {
-	
+
 	public abstract Label[] makeLabels(T dataElement);
 	public abstract Label[] makeHeaderLabels();
 	
 	public int firstEmpty = 1;
-	public int selectedRow = 0;
+	ClickListener listener = null;
 	
 	public ClickableTable() {
 		populateHeaders();
@@ -36,11 +36,18 @@ public abstract class ClickableTable<T> extends GridPane {
 	public void populateHeaders() {
 		addRow(0, makeHeaderLabels());
 	}
+
+	public void setListener(ClickListener listener) {
+		this.listener = listener;
+	}
 	
 	EventHandler<MouseEvent> onRowSelection = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent arg0) {
-			selectedRow = getRowIndex((Node) arg0.getSource());
+			if(listener != null) {
+				int i = getRowIndex((Node) arg0.getSource());
+				listener.click(i - 1);
+			}
 		}
 	};	
 }
