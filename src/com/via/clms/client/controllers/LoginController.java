@@ -17,9 +17,10 @@ public class LoginController extends ResultController<byte[]> {
 	private GridPane mainPane;
 	private String userName;
 	private String password;
+	private int lid;
 
-	public LoginController() {
-
+	public LoginController(int libraryid) {
+		lid = libraryid;
 	}
 
 	public String getTitle() {
@@ -69,8 +70,13 @@ public class LoginController extends ResultController<byte[]> {
 					
 					// If the information is valid, pass the token to the caller
 					if (token != null) {
-						setResult(token);
-						getWindow().close();
+						if (service.checkPermissions(token, lid, IUserService.ROLE_LOGIN)) {
+							setResult(token);
+							getWindow().close();
+						}
+						
+						// This user is not allowed to login
+						
 					}
 					
 				} catch (Exception e) {}

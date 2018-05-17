@@ -145,7 +145,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public Book[] getBooks(byte[] reqToken, int lid, int offset, int length) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkToken(reqToken)) {
+			return null;
+		}
 		if (lid == 0) {
 			return getAllBooks(reqToken, offset, length);
 		}
@@ -179,7 +182,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public Book[] getBooksByTitle(byte[] reqToken, int lid, String title) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkToken(reqToken)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cTitle` = ?;";
 		ResultSet result = dbs.query(q, lid, title);
 		ArrayList<Book> bookList = new ArrayList<>();
@@ -205,7 +211,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public Book getBookByISBN(byte[] reqToken, int lid, String isbn) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkToken(reqToken)) {
+			return null;
+		}
 		String q = "SELECT FROM `BookInventory` WHERE `cLid` = ? AND `cIsbn` = ?;";
 		ResultSet result = dbs.query(q, lid, isbn);
 
@@ -229,17 +238,19 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public Book[] getBooksByDate(byte[] reqToken, int lid, long timeLength) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkToken(reqToken)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cRelease` BETWEEN ? AND ?;";
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date(timeLength));
 		int year = c.get(Calendar.YEAR);
 		c.setTime(new Date(0));
-		long begin = c.getTime().getTime();
 		c.set(Calendar.YEAR, year);
-		c.set(Calendar.MONTH, Calendar.DECEMBER);
-		c.set(Calendar.DAY_OF_MONTH, 31);
+		long begin = c.getTime().getTime();
+		c.set(Calendar.YEAR, year + 1);
 		long end = c.getTime().getTime();
 
 		ResultSet result = dbs.query(q, lid, begin, end);
@@ -267,7 +278,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public Book getBookByBID(byte[] reqToken, int bid) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkToken(reqToken)) {
+			return null;
+		}
 		String q = "SELECT FROM `BookInventory` WHERE `cBid` = ?;";
 		ResultSet result = dbs.query(q, bid);
 
@@ -290,7 +304,10 @@ public class InventoryService implements IInventoryService, Service {
 
 	@Override
 	public BookRental[] getRentalsByUID(byte[] reqToken, int lid, int uid) throws RemoteException {
-
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if(!userService.checkPermissions(reqToken, lid, IUserService.ROLE_USERMGR)) {
+			return null;
+		}
 		String q = "SELECT * FROM `BookRental` WHERE `cLid` = ? AND `cUid` = ?;";
 		ResultSet result = dbs.query(q, lid, uid);
 		ArrayList<BookRental> brList = new ArrayList<>();

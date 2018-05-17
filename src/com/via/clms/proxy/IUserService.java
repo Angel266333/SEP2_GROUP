@@ -12,13 +12,16 @@ import com.via.clms.shared.User;
 public interface IUserService extends Remote {
 	
 	/** Allow access to the rental system */
-	public final static int ROLE_BOOKRENT = 0b0000001; // 1
+	public final static int ROLE_BOOKRENT = 0b0000011; // 1
 	
 	/** Allow access to book management, including rental system */
-	public final static int ROLE_BOOKMGR = 0b0100001; // 32 + 1
+	public final static int ROLE_BOOKMGR = 0b0100011; // 32 + 1
+	
+	/** Allow access to the rental system */
+	public final static int ROLE_LOGIN = 0b0000010; // 2
 	
 	/** Allow access to user management */
-	public final static int ROLE_USERMGR = 0b1000000; // 64
+	public final static int ROLE_USERMGR = 0b1000010; // 64
 	
 	/** Allow full administrative access */
 	public final static int ROLE_ADMIN = ~0; // Include ALL roles

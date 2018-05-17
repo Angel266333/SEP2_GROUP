@@ -250,7 +250,8 @@ public class HomeController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 
-				LoginController lc = new LoginController();
+				int lid = 0; // This should have been parsed to this controller at some point
+				LoginController lc = new LoginController(lid);
 				lc.setResultListener(new ResultHandler());
 				Window w = new DialogWindow(lc);
 				w.open();
