@@ -14,7 +14,11 @@ public abstract class ClickableTable<T> extends GridPane {
 
 	public int firstEmpty = 1;
 	private ClickListener listener = null;
-	private int padding = 0;
+	private VBox[] header = null;
+
+	public ClickableTable() {
+		populateHeaders();
+	}
 
 	public void clear() {
 		getChildren().clear();
@@ -38,14 +42,17 @@ public abstract class ClickableTable<T> extends GridPane {
 	}
 
 	public void populateHeaders() {
-		Label[] labels = makeHeaderLabels();
-		VBox[] b = new VBox[labels.length];
-		int i = 0;
-		for(Label l : labels) {
-			b[i] = new VBox(l);
-			b[i++].setFillWidth(true);
+		if(header == null) {
+			Label[] labels = makeHeaderLabels();
+			VBox[] b = new VBox[labels.length];
+			int i = 0;
+			for(Label l : labels) {
+				b[i] = new VBox(l);
+				b[i++].setFillWidth(true);
+			}
+			header = b;
 		}
-		addRow(0, b);
+		addRow(0, header);
 	}
 
 	public void setListener(ClickListener listener) {
