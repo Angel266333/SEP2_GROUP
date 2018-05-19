@@ -9,8 +9,8 @@ import javafx.scene.layout.VBox;
 
 public abstract class ClickableTable<T> extends GridPane {
 
-	abstract VBox[] makeBoxes(T dataElement);
-	abstract VBox[] makeHeaderBoxes();
+	abstract Label[] makeLabels(T dataElement);
+	abstract Label[] makeHeaderLabels();
 
 	public int firstEmpty = 1;
 	private ClickListener listener = null;
@@ -22,54 +22,34 @@ public abstract class ClickableTable<T> extends GridPane {
 		populateHeaders();
 	}
 
-	private void setupBoxes() {
-		for (Node n : getChildren()) {
-			n.addEventHandler(MouseEvent.MOUSE_CLICKED, onRowSelection);
-		}
-	}
-
 	public void populate(T[] dataElements) {
-		populateHeaders();
+		clear();
 		for (T element : dataElements) {
-			addRow(firstEmpty++, makeBoxes(element));
+			Label[] labels = makeLabels(element);
+			VBox[] b = new VBox[labels.length];
+			int i = 0;
+			for(Label l : labels) {
+				b[i] = new VBox(l);
+				b[i].setFillWidth(true);
+				b[i++].addEventHandler(MouseEvent.MOUSE_CLICKED, onRowSelection);
+			}
+			addRow(firstEmpty++, b);
 		}
-		setupBoxes();
 	}
 
 	public void populateHeaders() {
-		addRow(0, makeHeaderBoxes());
+		Label[] labels = makeHeaderLabels();
+		VBox[] b = new VBox[labels.length];
+		int i = 0;
+		for(Label l : labels) {
+			b[i] = new VBox(l);
+			b[i++].setFillWidth(true);
+		}
+		addRow(0, b);
 	}
 
 	public void setListener(ClickListener listener) {
 		this.listener = listener;
-	}
-
-	public void setBoxPadding(int padding) {
-		this.padding = padding;
-	}
-
-	protected VBox makeBox(String s) {
-		VBox box = new VBox(makeLabel(s));
-		box.setFillWidth(true);
-		return box;
-	}
-
-	protected VBox makeBox(long l) {
-		VBox box = new VBox(makeLabel("" + l));
-		box.setFillWidth(true);
-		return box;
-	}
-
-	protected VBox makeBox(int i) {
-		VBox box = new VBox(makeLabel("" + i));
-		box.setFillWidth(true);
-		return box;
-	}
-
-	private Label makeLabel(String s) {
-		Label l = new Label(s);
-		l.setStyle("-fx-padding: " + padding);
-		return l;
 	}
 
 	EventHandler<MouseEvent> onRowSelection = new EventHandler<MouseEvent>() {
