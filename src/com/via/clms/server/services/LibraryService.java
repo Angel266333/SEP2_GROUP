@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import com.sun.org.apache.bcel.internal.generic.LLOAD;
 import com.via.clms.proxy.ILibraryService;
+import com.via.clms.proxy.IUserService;
+import com.via.clms.server.ServiceManager;
 import com.via.clms.shared.Library;
 
 /**
@@ -22,6 +24,10 @@ public class LibraryService implements ILibraryService, Service {
 	
 	@Override
 	public boolean createLibrary(byte[] reqToken, String name) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
+			return false;
+		}
 		String q = "INSERT INTO 'Libraries' (cName)VALUES (?);";
 		int result = dbs.execute(q, name);
 		if (result == 1) {
@@ -33,6 +39,10 @@ public class LibraryService implements ILibraryService, Service {
 	
 	@Override
 	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
+			return null;
+		}
 		String q = "SELECT * FROM 'Libraries' WHERE 'lid' = ?;";
 		ResultSet result = dbs.query(q, lid);
 		try {
@@ -51,6 +61,10 @@ public class LibraryService implements ILibraryService, Service {
 
 	@Override
 	public Library[] getLibraries(byte[] reqToken, int offset, int length) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
+			return null;
+		}
 		String q = "SELECT * FROM 'Library' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
 		ResultSet result = dbs.query(q, offset, length);
 		ArrayList<Library> lbrList = new ArrayList<>();
