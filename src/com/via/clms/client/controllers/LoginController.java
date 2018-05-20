@@ -187,7 +187,6 @@ public class LoginController extends ResultController<byte[]> {
 				if (Desktop.isDesktopSupported()) {
 				    try {
 				        File myFile = new File(outputPath);
-				        window.minimize();
 				        Desktop.getDesktop().open(myFile);
 				    } catch (IOException e) {
 				    	Alert alertFailiure = new Alert(AlertType.ERROR);

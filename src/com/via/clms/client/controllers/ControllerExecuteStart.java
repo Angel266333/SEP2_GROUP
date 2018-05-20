@@ -42,7 +42,7 @@ public class ControllerExecuteStart extends Application {
 		}
 		if (controllerName == "LoginController") {
 			try {
-				LoginController loginController = new LoginController();
+				LoginController loginController = new LoginController(0);
 				primaryStage.setScene(new Scene(loginController.getComponent()));
 				primaryStage.setTitle(loginController.getTitle());
 				primaryStage.show();

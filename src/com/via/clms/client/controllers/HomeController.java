@@ -248,7 +248,7 @@ public class HomeController implements Controller {
 			public void handle(ActionEvent arg0) {
 
 				int lid = 0; // This should have been parsed to this controller at some point
-				LoginControllerOld lc = new LoginControllerOld(lid);
+				LoginController lc = new LoginController(lid);
 				lc.setResultListener(new ResultHandler());
 				Window w = new DialogWindow(lc);
 				w.open();
