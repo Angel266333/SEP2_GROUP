@@ -55,7 +55,7 @@ public class HomeController implements Controller {
 	private Button btn6MyProfile;
 	private Button btn7Lock;
 	private Button btn8Unlock;
-	private Button btn9Help;
+	
 	private boolean temp = true;
 
 	private class ResultHandler implements ResultListener<byte[]> {
@@ -131,18 +131,6 @@ public class HomeController implements Controller {
 
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
 		lbl2Actions.setPadding(new Insets(0, 0, 5, 0));
-
-		// \\/\\/\\/\\/\\-=File Fetcher=-//\\/\\/\\/\\/\\
-		
-		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		String filePath = f.toString();
-		String removeInvalidTargetPath = "bin";
-		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
-		String outputPath = "file:" + synchronizedPath + File.separator + "com" + File.separator + "via"
-				+ File.separator + "clms" + File.separator + "client" + File.separator + "graphics" + File.separator
-				+ "help.png";
-		Image imageDir = new Image(outputPath);
-		
 		
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
@@ -155,7 +143,7 @@ public class HomeController implements Controller {
 		btn6MyProfile = new Button("My Profile");
 		btn7Lock = new Button("Lock session");
 		btn8Unlock = new Button("Unlock session");
-		btn9Help = new Button("", new ImageView(imageDir));
+
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 		
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
@@ -256,35 +244,6 @@ public class HomeController implements Controller {
 			}
 
 		});
-		
-		btn9Help.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-
-				final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-				String filePath = f.toString();
-				String removeInvalidTargetPath = "bin";
-				String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
-				String outputPath = synchronizedPath + File.separator + "com" + File.separator + "via"
-						+ File.separator + "clms" + File.separator + "client" + File.separator + "help" + File.separator
-						+ "DemoGuide.pdf";
-				if (Desktop.isDesktopSupported()) {
-				    try {
-				        File myFile = new File(outputPath);
-				        window.minimize();
-				        Desktop.getDesktop().open(myFile);
-				    } catch (IOException e) {
-				    	Alert alertFailiure = new Alert(AlertType.ERROR);
-						alertFailiure.setTitle("Error Dialog");
-						alertFailiure.setHeaderText("Load resource failiure");
-						alertFailiure.setContentText("Could not load selected resource!");
-						alertFailiure.showAndWait();
-				    }
-				}
-				}
-
-		});
 
 		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
@@ -296,7 +255,7 @@ public class HomeController implements Controller {
 
 		userNotificationsSection.getChildren().addAll(lbl3Notifications, tf2Notifications);
 
-		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock, btn9Help);
+		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock);
 		userProfileSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Compact Containers To Panes=-//\\/\\/\\/\\/\\

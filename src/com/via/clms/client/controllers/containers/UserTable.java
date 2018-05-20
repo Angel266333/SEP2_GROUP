@@ -18,7 +18,11 @@ public class UserTable extends ClickableTable<User> {
 
 	@Override
 	public Label[] makeHeaderLabels() {
-		String extraSpace = "   ";
+		String extraSpace = "   "
+				+"   "
+				+"   "
+				+"   "
+				+"   ";
 		Label[] bookLabels = new Label[4];
 		bookLabels[0] = new Label("ID" + extraSpace);
 		bookLabels[1] = new Label("CPR" + extraSpace);

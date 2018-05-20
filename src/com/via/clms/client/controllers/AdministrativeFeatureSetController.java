@@ -160,7 +160,7 @@ public class AdministrativeFeatureSetController implements Controller {
 		// \\/\\/\\/\\/\\-=TextFields=-//\\/\\/\\/\\/\\
 
 		tf1SearchLibraries.setPrefColumnCount(16);
-		tf2SearchUsersByCPR.setPrefColumnCount(29);
+		tf2SearchUsersByCPR.setPrefColumnCount(16);
 		tf3SearchBooksByISBN.setPrefColumnCount(27);
 		
 		// \\/\\/\\/\\/\\-=Table Column Properties=-//\\/\\/\\/\\/\\
