@@ -56,15 +56,15 @@ public class ViewBookDetailsController implements Controller {
 		tf4BookISBN.setEditable(false);
 		
 		tAR5BookDescription = new TextArea();
-		tAR5BookDescription.setPrefHeight(250);
-		tAR5BookDescription.setPrefWidth(250);
+		tAR5BookDescription.setPrefHeight(276);
+		tAR5BookDescription.setPrefWidth(276);
 		tAR5BookDescription.setEditable(false);
 		
-		lbl1BookName = new Label("Book name:");
-		lbl2BookAuthor = new Label("Book author:");
-		lbl3BookYear = new Label("Book year:");
-		lbl4BookISBN = new Label("ISBN:");
-		lbl5BookDescription = new Label("Description:");
+		lbl1BookName = new Label("Book name (Required):");
+		lbl2BookAuthor = new Label("Book author (Required):");
+		lbl3BookYear = new Label("Book year (Required):");
+		lbl4BookISBN = new Label("ISBN (Required):");
+		lbl5BookDescription = new Label("Description (Optional):");
 		lbl5BookDescription.setPadding(new Insets(0, 0, 5, 0));
 
 		mainPane = new GridPane();
@@ -106,7 +106,7 @@ public class ViewBookDetailsController implements Controller {
 		descriptionPane.setPadding(new Insets(0, 0, 0, 5));
 
 		picturePane.add(viewImg, 0, 0);
-		picturePane.setPadding(new Insets(0, 0, 5, 24));
+		picturePane.setPadding(new Insets(0, 0, 5, 40));
 		
 		descriptionSection.getChildren().addAll(lbl5BookDescription, tAR5BookDescription);
 		descriptionSection.setSpacing(5);
@@ -133,32 +133,26 @@ public class ViewBookDetailsController implements Controller {
 
 	@Override
 	public void onWindowOpen(Window win) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void onWindowClose(Window win) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void onWindowRefresh(Window win) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void onWindowResume(Window win) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void onWindowPause(Window win) {
-		// TODO Auto-generated method stub
 
 	}
-
 }

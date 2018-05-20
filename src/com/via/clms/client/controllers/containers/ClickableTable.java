@@ -16,10 +16,6 @@ public abstract class ClickableTable<T> extends GridPane {
 	private ClickListener listener = null;
 	private VBox[] header = null;
 
-	public ClickableTable() {
-		populateHeaders();
-	}
-
 	public void clear() {
 		getChildren().clear();
 		firstEmpty = 1;

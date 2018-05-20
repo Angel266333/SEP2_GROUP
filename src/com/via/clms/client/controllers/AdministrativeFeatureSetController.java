@@ -1,43 +1,46 @@
 package com.via.clms.client.controllers;
 
+import com.via.clms.client.controllers.containers.BookTable;
 import com.via.clms.client.controllers.containers.LibraryTable;
+import com.via.clms.client.controllers.containers.UserTable;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.shared.Book;
 import com.via.clms.shared.Library;
 import com.via.clms.shared.User;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class AdministrativeFeatureSetController implements Controller {
 	
+	Window windowInstance;
+	
+	LibraryTable libraryTable;
+	UserTable userTable;
+	BookTable bookTable;
+
 	private GridPane mainPane;
 	private GridPane librariesLeftPane;
 	private GridPane bookOperationsRightPane;
 	private GridPane userOperationsMiddlePane;
+	
+	private ScrollPane libraryTableScrollPane;
+	private ScrollPane userTableScrollPane;
+	private ScrollPane bookTableScrollPane;
+	
 	private HBox innerCurrentLibrariesSection;
 	private VBox currentLibrariesSection;
 	private VBox libraryOperationsSection;
@@ -71,32 +74,6 @@ public class AdministrativeFeatureSetController implements Controller {
 	public String userEmail;
 	public String userRole;
 	
-	Window windowInstance;
-	LibraryTable libraryTable;
-	
-	private TableView<Library> tbView1Libraries;
-	private TableView<Users> tbView2LibraryUsers;
-	private TableView<Books> tbView3LibraryBooks;
-	
-	private final ObservableList<Library> tableDataLibraries = updateTableLibraries();
-	private final ObservableList<Users> tableDataUsers = updateTableUsers();
-	private final ObservableList<Books> tableDataBooks = updateTableBooks();
-	
-	private TableColumn<Library, Integer> libraryIDCol1;
-	private TableColumn<Library, String> libraryNameCol2;
-	private TableColumn<Library, String> libraryLocationCol3;
-	
-	private TableColumn<Users, Integer> userIDCol4;
-	private TableColumn<Users, Long> userCPRCol5;
-	private TableColumn<Users, String> userNameCol6;
-	private TableColumn<Users, String> userEmailCol7;
-	private TableColumn<Users, String> userRoleCol8;
-	
-	private TableColumn<Books, Integer> bookIDCol9;
-	private TableColumn<Books, Integer> bookISBNCol10;
-	private TableColumn<Books, String> bookNameCol11;
-	private TableColumn<Books, String> bookAuthorCol11;
-	private TableColumn<Books, Integer> bookYearCol12;
 	
 	private Button btn1SearchLibrariesByName;
 	private Button btn2CreateLibrary;
@@ -119,6 +96,10 @@ public class AdministrativeFeatureSetController implements Controller {
 		bookOperationsRightPane = new GridPane();
 		userOperationsMiddlePane = new GridPane();
 		
+		libraryTableScrollPane = new ScrollPane();
+		userTableScrollPane = new ScrollPane();
+		bookTableScrollPane = new ScrollPane();
+		
 		tf1SearchLibraries = new TextField();
 		tf2SearchUsersByCPR = new TextField();
 		tf3SearchBooksByISBN = new TextField();
@@ -130,9 +111,9 @@ public class AdministrativeFeatureSetController implements Controller {
 		lbl5Books = new Label("All Current Books:");
 		lbl6BookOperations = new Label("Book Operations:");
 		
-		tbView1Libraries = new TableView<Library>();
-		tbView2LibraryUsers = new TableView<Users>();
-		tbView3LibraryBooks = new TableView<Books>();
+		libraryTable = new LibraryTable();
+		userTable = new UserTable();
+		bookTable = new BookTable();
 		
 		innerCurrentLibrariesSection = new HBox();
 		currentLibrariesSection = new VBox();
@@ -154,7 +135,6 @@ public class AdministrativeFeatureSetController implements Controller {
 		return "CLMS Administration Panel";
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Parent getComponent() {
 		
@@ -164,6 +144,10 @@ public class AdministrativeFeatureSetController implements Controller {
 		mainPane.setPadding(new Insets(20, 15, 20, 15));
 		
 		librariesLeftPane.setPadding(new Insets(0, 10, 0, 10));
+		
+		libraryTableScrollPane.setPrefHeight(320);
+		userTableScrollPane.setPrefHeight(320);
+		bookTableScrollPane.setPrefHeight(320);
 		
 		libraryOperationsSection.setPadding(new Insets(10, 0, 0, 0));
 		librariesLeftPane.setPadding(new Insets(0, 5, 0, 0));
@@ -181,84 +165,6 @@ public class AdministrativeFeatureSetController implements Controller {
 		
 		// \\/\\/\\/\\/\\-=Table Column Properties=-//\\/\\/\\/\\/\\
 		
-		libraryIDCol1 = new TableColumn<Library, Integer>("LbrID");
-		libraryIDCol1.setPrefWidth(50);
-		libraryIDCol1.setStyle("-fx-alignment: CENTER;");
-		libraryIDCol1.setCellValueFactory(new PropertyValueFactory<Library, Integer>("libraryID"));
-	
-		libraryNameCol2 = new TableColumn<Library, String>("Name");
-		libraryNameCol2.setPrefWidth(180);
-		libraryNameCol2.setCellValueFactory(new PropertyValueFactory<Library, String>("libraryName"));
-		
-		libraryLocationCol3 = new TableColumn<Library, String>("Location");
-		libraryLocationCol3.setPrefWidth(92);
-		libraryLocationCol3.setStyle("-fx-alignment: CENTER;");
-		libraryLocationCol3.setCellValueFactory(new PropertyValueFactory<Library, String>("libraryLocation"));
-		
-		userIDCol4 = new TableColumn<Users, Integer>("UsrID");
-		userIDCol4.setPrefWidth(50);
-		userIDCol4.setStyle("-fx-alignment: CENTER;");
-		userIDCol4.setCellValueFactory(new PropertyValueFactory<Users, Integer>("userID"));
-		
-		userCPRCol5 = new TableColumn<Users, Long>("CPR");
-		userCPRCol5.setPrefWidth(75);
-		userCPRCol5.setStyle("-fx-alignment: CENTER;");
-		userCPRCol5.setCellValueFactory(new PropertyValueFactory<Users, Long>("userCPR"));
-		
-		userNameCol6 = new TableColumn<Users, String>("Name");
-		userNameCol6.setPrefWidth(130);
-		userNameCol6.setCellValueFactory(new PropertyValueFactory<Users, String>("userName"));
-		
-		userEmailCol7 = new TableColumn<Users, String>("Email");
-		userEmailCol7.setPrefWidth(130);
-		userEmailCol7.setCellValueFactory(new PropertyValueFactory<Users, String>("userEmail"));
-		
-		userRoleCol8 = new TableColumn<Users, String>("Role");
-		userRoleCol8.setPrefWidth(78);
-		userRoleCol8.setStyle("-fx-alignment: CENTER;");
-
-		userRoleCol8.setCellValueFactory(new PropertyValueFactory<Users, String>("userRole"));
-		
-		bookIDCol9 = new TableColumn<Books, Integer>("BkID");
-		bookIDCol9.setPrefWidth(50);
-		bookIDCol9.setStyle("-fx-alignment: CENTER;");
-		bookIDCol9.setCellValueFactory(new PropertyValueFactory<Books, Integer>("bookID"));
-		
-		bookISBNCol10 = new TableColumn<Books, Integer>("ISBN");
-		bookISBNCol10.setPrefWidth(93);
-		bookISBNCol10.setStyle("-fx-alignment: CENTER;");
-		bookISBNCol10.setCellValueFactory(new PropertyValueFactory<Books, Integer>("bookISBN"));
-		
-		bookNameCol11 = new TableColumn<Books, String>("Name");
-		bookNameCol11.setPrefWidth(130);
-		bookNameCol11.setCellValueFactory(new PropertyValueFactory<Books, String>("bookName"));
-		
-		bookAuthorCol11 = new TableColumn<Books, String>("Author");
-		bookAuthorCol11.setPrefWidth(126);
-		bookAuthorCol11.setCellValueFactory(new PropertyValueFactory<Books, String>("bookAuthor"));
-		
-		bookYearCol12 = new TableColumn<Books, Integer>("Year");
-		bookYearCol12.setPrefWidth(50);
-		bookYearCol12.setStyle("-fx-alignment: CENTER;");
-		bookYearCol12.setCellValueFactory(new PropertyValueFactory<Books, Integer>("bookYear"));
-		
-		tbView1Libraries.setItems(tableDataLibraries);
-		tbView1Libraries.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		tbView1Libraries.getColumns().addAll(libraryIDCol1, libraryNameCol2, libraryLocationCol3);
-		tbView1Libraries.setPrefHeight(280);
-		tbView1Libraries.setPrefWidth(320);
-		
-		tbView2LibraryUsers.setItems(tableDataUsers);
-		tbView2LibraryUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		tbView2LibraryUsers.getColumns().addAll(userIDCol4, userCPRCol5, userNameCol6, userEmailCol7, userRoleCol8);
-		tbView2LibraryUsers.setPrefHeight(280);
-		tbView2LibraryUsers.setPrefWidth(465);
-		
-		tbView3LibraryBooks.setItems(tableDataBooks);
-		tbView3LibraryBooks.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		tbView3LibraryBooks.getColumns().addAll(bookIDCol9, bookISBNCol10, bookNameCol11, bookAuthorCol11, bookYearCol12);
-		tbView3LibraryBooks.setPrefHeight(280);
-		tbView3LibraryBooks.setPrefWidth(453);
 		
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
@@ -300,8 +206,9 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.showAndWait();
 				}
 				else {
-					updateTableLibraries();
-					System.out.println("Initialize search. Demo data added.");
+					Library[] libraries = new Library[1];
+					libraries[0] = new Library(0001, "CLMS", "Horsens"); 
+					libraryTable.populate(libraries);
 				}
 			}
 		});
@@ -364,7 +271,7 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.setHeaderText("Search failiure");
 					alertFailiure.setContentText("Please enter only numbers!");
 					alertFailiure.showAndWait();
-				} else if (tf1SearchLibraries.getText().isEmpty()) {
+				} else if (tf2SearchUsersByCPR.getText().isEmpty()) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Search failiure");
@@ -372,8 +279,9 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.showAndWait();
 				}
 				else {
-					System.out.println("Initialize search");
-					updateTableUsers();
+					User[] users = new User[1];
+					users[0] = new User(0001); 
+					userTable.populate(users);
 				}
 			}
 		});
@@ -444,9 +352,9 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.showAndWait();
 				}
 				else {
-					System.out.println("Initialize search");
-					updateTableBooks();
-					// Initialize search
+					Book[] books = new Book[1];
+					books[0] = new Book(1010, "CLMS Guide", 40, "999", "getDescription", 2018, "An author", "Horsens" );
+					bookTable.populate(books);
 				}
 			}
 		});
@@ -503,7 +411,10 @@ public class AdministrativeFeatureSetController implements Controller {
 		innerCurrentLibrariesSection.getChildren().addAll(tf1SearchLibraries, btn1SearchLibrariesByName);
 		innerCurrentLibrariesSection.setSpacing(5);
 		
-		currentLibrariesSection.getChildren().addAll(lbl1CurrentLibraries, innerCurrentLibrariesSection, tbView1Libraries);
+		libraryTableScrollPane.setContent(libraryTable);
+		libraryTableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		
+		currentLibrariesSection.getChildren().addAll(lbl1CurrentLibraries, innerCurrentLibrariesSection, libraryTableScrollPane);
 		currentLibrariesSection.setSpacing(5);
 		
 		innerLibraryOperationsSection.getChildren().addAll(btn2CreateLibrary, btn3ModifyLibrary);
@@ -512,10 +423,14 @@ public class AdministrativeFeatureSetController implements Controller {
 		libraryOperationsSection.getChildren().addAll(lbl2LibraryOperations, innerLibraryOperationsSection, btn4RemoveLibrary);
 		libraryOperationsSection.setSpacing(5);
 		
+		
 		innerCurrentUsersSection.getChildren().addAll(tf2SearchUsersByCPR, btn5SearchUsersByCPR);
 		innerCurrentUsersSection.setSpacing(5);
 		
-		currentUsersSection.getChildren().addAll(lbl3Users, innerCurrentUsersSection, tbView2LibraryUsers);
+		userTableScrollPane.setContent(userTable);
+		userTableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+		currentUsersSection.getChildren().addAll(lbl3Users, innerCurrentUsersSection, userTableScrollPane);
 		currentUsersSection.setSpacing(5);
 		
 		innerUserOperationsSection.getChildren().addAll(btn6CreateUser, btn7ModifyUser);
@@ -527,7 +442,10 @@ public class AdministrativeFeatureSetController implements Controller {
 		innerCurrentBooksSection.getChildren().addAll(tf3SearchBooksByISBN, btn9SearchBooksByISBN);
 		innerCurrentBooksSection.setSpacing(5);
 		
-		currentBooksSection.getChildren().addAll(lbl5Books, innerCurrentBooksSection, tbView3LibraryBooks);
+		bookTableScrollPane.setContent(bookTable);
+		bookTableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		
+		currentBooksSection.getChildren().addAll(lbl5Books, innerCurrentBooksSection, bookTableScrollPane);
 		currentBooksSection.setSpacing(5);
 		
 		innerBookOperationsSection.getChildren().addAll(btn10AddBook, btn11ModifyBook, btn12BookToLibraryAssociation);
@@ -553,197 +471,22 @@ public class AdministrativeFeatureSetController implements Controller {
 		
 	}
 
-	public ObservableList<Users> updateTableUsers() {
-		return FXCollections.observableArrayList(
-				
-	}
-	
-	public ObservableList<Library> updateTableLibraries() {
-
-		return FXCollections.observableArrayList(
-				new Library(1, "Demo", "Demo"),
-				new Library(2, "Demo", "Demo"));
-	}
-	
-	public ObservableList<Books> updateTableBooks() {
-		return FXCollections.observableArrayList(
-				new Books(0001, "98337", "Demo", "Demo", 2018));
-
-	}
-	
-//	public class Library {
-//		
-//		private int libraryID;
-//		private String libraryName;
-//		private String libraryLocation;
-//
-//
-//		public Library(int libraryID, String libraryName, String libraryLocation) {
-//			this.libraryID = libraryID;
-//			this.libraryName = libraryName;
-//			this.libraryLocation = libraryLocation;
-//			
-//		}
-//		public int getLibraryID() {
-//			return this.libraryID;
-//		}
-//		
-//		public void setLibraryID(int libraryID) {
-//			this.libraryID = libraryID;
-//		}
-//		
-//		public String getLibraryName() {
-//			return this.libraryName;
-//		}
-//		
-//		public void setLibraryName(String libraryName) {
-//			this.libraryName = libraryName;
-//		}
-//		
-//		public String getLibraryLocation() {
-//			return this.libraryLocation;
-//		}
-//		
-//		public void setLibraryLocation(String libraryLocation) {
-//			this.libraryLocation = libraryLocation;
-//		}
-//	}
-	
-	public class Users {
-
-		private final SimpleIntegerProperty userID;
-		private final SimpleLongProperty userCPR;
-		private final SimpleStringProperty userName;
-		private final SimpleStringProperty userEmail;
-		private final SimpleStringProperty userRole;
-		
-		public Users(int userID, long userCPR, String userName, String userEmail, String userRole) {
-			this.userID = new SimpleIntegerProperty(userID);
-			this.userCPR = new SimpleLongProperty(userCPR);
-			this.userName = new SimpleStringProperty(userName);
-			this.userEmail = new SimpleStringProperty(userEmail);
-			this.userRole = new SimpleStringProperty(userRole);
-			
-		}
-		
-		public int getUserID() {
-			return userID.get();
-		}
-		
-		public void setUserID(int userID) {
-			this.userID.set(userID);	
-		}
-		
-		public long getUserCPR() {
-			return userCPR.get(); 
-		}
-		
-		public void setUserCPR(long userCPR) {
-			this.userCPR.set(userCPR);
-		}
-		
-		public String getUserName() {
-			return this.userName.get();
-		}
-		
-		public void setUserName(String userName) {
-			this.userName.set(userName);
-		}
-		
-		public String getUserEmail() {
-			return this.userEmail.get();
-		}
-		
-		public void setUserEmail(String userEmail) {
-			this.userEmail.set(userEmail);
-		}
-		
-		public String getUserRole() {
-			return this.userRole.get();
-		}
-		
-		public void setUserRole(String userRole) {
-			this.userRole.set(userRole);
-		}
-	}
-	
-	public class Books {
-		
-		private int bookID;
-		private String bookISBN;
-		private String bookName;
-		private String bookAuthor;
-		private int bookYear;
-		
-		public Books(int bookID, String bookISBN, String bookName, String bookAuthor, int bookYear) {
-			this.bookID = bookID;
-			this.bookISBN = bookISBN;
-			this.bookName = bookName;
-			this.bookAuthor = bookAuthor;
-			this.bookYear = bookYear;
-			
-		}
-		
-		public int getBookID() {
-			return this.bookID;	
-		}
-		
-		public void setBookID(int bookID) {
-			this.bookID = bookID;
-		}
-		
-		public String getBookISBN() {
-			return this.bookISBN;
-		}
-		
-		public void setBookISBN(String bookISBN) {
-			this.bookISBN = bookISBN;
-		}
-		
-		public String getBookName() {
-			return this.bookName;
-		}
-		
-		public void setBookName(String bookName) {
-			this.bookName = bookName;
-		}
-		
-		public String getBookAuthor() {
-			return this.bookAuthor;
-		}
-		
-		public void setBookAuthor(String bookAuthor) {
-			this.bookAuthor = bookAuthor;
-		}
-		
-		public int getBookYear() {
-			return this.bookYear;
-		}
-		
-		public void setBookYear(int bookYear) {
-			this.bookYear = bookYear;
-		}
-	}
-
 	public boolean tableValueGuardNoBooksLibrariesSection() {
-		ObservableList<Library> noCells = tbView1Libraries.getSelectionModel().getSelectedItems();
-		if (noCells.size() == 0) {
+		if (libraryTable.getChildren().size() == 0) {
 			return false;
 		}
 		return true;
 	}
 	
 	public boolean tableValueGuardNoBooksUsersSection() {
-		ObservableList<Users> noCells = tbView2LibraryUsers.getSelectionModel().getSelectedItems();
-		if (noCells.size() == 0) {
+		if (userTable.getChildren().size() == 0) {
 			return false;
 		}
 		return true;
 	}
 	
 	public boolean tableValueGuardNoBooksBooksSection() {
-		ObservableList<Books> noCells = tbView3LibraryBooks.getSelectionModel().getSelectedItems();
-		if (noCells.size() == 0) {
+		if (bookTable.getChildren().size() == 0) {
 			return false;
 		}
 		return true;

@@ -10,10 +10,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -90,7 +92,17 @@ public class CreateUserController implements Controller {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
-				
+				if (tf1UserName.getText().isEmpty() 
+						|| tf2UserPassword.getText().isEmpty()
+						|| tf3UserEmail.getText().isEmpty()) {
+						Alert alertFailiure = new Alert(AlertType.ERROR);
+						alertFailiure.setTitle("Error Dialog");
+						alertFailiure.setHeaderText("No information was filled in");
+						alertFailiure.setContentText("Please fill in all fields!");
+						alertFailiure.showAndWait();
+					} else {
+					// TODO - Execute function ---> Creating a new user
+					}
 			}
 		});
 		

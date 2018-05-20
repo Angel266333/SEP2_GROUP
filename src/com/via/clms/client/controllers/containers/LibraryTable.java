@@ -2,44 +2,34 @@ package com.via.clms.client.controllers.containers;
 
 import com.via.clms.shared.Library;
 
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 
-public class LibraryTable extends GridPane {
+public class LibraryTable extends ClickableTable<Library> {
 
-	public int firstEmpty = 1;
-	public int selectedRow = 0;
-	
-	public LibraryTable() {
-		populateHeaders();
-		for (Node n : getChildren()) {
-			n.addEventHandler(MouseEvent.MOUSE_CLICKED, onBookSelection);
-		}
+	@Override
+	public Label[] makeLabels(Library dataElement) {
+		Label[] libraryLabels = new Label[3];
+		libraryLabels[0] = new Label(" " + dataElement.lid);
+		libraryLabels[1] = new Label("" + dataElement.name);
+		libraryLabels[2] = new Label(dataElement.location);
+		return libraryLabels;
 	}
 
-	public void clear() {
-		getChildren().clear();
-		firstEmpty = 1;
-		populateHeaders();
+	@Override
+	public Label[] makeHeaderLabels() {
+		// If it works, don't break it, improve it.
+		String extraSpace = "   "
+				+ "    "     ////////
+				+ "    " 	///////
+				+ "    "   //////
+				+ "    "  /////
+				+ "    " ////
+				+ "    "///
+				+ "  ";//
+		Label[] libraryLabels = new Label[3];
+		libraryLabels[0] = new Label("LID" + extraSpace);
+		libraryLabels[1] = new Label("Name" + extraSpace);
+		libraryLabels[2] = new Label("Location");
+		return libraryLabels;
 	}
-
-	public void populate(Library[] libraries) {
-		for (Library l : libraries) {
-			addRow(firstEmpty++, new Label("" + l.lid), new Label(l.name), new Label(l.location));
-		}
-	}
-	
-	private void populateHeaders() {
-		addRow(0, new Label("ID"), new Label("Name"), new Label("Location"));
-	}
-	
-	EventHandler<MouseEvent> onBookSelection = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent arg0) {
-			selectedRow = getRowIndex((Node) arg0.getSource());
-		}
-	};
 }

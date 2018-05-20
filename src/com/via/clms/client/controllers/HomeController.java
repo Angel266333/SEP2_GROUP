@@ -45,9 +45,8 @@ public class HomeController implements Controller {
 	private TextField tf2Notifications;
 
 	private Label lbl1Search;
-	private Label lbl2SearchResults;
-	private Label lbl3Actions;
-	private Label lbl4Notifications;
+	private Label lbl2Actions;
+	private Label lbl3Notifications;
 	private Button btn1Search;
 	private Button btn2Rent;
 	private Button btn3Return;
@@ -96,9 +95,8 @@ public class HomeController implements Controller {
 		tf2Notifications = new TextField();
 
 		lbl1Search = new Label("Search for books:");
-		lbl2SearchResults = new Label("Search Results");
-		lbl3Actions = new Label("Actions:");
-		lbl4Notifications = new Label("Notifications:");
+		lbl2Actions = new Label("Actions:");
+		lbl3Notifications = new Label("Notifications:");
 
 		searchSection = new HBox();
 		actionSection = new HBox();
@@ -132,7 +130,7 @@ public class HomeController implements Controller {
 		// \\/\\/\\/\\/\\-=Label Properties=-//\\/\\/\\/\\/\\
 
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
-		lbl3Actions.setPadding(new Insets(0, 0, 5, 0));
+		lbl2Actions.setPadding(new Insets(0, 0, 5, 0));
 
 		// \\/\\/\\/\\/\\-=File Fetcher=-//\\/\\/\\/\\/\\
 		
@@ -173,7 +171,6 @@ public class HomeController implements Controller {
 					alertFailiure.showAndWait();
 			} else {
 				SearchResultController src = new SearchResultController();
-				src.populateTable(resultParse);
 				Window w = new DialogWindow(src);
 				src.tf1Search.setText(resultParse);
 				w.open();
@@ -251,7 +248,7 @@ public class HomeController implements Controller {
 			public void handle(ActionEvent arg0) {
 
 				int lid = 0; // This should have been parsed to this controller at some point
-				LoginController lc = new LoginController(lid);
+				LoginControllerOld lc = new LoginControllerOld(lid);
 				lc.setResultListener(new ResultHandler());
 				Window w = new DialogWindow(lc);
 				w.open();
@@ -283,7 +280,6 @@ public class HomeController implements Controller {
 						alertFailiure.setHeaderText("Load resource failiure");
 						alertFailiure.setContentText("Could not load selected resource!");
 						alertFailiure.showAndWait();
-						e.printStackTrace();
 				    }
 				}
 				}
@@ -298,7 +294,7 @@ public class HomeController implements Controller {
 		actionSection.getChildren().addAll(btn2Rent, btn3Return, btn4Renew, btn5GodMode);
 		actionSection.setSpacing(5);
 
-		userNotificationsSection.getChildren().addAll(lbl4Notifications, tf2Notifications);
+		userNotificationsSection.getChildren().addAll(lbl3Notifications, tf2Notifications);
 
 		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock, btn9Help);
 		userProfileSection.setSpacing(5);
@@ -308,7 +304,7 @@ public class HomeController implements Controller {
 		searchPane.add(lbl1Search, 0, 0);
 		searchPane.add(searchSection, 0, 1);
 
-		actionPane.add(lbl3Actions, 0, 0);
+		actionPane.add(lbl2Actions, 0, 0);
 		actionPane.add(actionSection, 0, 1);
 
 		notificationPane.add(userNotificationsSection, 0, 0);
@@ -333,30 +329,28 @@ public class HomeController implements Controller {
 
 	@Override
 	public void onWindowOpen(Window win) {
-
 		this.window = win;
 
 	}
 
 	@Override
 	public void onWindowClose(Window win) {
-
+		this.window = win;
 	}
 
 	@Override
 	public void onWindowRefresh(Window win) {
-
+		this.window = win;
 	}
 
 	@Override
 	public void onWindowResume(Window win) {
-		// TODO Auto-generated method stub
-
+		this.window = win;
 	}
 
 	@Override
 	public void onWindowPause(Window win) {
-		// TODO Auto-generated method stub
+		this.window = win;
 
 	}
 

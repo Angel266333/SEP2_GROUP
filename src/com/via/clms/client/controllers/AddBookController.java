@@ -2,7 +2,6 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
-import com.via.clms.client.controllers.SearchResultController.SearchResultData;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -63,14 +62,14 @@ public class AddBookController implements Controller {
 		tf4BookISBN = new TextField();
 		
 		tAR5BookDescription = new TextArea();
-		tAR5BookDescription.setPrefHeight(252);
-		tAR5BookDescription.setPrefWidth(252);
+		tAR5BookDescription.setPrefHeight(276);
+		tAR5BookDescription.setPrefWidth(276);
 		
 		lbl1BookName = new Label("Book name:");
 		lbl2BookAuthor = new Label("Book author:");
 		lbl3BookYear = new Label("Book year:");
 		lbl4BookISBN = new Label("ISBN:");
-		lbl5BookDescription = new Label("Description:");
+		lbl5BookDescription = new Label("Description (Optional):");
 		lbl5BookDescription.setPadding(new Insets(0, 0, 5, 0));
 
 		mainPane = new GridPane();
@@ -110,7 +109,19 @@ public class AddBookController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-			}	
+			if (tf1BookName.getText().isEmpty()
+				|| tf2BookAuthor.getText().isEmpty()
+				|| tf3BookYear.getText().isEmpty()
+				|| tf4BookISBN.getText().isEmpty()) {
+				Alert alertFailiure = new Alert(AlertType.ERROR);
+				alertFailiure.setTitle("Error Dialog");
+				alertFailiure.setHeaderText("No information was filled in");
+				alertFailiure.setContentText("Please fill in all fields!");
+				alertFailiure.showAndWait();
+			} else {
+			// TODO - Execute function ---> Adding book to library
+			}
+			}
 		});
 		
 		btn2Cancel.setOnAction(new EventHandler<ActionEvent>() {
@@ -135,7 +146,7 @@ public class AddBookController implements Controller {
 		descriptionPanePlusOperations.setPadding(new Insets(0, 0, 0, 5));
 
 		picturePane.add(viewImg, 0, 0);
-		picturePane.setPadding(new Insets(0, 0, 5, 24));
+		picturePane.setPadding(new Insets(0, 0, 5, 40));
 		
 		descriptionSection.getChildren().addAll(lbl5BookDescription, tAR5BookDescription);
 		descriptionSection.setSpacing(5);
