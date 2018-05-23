@@ -145,6 +145,32 @@ public class InventoryService implements IInventoryService, Service {
 		return dbs.execute(q, bid, lid, uid);
 	}
 
+	private Book[] bookArrayBuild(ResultSet result) {
+		try {
+			ArrayList<Book> bookList = new ArrayList<>();
+			while (result.next()) {
+				int bid = result.getInt(1);
+				String q = "SELECT `cInventory`,`cLocation` FROM `BookInventory` WHERE `cBid`=?;";
+				ResultSet rs = dbs.query(q, bid);
+				if(rs.next()) {
+					String title = result.getString(2);
+					int inventory = rs.getInt(1);
+					String isbn = result.getString(3);
+					String desc = result.getString(4);
+					long release = result.getLong(6);
+					String author = result.getString(7);
+					String location = rs.getString(2);
+					bookList.add(new Book(bid, title, inventory, isbn, desc, release, author, location));
+				}
+			}
+			Book[] bookArray = new Book[bookList.size()];
+			bookList.toArray(bookArray);
+			return bookArray;
+		} catch(Exception e) {
+			return null;
+		}
+	}
+
 	public Book[] getAllBooks(byte[] reqToken, int offset, int length) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
 		if (!userService.checkToken(reqToken)) {
@@ -153,25 +179,7 @@ public class InventoryService implements IInventoryService, Service {
 
 		String q = "SELECT * FROM `BookInventory` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
 		ResultSet result = dbs.query(q, offset, length);
-		ArrayList<Book> bookList = new ArrayList<>();
-		try {
-
-			while (result.next()) {
-				int nBid = result.getInt(1);
-				String nTitle = result.getString(2);
-				int nInventory = result.getInt(3);
-				String nISBN = result.getString(4);
-				String nDescription = result.getString(5);
-
-				bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
-			}
-			Book[] bookArray = new Book[bookList.size()];
-			bookList.toArray(bookArray);
-			return bookArray;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+		return bookArrayBuild(result);
 	}
 
 	@Override
@@ -184,31 +192,9 @@ public class InventoryService implements IInventoryService, Service {
 			return getAllBooks(reqToken, offset, length);
 		}
 
-		else {
-			String q = "SELECT * FROM `BookInventory` WHERE 'cLid' = ?  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
-			ResultSet result = dbs.query(q, lid, offset, length);
-			ArrayList<Book> bookList = new ArrayList<>();
-			try {
-
-				while (result.next()) {
-					int nBid = result.getInt(1);
-					String nTitle = result.getString(2);
-					int nInventory = result.getInt(3);
-					String nISBN = result.getString(4);
-					String nDescription = result.getString(5);
-
-					bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
-				}
-				Book[] bookArray = new Book[bookList.size()];
-				bookList.toArray(bookArray);
-				return bookArray;
-			} catch (SQLException e) {
-				System.out.println(e.getMessage());
-				return null;
-			}
-
-		}
-
+		String q = "SELECT * FROM `BookInventory` WHERE 'cLid' = ?  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+		ResultSet result = dbs.query(q, lid, offset, length);
+		return bookArrayBuild(result);
 	}
 
 	@Override
@@ -219,25 +205,7 @@ public class InventoryService implements IInventoryService, Service {
 		}
 		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ? AND `cTitle` = ?;";
 		ResultSet result = dbs.query(q, lid, title);
-		ArrayList<Book> bookList = new ArrayList<>();
-		try {
-
-			while (result.next()) {
-				int nBid = result.getInt(1);
-				String nTitle = result.getString(2);
-				int nInventory = result.getInt(3);
-				String nISBN = result.getString(4);
-				String nDescription = result.getString(5);
-
-				bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
-			}
-			Book[] bookArray = new Book[bookList.size()];
-			bookList.toArray(bookArray);
-			return bookArray;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+		return bookArrayBuild(result);
 	}
 
 	@Override
@@ -248,23 +216,11 @@ public class InventoryService implements IInventoryService, Service {
 		}
 		String q = "SELECT FROM `BookInventory` WHERE `cLid` = ? AND `cIsbn` = ?;";
 		ResultSet result = dbs.query(q, lid, isbn);
-
-		try {
-
-			int nBid = result.getInt(1);
-			String nTitle = result.getString(2);
-			int nInventory = result.getInt(3);
-			String nISBN = result.getString(4);
-			String nDescription = result.getString(5);
-
-			Book b = new Book(nBid, nTitle, nInventory, nISBN, nDescription);
-
-			return b;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+		Book[] books = bookArrayBuild(result);
+		if(books.length < 1) {
 			return null;
 		}
-
+		return books[0];
 	}
 
 	@Override
@@ -285,26 +241,7 @@ public class InventoryService implements IInventoryService, Service {
 		long end = c.getTime().getTime();
 
 		ResultSet result = dbs.query(q, lid, begin, end);
-		ArrayList<Book> bookList = new ArrayList<>();
-		try {
-
-			while (result.next()) {
-				int nBid = result.getInt(1);
-				String nTitle = result.getString(2);
-				int nInventory = result.getInt(3);
-				String nISBN = result.getString(4);
-				String nDescription = result.getString(5);
-
-				bookList.add(new Book(nBid, nTitle, nInventory, nISBN, nDescription));
-			}
-			Book[] bookArray = new Book[bookList.size()];
-			bookList.toArray(bookArray);
-			return bookArray;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
-
+		return bookArrayBuild(result);
 	}
 
 	@Override
@@ -313,24 +250,14 @@ public class InventoryService implements IInventoryService, Service {
 		if (!userService.checkToken(reqToken)) {
 			return null;
 		}
+
 		String q = "SELECT FROM `BookInventory` WHERE `cBid` = ?;";
 		ResultSet result = dbs.query(q, bid);
-
-		try {
-
-			int nBid = result.getInt(1);
-			String nTitle = result.getString(2);
-			int nInventory = result.getInt(3);
-			String nISBN = result.getString(4);
-			String nDescription = result.getString(5);
-
-			Book b = new Book(nBid, nTitle, nInventory, nISBN, nDescription);
-
-			return b;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+		Book[] books = bookArrayBuild(result);
+		if(books.length < 1) {
 			return null;
 		}
+		return books[0];
 	}
 
 	@Override
