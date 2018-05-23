@@ -17,13 +17,13 @@ public class Book implements Serializable {
 	public String language;
 	public String location;
 
-	public Book(int bid, String title, int inventory, String ISBN, String description, long relase, String author, String location) {
+	public Book(int bid, String title, int inventory, String ISBN, String description, long release, String author, String location) {
 		this.bid = bid;
 		this.title = title;
 		this.inventory = inventory;
 		this.ISBN = ISBN;
 		this.description = description;
-		this.release = relase;
+		this.release = release;
 		this.author = author;
 		this.location = location;
 	}
