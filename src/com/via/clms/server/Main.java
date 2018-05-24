@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import com.via.clms.Log;
 import com.via.clms.Utils;
@@ -41,10 +42,13 @@ public class Main {
 		
 		daemon:
 		for (;;) {
-			switch ( Utils.readInput("CLMS Shell $ ") ) {
+			String[] parts = Utils.readInput("CLMS Shell $ ").split("\\s+");
+			
+			switch (parts[0]) {
 				case "help": 
 					print(
 						"Commands:",
+						"\ttoken <cpr> <pass>:\tCreate user token",
 						"\tstatus:\tGet service registry status",
 						"\tstart:\tStart the service registry",
 						"\tstop:\tStop the service registry",
@@ -125,11 +129,22 @@ public class Main {
 					
 					break;
 					
+				case "token":
+					if (parts.length < 3) {
+						print("Tokens must have a CPR number and a password"); break;
+					}
+					
+					long cpr = Long.parseLong(parts[1]);
+					String passwd = parts[2];
+					byte[] tok = UserService.generateUserToken(cpr, passwd);
+					
+					print("Token: " + Utils.tokenToString(tok));
+					
 				case "exit": 
 					break daemon;
 					
 				default:
-					print("Unknown command!");
+					print("Unknown command '" + parts[0] + "'!");
 			}
 		}
 		

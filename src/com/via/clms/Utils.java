@@ -17,7 +17,7 @@ public class Utils {
 	 */
 	public static String readInput(String msg) {
 		System.out.print(msg);
-		String input = Utils.input.next();
+		String input = Utils.input.nextLine();
 		
 		return input;
 	}
