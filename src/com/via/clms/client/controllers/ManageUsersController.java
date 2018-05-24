@@ -1,4 +1,5 @@
 package com.via.clms.client.controllers;
+import com.via.clms.client.controllers.containers.ManageUsersTable;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 import com.via.clms.shared.User;
@@ -27,7 +28,7 @@ public class ManageUsersController implements Controller {
 	Button submitButton;
 	TextField listBarTF;
 	Button listBarSearch;
-	UsersListPane ulPane;
+	ManageUsersTable ulPane;
 
 	@Override
 	public String getTitle() {
@@ -70,8 +71,7 @@ public class ManageUsersController implements Controller {
 		alu.addAll(Arrays.asList(testUsers));
 		testUsers = Arrays.copyOf(alu.toArray(), alu.size(), User[].class);
 		ScrollPane scrollPane = new ScrollPane();
-		ulPane = new UsersListPane();
-		ulPane.populate(testUsers);
+		ulPane = new ManageUsersTable();
 		scrollPane.setContent(ulPane);
 		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scrollPane.autosize();
@@ -108,56 +108,6 @@ public class ManageUsersController implements Controller {
 
 	}
 
-	private class UsersListPane extends GridPane {
-		int firstEmpty = 0;
-
-		private class ClickHandler implements EventHandler<MouseEvent> {
-			int uid;
-
-			public ClickHandler(int uid) {
-				this.uid = uid;
-			}
-
-			@Override
-			public void handle(MouseEvent event) {
-				updateLeft(uid);
-			}
-		}
-
-		public void clearList() {
-			super.getChildren().clear();
-			firstEmpty = 0;
-		}
-
-		private String cprPretty(long cpr) {
-			char[] cprArray = ("" + cpr).toCharArray();
-			StringBuffer sb = new StringBuffer();
-			sb.append(Arrays.copyOfRange(cprArray, 0, 4));
-			sb.append(' ');
-			sb.append(Arrays.copyOfRange(cprArray, 4, 6));
-			sb.append(" - ");
-			sb.append(Arrays.copyOfRange(cprArray, 6, 10));
-			return sb.toString();
-		}
-
-		public void populate(User[] users) {
-			clearList();
-			for(User u : users) {
-				ClickHandler ch = new ClickHandler(u.uid);
-				Label a = new Label("" + u.uid);
-				Label b = new Label(cprPretty(u.cpr));
-				Label c = new Label(u.name);
-				for(Label l : new Label[]{a, b, c}) {
-					l.addEventFilter(MouseEvent.MOUSE_CLICKED, ch);
-					l.setStyle("-fx-padding: 5px 20px 5px 0px");
-				}
-				super.addRow(firstEmpty, a, b, c);
-				firstEmpty++;
-				super.add(new Separator(Orientation.HORIZONTAL), 0, firstEmpty, 5, 1);
-				firstEmpty++;
-			}
-		}
-	}
 
 	private void updateLeft(int uid) {
 		uidTF.setText("" + uid);
