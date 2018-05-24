@@ -140,6 +140,8 @@ public class Main {
 					
 					print("Token: " + Utils.tokenToString(tok));
 					
+					break;
+					
 				case "exit": 
 					break daemon;
 					
