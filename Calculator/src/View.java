@@ -1,10 +1,15 @@
 
 import java.util.Scanner;
 
+/*
+ * This class simulates the view of the calculator to the console
+ * The console keeps shoing the result after entering each value just like a simple calculator
+ * Remember to press enter after and befor entering each operation sign
+ */
 public class View {
 
 	public static void main(String[] args) {
-		String operation = null;
+		String operation = null; // This is where the operation sign is stored
 		Calculator calculator = new Calculator();
 		Scanner scanner = new Scanner(System.in);
 
@@ -12,7 +17,7 @@ public class View {
 
 		while (true) {
 
-			if (scanner.hasNextDouble()) {
+			if (scanner.hasNextDouble()) { // The state of catching a number
 
 				double enteredNumber = 0;
 				enteredNumber = scanner.nextDouble();
@@ -20,13 +25,18 @@ public class View {
 
 			}
 
+			/*
+			 * next while loop is to validate the operation sign and to make sure the user
+			 * can change the operation sign just by pressing another sign.
+			 */
+
 			while (scanner.hasNextLine() && !calculator.getAvailableOperations().contains(operation)) {
 
 				String sign = scanner.nextLine();
 
 				if ((sign.length() == 1) && (calculator.getAvailableOperations().contains(sign))) {
 					operation = sign;
-					if (operation.equals("o")) {
+					if (operation.equals("o")) { // clearing the display when pressing On
 						calculator.clear();
 					}
 
@@ -35,6 +45,10 @@ public class View {
 				System.out.println(calculator.getResult());
 
 			}
+			
+			/*
+			 * catching the second number, sending it to the model to do the calculation, and displaying the result
+			 */
 
 			if (!operation.equals("o") && scanner.hasNextDouble()) {
 
@@ -60,7 +74,7 @@ public class View {
 
 			}
 
-			operation = null;
+			operation = null;  // forgetting the operation sign
 
 		}
 
