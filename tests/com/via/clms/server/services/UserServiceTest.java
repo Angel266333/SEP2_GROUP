@@ -2,16 +2,12 @@ package com.via.clms.server.services;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import com.via.clms.Utils;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
@@ -21,42 +17,62 @@ import com.via.clms.server.ServiceManager;
  */
 public class UserServiceTest {
 	
+	/** * */
+	private static final byte[] mToken;
+	
+	/** * */
+	private static final long mCpr = 1234567878L;
+	
+	/** * */
+	private static final String mPasswd = "123456";
+	
+	/**
+	 * 
+	 */
+	static {
+		mToken = UserService.generateUserToken(mCpr, mPasswd);
+	}
+	
 	/**
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 * @throws SQLException 
 	 */
 	@BeforeClass
-	public static void initialize() throws InstantiationException, IllegalAccessException, SQLException {
-		
+	public static void initialize() throws InstantiationException, IllegalAccessException, SQLException {		
 		ServerInstantiator.initialize();
 		
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-		int res = db.execute("INSERT INTO Users (cCpr, cName, cEmail, cToken) VALUES (?,?,?,?)",
-				1234567878L,
-				"Test",
-				"test@domain.com",
-				Utils.tokenToString(
-						UserService.generateUserToken(1234567878L, "123456")	
-				)
-		);
+		int uid = getUid();
 		
-		if (res <= 0) {
-			Assert.fail("Failed to setup test user in the database");
+		if (uid < 0) {
+			int res = db.execute("INSERT INTO Users (cCpr, cName, cEmail, cToken) VALUES (?,?,?,?)",
+					1234567878L,
+					"Test",
+					"test@domain.com",
+					Utils.tokenToString(mToken)
+			);
+			
+			if (res <= 0) {
+				Assert.fail("Failed to setup test user in the database");
+			}
+			
+			uid = getUid();
 		}
-		
-		ResultSet result = db.query("SELECT cUid FROM Users WHERE cCpr = ?", 1234567878L);
-		
-		if (!result.next()) {
-			Assert.fail("Could not retrieve uid from test user in database");
-		}
-		
-		int uid = result.getInt("cUid");
-		res = db.execute("INSERT INTO UserRoles (cUid, cLid, cRole) VALUES (?,?,?)", 0, uid, IUserService.ROLE_LOGIN);
-		
-		if (res <= 0) {
+
+		if (!hasRoles() && uid > 0) {
+			int res = db.execute("INSERT INTO UserRoles (cUid, cLid, cRole) VALUES (?,?,?)", uid, 0, IUserService.ROLE_LOGIN);
+			
+			if (res <= 0) {
+				Assert.fail("Failed to setup test user roles in the database");
+			}
+			
+		} else if (uid <= 0) {
 			Assert.fail("Failed to setup test user roles in the database");
 		}
+		
+		// Make sure that byte/string parsing works as expected
+		Assert.assertEquals(Utils.tokenToString(mToken), Utils.tokenToString(Utils.tokenToBytes(Utils.tokenToString(mToken))));
 	}
 	
 	/**
@@ -65,27 +81,61 @@ public class UserServiceTest {
 	 */
 	@AfterClass
 	public static void deinitialize() throws SQLException {
+		int uid = getUid();
+		
+		if (uid > 0) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			db.execute("DELETE FROM Users WHERE cUid = ?", uid);
+			db.execute("DELETE FROM UserRoles WHERE cUid = ?", uid);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private static int getUid() {
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT cUid FROM Users WHERE cCpr = ?", mCpr);
+		int uid = -1;
 		
-		ResultSet result = db.query("SELECT cUid FROM Users WHERE cCpr = ?", 1234567878L);
+		try {
+			if (result.next()) {
+				uid = result.getInt("cUid");
+			}
+			
+			result.close();
+			
+		} catch (SQLException ignore) {}
 		
-		if (!result.next()) {
-			Assert.fail("Could not retrieve uid from test user in database");
+		return uid;
+	}
+	
+	/**
+	 * 
+	 */
+	private static boolean hasRoles() {
+		int uid = getUid();
+		
+		if (uid < 0) {
+			return false;
 		}
 		
-		int uid = result.getInt("cUid");
-		int res = db.execute("DELETE FROM Users WHERE cUid = ?", uid);
-		int res2 = db.execute("DELETE FROM Users WHERE cUid = ?", uid);
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT COUNT(*) as cCount FROM UserRoles WHERE cLid = ? AND cUid = ?", 0, uid);
 		
-		ServerInstantiator.deinitialize();
-		
-		if (res <= 0) {
-			Assert.fail("Failed to remove test user from the database");
+		try {
+			if (result.next()) {
+				return result.getInt("cCount") > 0;
+			}
+			
+		} catch (SQLException ignore) {} finally {
+			try {
+				result.close();
+				
+			} catch (SQLException e) {}
 		}
 		
-		if (res2 <= 0) {
-			Assert.fail("Failed to remove test user roles from the database");
-		}
+		return false;
 	}
 	
 	/**
@@ -94,9 +144,7 @@ public class UserServiceTest {
 	@Test
 	public void checkTokenTest() {
 		UserService user = (UserService) ServiceManager.getService("user");
-		Assert.assertEquals(true, user.checkToken(
-				UserService.generateUserToken(1234567878L, "123456")
-		));
+		Assert.assertEquals(true, user.checkToken(mToken));
 	}
 	
 	/**
@@ -106,8 +154,8 @@ public class UserServiceTest {
 	public void getTokenTest() {
 		UserService user = (UserService) ServiceManager.getService("user");
 		Assert.assertEquals(
-				UserService.generateUserToken(1234567878L, "123456"),
-				user.getUserToken(1234567878L, "123456")
+				Utils.tokenToString(mToken),
+				Utils.tokenToString(user.getUserToken(mCpr, mPasswd))
 		);
 	}
 	
@@ -118,7 +166,7 @@ public class UserServiceTest {
 	public void checkPermissionsTest() {
 		UserService user = (UserService) ServiceManager.getService("user");
 		Assert.assertEquals(true, user.checkPermissions(
-				UserService.generateUserToken(1234567878L, "123456"),
+				mToken,
 				0,
 				IUserService.ROLE_LOGIN
 		));
