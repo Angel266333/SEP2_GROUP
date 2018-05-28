@@ -1,8 +1,5 @@
 package com.via.clms.server.services.util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.via.clms.server.services.DatabaseService;
 
 /**
@@ -12,7 +9,7 @@ public class DatabaseSetup {
 	
 	/** * */
 	private static final String TPL_LIBRATIRES = "CREATE TABLE IF NOT EXISTS Libraries (\n" + 
-			"    cLid int NOT NULL,\n" + 
+			"    cLid serial NOT NULL,\n" + 
 			"    cName varchar(255) NOT NULL,\n" + 
 			"    PRIMARY KEY (cLid),\n" + 
 			"    UNIQUE (cName)\n" + 
@@ -20,7 +17,7 @@ public class DatabaseSetup {
 	
 	/** * */
 	private static final String TPL_USERS = "CREATE TABLE IF NOT EXISTS Users (\n" + 
-			"    cUid int NOT NULL,\n" + 
+			"    cUid serial NOT NULL,\n" + 
 			"    cCpr bigint NOT NULL,\n" + 
 			"    cName varchar(255) NOT NULL,\n" + 
 			"    cEmail varchar(255) NOT NULL,\n" + 
@@ -38,7 +35,7 @@ public class DatabaseSetup {
 	
 	/** * */
 	private static final String TPL_BOOKS = "CREATE TABLE IF NOT EXISTS Books (\n" + 
-			"  cBid int NOT NULL,\n" + 
+			"  cBid serial NOT NULL,\n" + 
 			"  cTitle varchar(255) NOT NULL,\n" + 
 			"  cIsbn varchar(255) NOT NULL,\n" + 
 			"  cDescription varchar(255) NOT NULL,\n" + 
