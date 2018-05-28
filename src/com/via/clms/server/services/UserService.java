@@ -73,7 +73,7 @@ public class UserService implements IUserService, Service {
 		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM Users WHERE cToken = ?", tokenStr);
 		
 		try {
-			if (result.first()) {
+			if (result.next()) {
 				if (result.getInt("cCount") > 0) {
 					return token;
 				}
@@ -100,7 +100,7 @@ public class UserService implements IUserService, Service {
 		ResultSet result = db.query("SELECT COUNT(*) AS cCount FROM Users WHERE cToken = ?", tokenStr);
 		
 		try {
-			if (result.first()) {
+			if (result.next()) {
 				if (result.getInt("cCount") > 0) {
 					return true;
 				}
@@ -130,7 +130,7 @@ public class UserService implements IUserService, Service {
 		
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT ur.cRole " +
-				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid " +
 				"WHERE u.cToken = ? AND (ur.cLid = ? OR ur.cLid = 0)", tokenStr, libraryid);
 		
 		try {
@@ -157,11 +157,11 @@ public class UserService implements IUserService, Service {
 		if (checkToken(token)) {
 			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 			ResultSet result = db.query("SELECT ur.cRole " +
-					"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+					"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid " +
 					"WHERE u.cUid = ? AND ur.cLid = ?", uid, libraryid);
 			
 			try {
-				if (result.first()) {
+				if (result.next()) {
 					return result.getInt("cRole");
 				}
 				
@@ -193,6 +193,7 @@ public class UserService implements IUserService, Service {
 	public Map<String,Integer> getRoles() {
 		Map<String,Integer> roles = new LinkedHashMap<>();
 		
+		roles.put("Login", ROLE_LOGIN);
 		roles.put("Book Rental System", ROLE_BOOKRENT);
 		roles.put("Book Management", ROLE_BOOKMGR);
 		roles.put("User Management", ROLE_USERMGR);
@@ -225,7 +226,7 @@ public class UserService implements IUserService, Service {
 		String tokenStr = Utils.tokenToString(token);
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = db.query("SELECT ur.cRole " +
-				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid" +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid " +
 				"WHERE u.cToken = ? AND (ur.cLid = ? OR ur.cLid = 0)", tokenStr, libraryid);
 		
 		try {
@@ -306,7 +307,7 @@ public class UserService implements IUserService, Service {
 			ResultSet result = db.query("SELECT * FROM Users WHERE cUid = ?", uid);
 			
 			try {
-				if (result.first()) {
+				if (result.next()) {
 					User user = new User(result.getInt("cUid"));
 					user.cpr = result.getLong("cCpr");
 					user.name = result.getString("cName");
@@ -333,7 +334,7 @@ public class UserService implements IUserService, Service {
 			ResultSet result = db.query("SELECT * FROM Users WHERE cCpr = ?", cpr);
 			
 			try {
-				if (result.first()) {
+				if (result.next()) {
 					User user = new User(result.getInt("cUid"));
 					user.cpr = result.getLong("cCpr");
 					user.name = result.getString("cName");
