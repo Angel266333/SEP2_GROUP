@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Types;
 
@@ -61,7 +62,38 @@ public class DatabaseService implements Service {
 			return true;
 			
 		} catch (Exception e) {
-			Log.error(e);
+			try {
+				/* Establish connection to reate a database
+				 * We MUST define a database before we can connect, 
+				 * so a hack is to use the default 'postgres' database
+				 */
+				Connection conn = DriverManager.getConnection("jdbc:" + mDriver + "://localhost/postgres" +
+						"?useSSL=false" +
+						"&characterEncoding=utf8" +
+						"&user=" + mDbUser + "" +
+						"&password=" + mDbPasswd);
+				
+				Statement stmt = conn.createStatement();
+				stmt.execute("CREATE DATABASE " + mDbRelation);
+				conn.close();
+				
+				/*
+				 * Postgres does not support changing database via SQL. 
+				 * So we must disconnect and re-connect to do so.
+				 */
+				mConnection = DriverManager.getConnection("jdbc:" + mDriver + "://localhost/" + mDbRelation +
+						"?useSSL=false" +
+						"&characterEncoding=utf8" +
+						"&user=" + mDbUser + "" +
+						"&password=" + mDbPasswd);
+				
+				DatabaseSetup.configureTables(this, mDbRelation);
+				
+				return true;
+			
+			} catch (Exception ei) {
+				Log.error(e);
+			}
 		}
 		
 		return false;
