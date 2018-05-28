@@ -144,6 +144,36 @@ public class InventoryService implements IInventoryService, Service {
 		String q = "INSERT INTO `BookReservations` VALUES(?, ?, ?);";
 		return dbs.execute(q, bid, lid, uid);
 	}
+	
+	public int addRental(byte[] reqToken, int lid, int bid, int uid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkToken(reqToken)) {
+			return -1;
+		}
+
+		String q = "INSERT INTO `BookRentals` VALUES(?, ?, ?);";
+		return dbs.execute(q, bid, lid, uid);
+	}
+	
+	public int removeReservation(byte[] reqToken, int lid, int bid, int uid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkToken(reqToken)) {
+			return -1;
+		}
+
+		String q = "REMOVE FROM `BookReservations` VALUES(?, ?, ?);";
+		return dbs.execute(q, bid, lid, uid);
+	}
+	
+	public int removeRental(byte[] reqToken, int lid, int bid, int uid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, lid, IUserService.ROLE_BOOKMGR)) {
+			return -1;
+		}
+
+		String q = "REMOVE FROM `BookRentals` VALUES(?, ?, ?);";
+		return dbs.execute(q, bid, lid, uid);
+	}
 
 	private Book[] bookArrayBuild(ResultSet result) {
 		try {
