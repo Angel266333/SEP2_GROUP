@@ -29,7 +29,19 @@ public class Utils {
 	 * 		The raw token 
 	 */
 	public static String tokenToString(byte[] token) {
-		return DatatypeConverter.printHexBinary(token);
+		String hash = "";
+		
+		for(byte b : token) {
+		    String hex = Integer.toHexString( b & 0xFF );
+		    
+		    if (hex.length() == 1) {
+		    	hash += "0";
+		    }
+		    
+		    hash += hex;
+		}
+		
+		return hash;
 	}
 	
 	/**
@@ -39,6 +51,13 @@ public class Utils {
 	 * 		The token String representation
 	 */
 	public static byte[] tokenToBytes(String token) {
-		return DatatypeConverter.parseHexBinary(token);
+		int len = token.length();
+	    byte[] data = new byte[len / 2];
+	    
+	    for (int i=0, y=0, x=1; x < len; i++, y += 2, x += 2) {
+	    	data[i] = (byte) (((Character.digit(token.charAt(y), 16) << 4) | Character.digit(token.charAt(x), 16)) & 0xFF);
+	    }
+	    
+	    return data;
 	}
 }
