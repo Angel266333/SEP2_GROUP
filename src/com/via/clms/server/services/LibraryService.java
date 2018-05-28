@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.sun.org.apache.bcel.internal.generic.LLOAD;
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
@@ -86,8 +85,7 @@ public class LibraryService implements ILibraryService, Service {
 	
 	@Override
 	public boolean onConfigure() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

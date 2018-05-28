@@ -264,7 +264,20 @@ public class UserService implements IUserService, Service {
 		
 		return null;
 	}
+	
+	public byte[] getSpecialToken(int libraryid, int roles) {
 
+		byte[] rand = new byte[64];
+		new Random().nextBytes(rand);
+		
+		SpecialToken st = new SpecialToken();
+		st.lid = libraryid;
+		st.roles = roles;
+		
+		mSpecialTokens.put(Utils.tokenToString(rand), st);
+		
+		return rand;		
+	}
 	/**
 	 * {@inheritDoc}
 	 */

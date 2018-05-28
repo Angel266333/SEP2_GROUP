@@ -21,17 +21,6 @@ import com.via.clms.server.ServiceManager;
  */
 public class UserServiceTest {
 	
-	/** * */
-	private static Map<String, Class<? extends Service>> SERVICES = new LinkedHashMap<>();
-	
-	/**
-	 * 
-	 */
-	static {
-		SERVICES.put("database", DatabaseService.class);
-		SERVICES.put("user", UserService.class);
-	}
-
 	/**
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
@@ -39,11 +28,8 @@ public class UserServiceTest {
 	 */
 	@BeforeClass
 	public static void initialize() throws InstantiationException, IllegalAccessException, SQLException {
-		for (Entry<String, Class<? extends Service>> entry : SERVICES.entrySet()) {
-			if (!ServiceManager.registerService(entry.getKey(), entry.getValue().newInstance())) {
-				Assert.fail("Could not load the service '" + entry.getKey() + "'");
-			}
-		}
+		
+		ServerInstantiator.initialize();
 		
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		int res = db.execute("INSERT INTO Users (cCpr, cName, cEmail, cToken) VALUES (?,?,?,?)",
@@ -91,12 +77,7 @@ public class UserServiceTest {
 		int res = db.execute("DELETE FROM Users WHERE cUid = ?", uid);
 		int res2 = db.execute("DELETE FROM Users WHERE cUid = ?", uid);
 		
-		// Stopping services should be in reversed order
-		ListIterator<String> iterator = new ArrayList<String>(SERVICES.keySet()).listIterator(SERVICES.size());
-		
-		while (iterator.hasPrevious()) {
-			ServiceManager.unregisterService(iterator.previous());
-		}
+		ServerInstantiator.deinitialize();
 		
 		if (res <= 0) {
 			Assert.fail("Failed to remove test user from the database");

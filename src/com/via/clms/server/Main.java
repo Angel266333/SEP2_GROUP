@@ -38,7 +38,7 @@ public class Main {
 	 * 
 	 */
 	public static void main(String[] args) {
-		print("Wellcome to CLMS Server", "Type 'help' to get a list of options");
+		print("Welcome to CLMS Server", "Type 'help' to get a list of options");
 		
 		daemon:
 		for (;;) {

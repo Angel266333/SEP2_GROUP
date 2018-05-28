@@ -26,6 +26,8 @@ public class LibraryTable extends ClickableTable<Library> {
 				+ "    " ////
 				+ "    "///
 				+ "  ";//
+		
+		// TODO - Make styling / padding etc. Can use for loop on labels.
 		Label[] libraryLabels = new Label[3];
 		libraryLabels[0] = new Label("LID" + extraSpace);
 		libraryLabels[1] = new Label("Name" + extraSpace);

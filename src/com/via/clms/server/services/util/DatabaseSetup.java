@@ -10,7 +10,8 @@ public class DatabaseSetup {
 	/** * */
 	private static final String TPL_LIBRATIRES = "CREATE TABLE IF NOT EXISTS Libraries (\n" + 
 			"    cLid serial NOT NULL,\n" + 
-			"    cName varchar(255) NOT NULL,\n" + 
+			"    cName varchar(255) NOT NULL,\n" +
+			"    cLocation varchar(255) NOT NULL,\n" +
 			"    PRIMARY KEY (cLid),\n" + 
 			"    UNIQUE (cName)\n" + 
 			");";

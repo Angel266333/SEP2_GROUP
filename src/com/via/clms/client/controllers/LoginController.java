@@ -154,19 +154,20 @@ public class LoginController extends ResultController<byte[]> {
 						setResult(token);
 						getWindow().close();
 					}
+					else {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Permission denied");
 					alertFailiure.setContentText("You do not have the given permissions to log in!");
-					alertFailiure.showAndWait();
+					alertFailiure.show();
 				}
-				
+				}
 			} catch (Exception e) {
 			Alert alertFailiure = new Alert(AlertType.ERROR);
 			alertFailiure.setTitle("Error Dialog");
 			alertFailiure.setHeaderText("Invalid login");
 			alertFailiure.setContentText("Could not log in! General error.");
-			alertFailiure.showAndWait();
+			alertFailiure.show();
 		}
 				}	
 		}
