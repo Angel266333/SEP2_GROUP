@@ -172,7 +172,7 @@ public class InventoryService implements IInventoryService, Service {
 //
 //		}
 
-		String q = "REMOVE FROM `BookReservations` VALUES(?, ?, ?);";
+		String q = "REMOVE * FROM `BookReservations` WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;";
 
 		return dbs.execute(q, bid, lid, uid);
 
@@ -188,7 +188,7 @@ public class InventoryService implements IInventoryService, Service {
 //
 //		}
 
-		String q = "REMOVE FROM `BookRentals` VALUES(?, ?, ?);";
+		String q = "REMOVE * FROM `BookRentals` WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;;";
 
 		return dbs.execute(q, bid, lid, uid);
 
