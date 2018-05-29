@@ -1,6 +1,8 @@
 package com.via.clms.server.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 import java.sql.ResultSet;
@@ -11,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.via.clms.server.ServiceManager;
+import com.via.clms.shared.Library;
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.proxy.IUserService;
 
@@ -48,7 +51,19 @@ public class LibraryServiceTesting {
 	public void testCreateLibrary() throws RemoteException {	
 	UserService userService = (UserService) ServiceManager.getService("user");
 	ILibraryService libraryService = (LibraryService) ServiceManager.getService("library");
-	boolean result = libraryService.createLibrary(token, "CLMS");
+	boolean result = libraryService.createLibrary(token, "CLMS", "Horsens");
 	assertEquals(true, result);
+	}
+	
+	@Test
+	public void testGetLibraryByID() throws RemoteException {
+	ILibraryService libraryService = (LibraryService) ServiceManager.getService("library");
+	Library result = libraryService.getLibraryByLID(token, 0);
+	assertTrue(result != null);
+	}
+	
+	@Test
+	public void testGetLibraries() throws RemoteException {
+		
 	}
 }

@@ -22,13 +22,13 @@ public class LibraryService implements ILibraryService, Service {
 	}
 	
 	@Override
-	public boolean createLibrary(byte[] reqToken, String name) throws RemoteException {
+	public boolean createLibrary(byte[] reqToken, String name, String location) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
 		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
 			return false;
 		}
 		String q = "INSERT INTO 'Libraries' (cName)VALUES (?);";
-		int result = dbs.execute(q, name);
+		int result = dbs.execute(q, name, location);
 		if (result == 1) {
 			return true;
 		} else {
