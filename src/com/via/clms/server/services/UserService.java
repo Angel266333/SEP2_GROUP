@@ -137,9 +137,9 @@ public class UserService implements IUserService, Service {
 			int perms = 0;
 			
 			while (result.next()) {
-				perms |= result.getInt("cFlags");
+				perms |= result.getInt("cRole");
 			}
-			
+
 			return (perms & roles) == roles;
 			
 		} catch (SQLException e) {
