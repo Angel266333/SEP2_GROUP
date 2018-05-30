@@ -1,16 +1,15 @@
 package com.via.clms.client.controllers;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.rmi.RemoteException;
 
-import com.sun.scenario.effect.impl.prism.PrImage;
+import com.via.clms.Log;
+import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.ResultListener;
 import com.via.clms.client.views.Window;
+import com.via.clms.proxy.IUserService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,12 +17,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -56,18 +53,18 @@ public class HomeController implements Controller {
 	private Button btn7Lock;
 	private Button btn8Unlock;
 	
-	private boolean temp = true;
+	private UserSession session;
 
-	private class ResultHandler implements ResultListener<byte[]> {
+	private class ResultHandler implements ResultListener<UserSession> {
 
 		@Override
-		public void onReturnResult(byte[] result) {
+		public void onReturnResult(UserSession session) {
 
-			if (result == null) {
+			if (session == null) {
 				return;
 			}
 
-			temp = true;
+			HomeController.this.session = session;
 			updateUI();
 		}
 
@@ -75,8 +72,8 @@ public class HomeController implements Controller {
 
 	// Add book search filters in main section of program (?)
 
-	public HomeController() {
-		
+	public HomeController(UserSession session) {
+		this.session = session;
 	}
 
 	public String getTitle() {
@@ -223,7 +220,17 @@ public class HomeController implements Controller {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
-				temp = false;
+				IUserService user = (IUserService) ServiceManager.getService("user");
+				
+				try {
+					byte[] newtoken = user.getSpecialToken(session.token, session.lid, IUserService.ROLE_BOOKRENT);
+					
+					if (newtoken != null && user.checkPermissions(newtoken, session.lid, IUserService.ROLE_BOOKRENT)) {
+						session = new UserSession(newtoken, session.lid);
+					}
+					
+				} catch (RemoteException e) {}
+				
 				updateUI();
 				
 			}
@@ -234,9 +241,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
-				int lid = 0; // This should have been parsed to this controller at some point
-				LoginController lc = new LoginController(lid);
+				LoginController lc = new LoginController(session.lid);
 				lc.setResultListener(new ResultHandler());
 				Window w = new DialogWindow(lc);
 				w.open();
@@ -288,34 +293,66 @@ public class HomeController implements Controller {
 
 	@Override
 	public void onWindowOpen(Window win) {
-		this.window = win;
+		window = win;
 
 	}
 
 	@Override
 	public void onWindowClose(Window win) {
-		this.window = win;
+		
 	}
 
 	@Override
 	public void onWindowRefresh(Window win) {
-		this.window = win;
+		
 	}
 
 	@Override
 	public void onWindowResume(Window win) {
-		this.window = win;
+		
 	}
 
 	@Override
 	public void onWindowPause(Window win) {
-		this.window = win;
-
+		
 	}
 
 	public void updateUI() {
-		btn5GodMode.setVisible(temp);
-		btn7Lock.setVisible(temp);
-		btn8Unlock.setVisible(!temp);
+		IUserService user = (IUserService) ServiceManager.getService("user");
+		boolean locked = false;
+		
+		try {
+			locked = user.isSpecialToken(session.token);
+			
+		} catch (RemoteException e) {}
+		
+		btn5GodMode.setVisible(!locked);
+		btn7Lock.setVisible(!locked);
+		btn8Unlock.setVisible(locked);
+		
+		try {
+			if (!locked && user.checkPermissions(session.token, session.lid, IUserService.ROLE_BOOKRENT)) {
+				btn7Lock.setVisible(false);
+			}
+			
+		} catch (RemoteException e) {
+			Log.error(e);
+		}
+		
+		try {
+			if (user.checkPermissions(session.token, session.lid, IUserService.ROLE_ADMIN)) {
+				btn5GodMode.setVisible(true);
+				
+			} else {
+				btn5GodMode.setVisible(false);
+			}
+			
+		} catch (RemoteException e) {
+			Log.error(e);
+		}
+		
+		btn2Rent.setVisible(session.lid > 0);
+		btn3Return.setVisible(session.lid > 0);
+		btn4Renew.setVisible(session.lid > 0);
 	}
 }

@@ -13,9 +13,15 @@ public interface ILibraryService extends Remote {
 
 	public boolean createLibrary(byte[] reqToken, String name, String location) throws RemoteException;
 	
+	public boolean deleteLibrary(int lid) throws RemoteException;
+
 	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException;
 	
 	public Library[] getLibraries(byte[] reqToken, int offset, int length) throws RemoteException;
+
+
+
+
 
 	
 }
