@@ -1,6 +1,13 @@
 package com.via.clms.server.services.util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.via.clms.Log;
+import com.via.clms.Utils;
+import com.via.clms.proxy.IUserService;
 import com.via.clms.server.services.DatabaseService;
+import com.via.clms.server.services.UserService;
 
 /**
  * 
@@ -120,6 +127,25 @@ public class DatabaseSetup {
 		
 		if (!invent) {
 			// connection.execute(TPL_EXTRA);
+		}
+		
+		ResultSet result = connection.query("SELECT COUNT(*) as cCount FROM Users WHERE cUid = 0");
+		
+		try {
+			if (result.next() && result.getInt("cCount") == 0) {
+				connection.execute("INSERT INTO Users (cUid, cCpr, cName, cEmail, cToken) VALUES (?,?,?,?,?)",
+						0,
+						0L,
+						"Test",
+						"test@domain.com",
+						Utils.tokenToString(UserService.generateUserToken(0L, "test"))
+				);
+				
+				connection.execute("INSERT INTO UserRoles (cUid, cLid, cRole) VALUES (?,?,?)", 0, 0, IUserService.ROLE_ADMIN);
+			}
+			
+		} catch (SQLException e) {
+			Log.error(e);
 		}
 		
 		return true;

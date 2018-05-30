@@ -11,11 +11,15 @@ import org.junit.Test;
 import com.via.clms.Utils;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
+import com.via.clms.shared.User;
 
 /**
  * 
  */
 public class UserServiceTest {
+	
+	/** * */
+	private static byte[] mAuthToken;
 	
 	/** * */
 	private static final byte[] mToken;
@@ -41,6 +45,9 @@ public class UserServiceTest {
 	@BeforeClass
 	public static void initialize() throws InstantiationException, IllegalAccessException, SQLException {		
 		ServerInstantiator.initialize();
+		
+		UserService user = (UserService) ServiceManager.getService("user");
+		mAuthToken = user.getSpecialToken(0, IUserService.ROLE_ADMIN);
 		
 		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
 		int uid = getUid();
@@ -170,5 +177,29 @@ public class UserServiceTest {
 				0,
 				IUserService.ROLE_LOGIN
 		));
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void getUserByCPRTest() {
+		UserService service = (UserService) ServiceManager.getService("user");
+		User user = service.getUserByCPR(mAuthToken, mCpr);
+		
+		Assert.assertNotNull(user);
+		Assert.assertEquals(mCpr, user.cpr);
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void getUserByUIDTest() {
+		UserService service = (UserService) ServiceManager.getService("user");
+		User user = service.getUserByUID(mAuthToken, getUid());
+		
+		Assert.assertNotNull(user);
+		Assert.assertEquals(mCpr, user.cpr);
 	}
 }

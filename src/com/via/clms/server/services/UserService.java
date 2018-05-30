@@ -233,7 +233,7 @@ public class UserService implements IUserService, Service {
 			int perms = 0;
 			
 			while (result.next()) {
-				perms |= result.getInt("cFlags");
+				perms |= result.getInt("cRole");
 			}
 			
 			// Users cannot create a token with more permissions than they originally have themselves 
@@ -265,6 +265,17 @@ public class UserService implements IUserService, Service {
 		return null;
 	}
 	
+	/**
+	 * Server internal method for creating special tokkens
+	 * 
+	 * This method can only be used from within the server. 
+	 * It allows you to create special tokens with any pre-defined 
+	 * verifications. 
+	 * 
+	 * @param libraryid
+	 * @param roles
+	 * @return
+	 */
 	public byte[] getSpecialToken(int libraryid, int roles) {
 
 		byte[] rand = new byte[64];
