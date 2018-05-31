@@ -15,19 +15,14 @@ import com.via.clms.shared.Library;
  */
 public class LibraryService implements ILibraryService, Service {
 	
-	DatabaseService dbs;
-
-	public LibraryService() {
-		dbs = new DatabaseService();
-	}
-	
 	@Override
 	public boolean createLibrary(byte[] reqToken, String name, String location) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
 		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
 			return false;
 		}
-		String q = "INSERT INTO 'Libraries' (cName)VALUES (?);";
+		String q = "INSERT INTO Libraries (cName, cLocation)VALUES (?, ?);";
+		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		int result = dbs.execute(q, name, location);
 		if (result == 1) {
 			return true;
@@ -35,6 +30,16 @@ public class LibraryService implements ILibraryService, Service {
 				return false;
 			}
 		}
+	@Override
+		public boolean deleteLibrary(int lid) throws RemoteException {
+		String q = "DELETE FROM Libraries WHERE cLid = ?;";
+		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
+		int result = dbs.execute(q, lid);
+		if (result == 1) {
+			return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException {
@@ -42,7 +47,8 @@ public class LibraryService implements ILibraryService, Service {
 		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
 			return null;
 		}
-		String q = "SELECT * FROM 'Libraries' WHERE 'lid' = ?;";
+		String q = "SELECT * FROM Libraries WHERE cLid = ?;";
+		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = dbs.query(q, lid);
 		try {
 			while(result.next()) {
@@ -64,8 +70,10 @@ public class LibraryService implements ILibraryService, Service {
 		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
 			return null;
 		}
-		String q = "SELECT * FROM 'Library' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
-		ResultSet result = dbs.query(q, offset, length);
+		// "SELECT * FROM Users LIMIT ?,?", offset, length
+		String q = "SELECT * FROM Libraries LIMIT ? OFFSET ?";
+		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = dbs.query(q, length, offset);
 		ArrayList<Library> lbrList = new ArrayList<>();
 		try {
 			while(result.next()) {
@@ -90,7 +98,6 @@ public class LibraryService implements ILibraryService, Service {
 
 	@Override
 	public void onShutdown() {
-		
 	}
 
 }
