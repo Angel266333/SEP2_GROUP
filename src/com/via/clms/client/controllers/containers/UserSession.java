@@ -9,7 +9,7 @@ public class UserSession {
 	public final int lid;
 	
 	/** * */
-	public final int cpr;
+	public final long cpr;
 	
 	/** * */
 	public final byte[] token;
