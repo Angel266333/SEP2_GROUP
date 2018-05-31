@@ -188,7 +188,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				window.launchController(new AdministrativeFeatureSetController());
+				window.launchController(new AdministrativeFeatureSetController(session));
 			}
 		});
 
