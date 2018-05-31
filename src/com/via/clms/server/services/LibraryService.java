@@ -31,7 +31,11 @@ public class LibraryService implements ILibraryService, Service {
 			}
 		}
 	@Override
-		public boolean deleteLibrary(int lid) throws RemoteException {
+		public boolean deleteLibrary(byte[] reqToken, int lid) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
+			return false;
+		}
 		String q = "DELETE FROM Libraries WHERE cLid = ?;";
 		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		int result = dbs.execute(q, lid);
@@ -42,11 +46,8 @@ public class LibraryService implements ILibraryService, Service {
 	}
 	
 	@Override
-	public Library getLibraryByLID(byte[] reqToken, int lid) throws RemoteException {
+	public Library getLibraryByLID(int lid) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
-			return null;
-		}
 		String q = "SELECT * FROM Libraries WHERE cLid = ?;";
 		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = dbs.query(q, lid);
@@ -65,12 +66,8 @@ public class LibraryService implements ILibraryService, Service {
 	}
 
 	@Override
-	public Library[] getLibraries(byte[] reqToken, int offset, int length) throws RemoteException {
+	public Library[] getLibraries(int offset, int length) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
-		if (!userService.checkPermissions(reqToken, 0, IUserService.ROLE_ADMIN)) {
-			return null;
-		}
-		// "SELECT * FROM Users LIMIT ?,?", offset, length
 		String q = "SELECT * FROM Libraries LIMIT ? OFFSET ?";
 		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = dbs.query(q, length, offset);
