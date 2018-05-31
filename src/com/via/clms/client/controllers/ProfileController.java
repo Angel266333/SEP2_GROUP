@@ -1,30 +1,48 @@
 package com.via.clms.client.controllers;
 
+import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.containers.RentalsTable;
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
+import com.via.clms.proxy.IInventoryService;
+import com.via.clms.proxy.IUserService;
+import com.via.clms.shared.Book;
+import com.via.clms.shared.BookRental;
+import com.via.clms.shared.User;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
+import java.rmi.RemoteException;
+import java.sql.Date;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class ProfileController implements Controller {
 	private GridPane mainPane;
-	private GridPane rentalPane;
-	private long cpr;
-	private String name;
-	private String email;
+	private ScrollPane rentalPane;
+	private RentalsTable rentalsTable;
 	Button emailUpdateButton;
 	Button changePasswordButton;
 
-	public ProfileController(long cpr) {
-		this.cpr = cpr;
+	UserSession session;
+	User currentUser;
 
-		mainPane = new GridPane();
-		rentalPane = new GridPane();
-		getData();
-
+	public ProfileController(UserSession session) {
+		this.session = session;
+		try {
+			currentUser = ((IUserService) ServiceManager.getService("user")).getUserByCPR(session.token, session.cpr);
+		} catch (RemoteException e) {
+			currentUser = null;
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -34,21 +52,31 @@ public class ProfileController implements Controller {
 
 	@Override
 	public Parent getComponent() {
+		mainPane = new GridPane();
+		if(currentUser == null) {
+			mainPane.addRow(0, new Label("Error loading profile"));
+			return mainPane;
+		}
+		rentalPane = new ScrollPane();
+		rentalsTable = new RentalsTable();
+		rentalPane.setContent(rentalsTable);
+		rentalsTable.populate(getRentals());
+
 		//Labels
 		String labelStyle = "-fx-font-weight: bold";
 		Label nameLabel = new Label("Name");
 		nameLabel.setStyle(labelStyle);
-		Label nameTextLabel = new Label(name);
+		Label nameTextLabel = new Label(currentUser.name);
 		Label cprLabel = new Label("CPR");
 		cprLabel.setStyle(labelStyle);
-		Label cprTextLabel = new Label("" + cpr);
+		Label cprTextLabel = new Label("" + session.cpr);
 		Label emailLabel = new Label("E-mail");
 		emailLabel.setStyle(labelStyle);
 
 		//TextFields
 		TextField emailTextField = new TextField();
 		emailTextField.setPrefColumnCount(20);
-		emailTextField.setText(email);
+		emailTextField.setText(currentUser.email);
 
 		//Buttons
 		emailUpdateButton = new Button("Update");
@@ -92,14 +120,43 @@ public class ProfileController implements Controller {
 		
 	}
 
-	private void getData() {
-		//Test data REMOVE====
-		name = "John Hansen";
-		email = "whatever@gmail.com";
-		rentalPane.add(new Label("Some rental"), 0, 0);
-		rentalPane.add(new Label("Some reservation"), 0, 1);
-		rentalPane.add(new Label("Some other rental"), 0, 2);
-		rentalPane.add(new Label("Some other reservation"), 0, 3);
-		//REMOVE==============
+	private String[][] getRentals() {
+		try {
+			ArrayList<String[]> resultArray = new ArrayList<>();
+			BookRental[] r = ((IInventoryService) ServiceManager.getService("inventory")).getRentalsByUID(session.token, session.lid, currentUser.uid);
+
+			for(BookRental b : r) {
+				resultArray.add(formatRental(b));
+			}
+
+			String[][] strings = new String[resultArray.size()][];
+			resultArray.toArray(strings);
+			return strings;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new String[0][];
+		}
+	}
+
+	private String[] formatRental(BookRental b) throws RemoteException {
+		String[] s = new String[3];
+		s[0] = ((IInventoryService) ServiceManager.getService("user")).getBookByBID(session.token, b.bid).title;
+		s[1] = formatDate(b.timeoffset + b.timelength);
+		if(Instant.now().getEpochSecond() > b.timeoffset + b.timelength) {
+			s[2] = "Yes";
+		}
+		else {
+			s[2] = "No";
+		}
+		return s;
+	}
+
+	private String formatDate(long time) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(Date.from(Instant.ofEpochSecond(time)));
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.ENGLISH);
+		int year = cal.get(Calendar.YEAR);
+		return "" + day + "-" + month + "-" + year;
 	}
 }
