@@ -52,7 +52,7 @@ public class HomeController implements Controller {
 	private Button btn6MyProfile;
 	private Button btn7Lock;
 	private Button btn8Unlock;
-	
+
 	private UserSession session;
 
 	private class ResultHandler implements ResultListener<UserSession> {
@@ -128,7 +128,7 @@ public class HomeController implements Controller {
 
 		lbl1Search.setPadding(new Insets(0, 0, 5, 0));
 		lbl2Actions.setPadding(new Insets(0, 0, 5, 0));
-		
+
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
 		btn1Search = new Button("Search");
@@ -142,98 +142,85 @@ public class HomeController implements Controller {
 		btn8Unlock = new Button("Unlock session");
 
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
-		
+
 		btn1Search.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				String resultParse = tf1Search.getText();
+				/*String resultParse = tf1Search.getText();
 				if (tf1Search.getText().isEmpty()) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Search unsuccessful");
 					alertFailiure.setContentText("Please enter a book title!");
 					alertFailiure.showAndWait();
-			} else {
-				SearchResultController src = new SearchResultController(session);
-				Window w = new DialogWindow(src);
-				src.tf1Search.setText(resultParse);
-				w.open();
-			}
+				} else {
+					window.launchController(new RentBookController());
 
-		}
+					SearchResultController src = new SearchResultController();
+					Window w = new DialogWindow(src);
+					src.tf1Search.setText(resultParse);
+					w.open();
+				}*/
+
+			}
 		});
-		
+
 		btn2Rent.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
-				RentBookController rbc = new RentBookController();
-				Window w = new DialogWindow(rbc);
-				w.open();
+				window.launchController(new RentBookController());
 			}
 
 		});
-		
+
 		btn3Return.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
-				ReturnBookController rtrnbc = new ReturnBookController();
-				Window w = new DialogWindow(rtrnbc);
-				w.open();
-
+				window.launchController(new ReturnBookController());
 			}
 
 		});
 
 		btn5GodMode.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent arg0) {
-				
-				AdministrativeFeatureSetController admftrsetcntrl = new AdministrativeFeatureSetController(session);
-				Window w = new DialogWindow(admftrsetcntrl);
-				w.open();
-				
+				window.launchController(new AdministrativeFeatureSetController());
 			}
 		});
 
-		
 		btn6MyProfile.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-
-				ProfileController pc = new ProfileController(4424);
-				Window w = new DialogWindow(pc);
-				w.open();
-
+				// window.launchController(new ProfileController(session));
 			}
 
 		});
-		
+
 		btn7Lock.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent arg0) {
 				IUserService user = (IUserService) ServiceManager.getService("user");
-				
+
 				try {
 					byte[] newtoken = user.getSpecialToken(session.token, session.lid, IUserService.ROLE_BOOKRENT);
-					
+
 					if (newtoken != null && user.checkPermissions(newtoken, session.lid, IUserService.ROLE_BOOKRENT)) {
 						session = new UserSession(newtoken, -1L, session.lid);
 					}
-					
-				} catch (RemoteException e) {}
-				
+
+				} catch (RemoteException e) {
+				}
+
 				updateUI();
-				
+
 			}
-			
+
 		});
 
 		btn8Unlock.setOnAction(new EventHandler<ActionEvent>() {
@@ -298,58 +285,59 @@ public class HomeController implements Controller {
 
 	@Override
 	public void onWindowClose(Window win) {
-		
+
 	}
 
 	@Override
 	public void onWindowRefresh(Window win) {
-		
+
 	}
 
 	@Override
 	public void onWindowResume(Window win) {
-		
+
 	}
 
 	@Override
 	public void onWindowPause(Window win) {
-		
+
 	}
 
 	public void updateUI() {
 		IUserService user = (IUserService) ServiceManager.getService("user");
 		boolean locked = false;
-		
+
 		try {
 			locked = user.isSpecialToken(session.token);
-			
-		} catch (RemoteException e) {}
-		
+
+		} catch (RemoteException e) {
+		}
+
 		btn5GodMode.setVisible(!locked);
 		btn7Lock.setVisible(!locked);
 		btn8Unlock.setVisible(locked);
-		
+
 		try {
 			if (!locked && user.checkPermissions(session.token, session.lid, IUserService.ROLE_BOOKRENT)) {
 				btn7Lock.setVisible(false);
 			}
-			
+
 		} catch (RemoteException e) {
 			Log.error(e);
 		}
-		
+
 		try {
 			if (user.checkPermissions(session.token, session.lid, IUserService.ROLE_ADMIN)) {
 				btn5GodMode.setVisible(true);
-				
+
 			} else {
 				btn5GodMode.setVisible(false);
 			}
-			
+
 		} catch (RemoteException e) {
 			Log.error(e);
 		}
-		
+
 		btn2Rent.setVisible(session.lid > 0);
 		btn3Return.setVisible(session.lid > 0);
 		btn4Renew.setVisible(session.lid > 0);
