@@ -140,7 +140,7 @@ public class ProfileController implements Controller {
 
 	private String[] formatRental(BookRental b) throws RemoteException {
 		String[] s = new String[3];
-		s[0] = ((IInventoryService) ServiceManager.getService("user")).getBookByBID(session.token, b.bid).title;
+		s[0] = ((IInventoryService) ServiceManager.getService("inventory")).getBookByBID(session.token, b.bid).title;
 		s[1] = formatDate(b.timeoffset + b.timelength);
 		if(Instant.now().getEpochSecond() > b.timeoffset + b.timelength) {
 			s[2] = "Yes";
