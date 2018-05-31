@@ -172,7 +172,6 @@ public class HomeController implements Controller {
 				RentBookController rbc = new RentBookController();
 				Window w = new DialogWindow(rbc);
 				w.open();
-
 			}
 
 		});
@@ -226,7 +225,7 @@ public class HomeController implements Controller {
 					byte[] newtoken = user.getSpecialToken(session.token, session.lid, IUserService.ROLE_BOOKRENT);
 					
 					if (newtoken != null && user.checkPermissions(newtoken, session.lid, IUserService.ROLE_BOOKRENT)) {
-						session = new UserSession(newtoken, session.lid);
+						session = new UserSession(newtoken, -1L, session.lid);
 					}
 					
 				} catch (RemoteException e) {}

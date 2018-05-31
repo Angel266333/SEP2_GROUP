@@ -163,7 +163,7 @@ public class LoginController extends ResultController<UserSession> {
 						// If the information is valid, pass the token to the caller
 						if (token != null) {
 							if (service.checkPermissions(token, lid, IUserService.ROLE_LOGIN)) {
-								setResult(new UserSession(token, lid));
+								setResult(new UserSession(token, Long.parseLong(cpr), lid));
 								getWindow().close();
 								
 							} else {

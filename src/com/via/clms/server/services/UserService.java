@@ -296,7 +296,7 @@ public class UserService implements IUserService, Service {
 	public User[] getUsers(byte[] token, int offset, int length) {
 		if (checkToken(token)) {
 			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
-			ResultSet result = db.query("SELECT * FROM Users LIMIT ?,?", offset, length);
+			ResultSet result = db.query("SELECT * FROM Users LIMIT ? OFFSET ?", length, offset);
 			
 			try {
 				User[] users = new User[ result.getFetchSize() ];
