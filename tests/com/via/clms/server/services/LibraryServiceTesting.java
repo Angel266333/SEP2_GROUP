@@ -1,7 +1,6 @@
 package com.via.clms.server.services;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
@@ -13,10 +12,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.via.clms.server.ServiceManager;
-import com.via.clms.shared.Library;
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.proxy.IUserService;
+import com.via.clms.server.ServiceManager;
+import com.via.clms.shared.Library;
 
 public class LibraryServiceTesting {
 	
@@ -63,7 +62,7 @@ public class LibraryServiceTesting {
 	@Test
 	public void betaDeleteLibrary() throws RemoteException {
 	ILibraryService libraryService = (LibraryService) ServiceManager.getService("library");
-	boolean resultDelete = libraryService.deleteLibrary(1);
+	boolean resultDelete = libraryService.deleteLibrary(token, 1);
 	System.out.println("Beta: " + resultDelete);
 	assertEquals(true, resultDelete);
 	}
@@ -71,14 +70,14 @@ public class LibraryServiceTesting {
 	@Test
 	public void gammaGetLibraryByID() throws RemoteException {
 	ILibraryService libraryService = (LibraryService) ServiceManager.getService("library");
-	Library result = libraryService.getLibraryByLID(token, 1);
+	Library result = libraryService.getLibraryByLID(1);
 	System.out.println("Gamma: " + result);
 	assertTrue(result != null);
 	}
 	@Test
 	public void deltaGetLibraries() throws RemoteException {
 	ILibraryService libraryService = (ILibraryService) ServiceManager.getService("library");
-	Library[] libraries = libraryService.getLibraries(token, 0, 1);
+	Library[] libraries = libraryService.getLibraries(0, 1);
 	System.out.println("Delta: " + libraries);
 	assertTrue(libraries != null);
 	}
