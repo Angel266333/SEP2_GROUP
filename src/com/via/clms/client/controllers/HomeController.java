@@ -155,7 +155,7 @@ public class HomeController implements Controller {
 					alertFailiure.setContentText("Please enter a book title!");
 					alertFailiure.showAndWait();
 			} else {
-				SearchResultController src = new SearchResultController();
+				SearchResultController src = new SearchResultController(session);
 				Window w = new DialogWindow(src);
 				src.tf1Search.setText(resultParse);
 				w.open();
@@ -194,7 +194,7 @@ public class HomeController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 				
-				AdministrativeFeatureSetController admftrsetcntrl = new AdministrativeFeatureSetController();
+				AdministrativeFeatureSetController admftrsetcntrl = new AdministrativeFeatureSetController(session);
 				Window w = new DialogWindow(admftrsetcntrl);
 				w.open();
 				

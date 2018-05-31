@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -23,6 +24,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class CreateUserController implements Controller {
+	
+	UserSession userSession;
 
 	private GridPane mainPane;
 	private GridPane picturePane;
@@ -45,8 +48,18 @@ public class CreateUserController implements Controller {
 	private Button btn1CreateUser;
 	private Button btn2Cancel;
 	
-	public CreateUserController() {
+	public CreateUserController(UserSession userSession) {
+		this.userSession = userSession;
+	}
 
+	@Override
+	public String getTitle() {
+		return "Create a user";
+	}
+
+	@Override
+	public Parent getComponent() {
+		
 		tf1UserName = new TextField();
 		tf2UserPassword = new TextField();
 		tf3UserEmail = new TextField();
@@ -61,16 +74,6 @@ public class CreateUserController implements Controller {
 		picturePanePlusUserDetails = new GridPane();
 		innerPictureSectionUserDetails = new VBox();
 		innerPictureSectionButtonActionsSection = new HBox();
-
-	}
-
-	@Override
-	public String getTitle() {
-		return "Create a user";
-	}
-
-	@Override
-	public Parent getComponent() {
 		
 		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();

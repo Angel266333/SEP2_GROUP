@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -44,8 +45,20 @@ public class ViewBookDetailsController implements Controller {
 	public String bookYear;
 	public String bookAvailability;
 
-	public ViewBookDetailsController() {
+	private UserSession userSession;
+	
+	public ViewBookDetailsController(UserSession userSession) {
+		this.userSession = userSession;
+	}
 
+	@Override
+	public String getTitle() {
+		return "Book details";
+	}
+
+	@Override
+	public Parent getComponent() {
+		
 		tf1BookName = new TextField();
 		tf1BookName.setEditable(false);
 		tf2BookAuthor = new TextField();
@@ -60,11 +73,11 @@ public class ViewBookDetailsController implements Controller {
 		tAR5BookDescription.setPrefWidth(276);
 		tAR5BookDescription.setEditable(false);
 		
-		lbl1BookName = new Label("Book name (Required):");
-		lbl2BookAuthor = new Label("Book author (Required):");
-		lbl3BookYear = new Label("Book year (Required):");
-		lbl4BookISBN = new Label("ISBN (Required):");
-		lbl5BookDescription = new Label("Description (Optional):");
+		lbl1BookName = new Label("Book name:");
+		lbl2BookAuthor = new Label("Book author:");
+		lbl3BookYear = new Label("Book year:");
+		lbl4BookISBN = new Label("ISBN:");
+		lbl5BookDescription = new Label("Description:");
 		lbl5BookDescription.setPadding(new Insets(0, 0, 5, 0));
 
 		mainPane = new GridPane();
@@ -72,16 +85,6 @@ public class ViewBookDetailsController implements Controller {
 		picturePanePlusBookDetails = new GridPane();
 		descriptionSection = new VBox();
 		descriptionPane = new GridPane();
-		
-	}
-
-	@Override
-	public String getTitle() {
-		return "Add a book";
-	}
-
-	@Override
-	public Parent getComponent() {
 		
 		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();

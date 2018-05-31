@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -38,9 +39,21 @@ public class CreateLibraryController implements Controller {
 	
 	private Button btn1CreateLibrary;
 	private Button btn2Cancel;
-	
-	public CreateLibraryController() {
 
+	private UserSession userSession;
+	
+	public CreateLibraryController(UserSession userSession) {
+		this.userSession = userSession;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Create a library";
+	}
+
+	@Override
+	public Parent getComponent() {
+		
 		tf1LibraryName = new TextField();
 		tf2LibraryLocation = new TextField();
 
@@ -52,16 +65,6 @@ public class CreateLibraryController implements Controller {
 		picturePanePlusUserDetails = new GridPane();
 		innerPictureSectionLibraryDetails = new VBox();
 		innerPictureSectionButtonActionsSection = new HBox();
-
-	}
-
-	@Override
-	public String getTitle() {
-		return "Create a library";
-	}
-
-	@Override
-	public Parent getComponent() {
 		
 		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();

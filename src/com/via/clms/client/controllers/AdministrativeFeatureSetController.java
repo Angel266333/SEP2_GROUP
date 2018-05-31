@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import com.via.clms.client.controllers.containers.BookTable;
 import com.via.clms.client.controllers.containers.LibraryTable;
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.controllers.containers.UserTable;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
@@ -26,12 +27,12 @@ import javafx.scene.layout.VBox;
 
 public class AdministrativeFeatureSetController implements Controller {
 	
-	Window windowInstance;
 	
 	LibraryTable libraryTable;
 	UserTable userTable;
 	BookTable bookTable;
-
+	Window windowInstance;
+	
 	private GridPane mainPane;
 	private GridPane librariesLeftPane;
 	private GridPane bookOperationsRightPane;
@@ -74,7 +75,6 @@ public class AdministrativeFeatureSetController implements Controller {
 	public String userEmail;
 	public String userRole;
 	
-	
 	private Button btn1SearchLibrariesByName;
 	private Button btn2CreateLibrary;
 	private Button btn3ModifyLibrary;
@@ -89,7 +89,19 @@ public class AdministrativeFeatureSetController implements Controller {
 	private Button btn13RemoveBook;
 	private Button btn12BookToLibraryAssociation;
 	
-	public AdministrativeFeatureSetController() {
+	private UserSession userSession;
+	
+	public AdministrativeFeatureSetController(UserSession userSession) {
+		this.userSession = userSession;
+	}
+	
+	@Override
+	public String getTitle() {
+		return "CLMS Administration Panel";
+	}
+	
+	@Override
+	public Parent getComponent() {
 		
 		mainPane = new GridPane();
 		librariesLeftPane = new GridPane();
@@ -127,16 +139,6 @@ public class AdministrativeFeatureSetController implements Controller {
 		currentBooksSection = new VBox();
 		bookOperationsSection = new VBox();
 		innerBookOperationsSection = new HBox();
-		
-	}
-	
-	@Override
-	public String getTitle() {
-		return "CLMS Administration Panel";
-	}
-	
-	@Override
-	public Parent getComponent() {
 		
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 		
@@ -217,7 +219,7 @@ public class AdministrativeFeatureSetController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				CreateLibraryController crtlbrcntrl = new CreateLibraryController();
+				CreateLibraryController crtlbrcntrl = new CreateLibraryController(userSession);
 				Window w = new Window(crtlbrcntrl);
 				w.open();
 			}
@@ -290,7 +292,7 @@ public class AdministrativeFeatureSetController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				CreateUserController crlbrcntrl = new CreateUserController();
+				CreateUserController crlbrcntrl = new CreateUserController(userSession);
 				Window w = new Window(crlbrcntrl);
 				w.open();
 			}
@@ -364,7 +366,7 @@ public class AdministrativeFeatureSetController implements Controller {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
-				AddBookController addbkcntrl = new AddBookController();
+				AddBookController addbkcntrl = new AddBookController(userSession);
 				Window w = new Window(addbkcntrl);
 				w.open();
 			}
@@ -381,7 +383,7 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.setContentText("Please select a book first!");
 					alertFailiure.showAndWait();
 			} else {
-				EditBookDetailsController edtbkdtlscntrl = new EditBookDetailsController();
+				EditBookDetailsController edtbkdtlscntrl = new EditBookDetailsController(userSession);
 				Window w = new Window(edtbkdtlscntrl);
 				w.open();
 			} 

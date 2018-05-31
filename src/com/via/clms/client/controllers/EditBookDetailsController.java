@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -54,8 +55,20 @@ public class EditBookDetailsController implements Controller {
 	private Button btn1Update;
 	private Button btn2Cancel;
 
-	public EditBookDetailsController() {
+	private UserSession userSession;
 
+	public EditBookDetailsController(UserSession userSession) {
+		this.userSession = userSession;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Edit a book";
+	}
+
+	@Override
+	public Parent getComponent() {
+	
 		tf1BookName = new TextField();
 		tf2BookAuthor = new TextField();
 		tf3BookYear = new TextField();
@@ -78,16 +91,6 @@ public class EditBookDetailsController implements Controller {
 		descriptionSection = new VBox();
 		operationsSection = new HBox();
 		descriptionPanePlusOperations = new GridPane();
-
-	}
-
-	@Override
-	public String getTitle() {
-		return "Edit a book";
-	}
-
-	@Override
-	public Parent getComponent() {
 		
 		final File f = new File(EditBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();

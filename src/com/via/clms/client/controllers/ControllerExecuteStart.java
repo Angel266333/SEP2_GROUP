@@ -1,5 +1,7 @@
 package com.via.clms.client.controllers;
 
+import com.via.clms.client.controllers.containers.UserSession;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -8,6 +10,8 @@ public class ControllerExecuteStart extends Application {
 
 	public static ControllerExecute debugger;
 	public static String controllerName;
+	
+	private UserSession userSession = new UserSession(null, 1, 2);
 
 	public ControllerExecuteStart() {
 		debugger = new ControllerExecute();
@@ -31,7 +35,7 @@ public class ControllerExecuteStart extends Application {
 		}
 		if (controllerName == "HomeController") {
 			try {
-				HomeController homeController = new HomeController();
+				HomeController homeController = new HomeController(userSession);
 				primaryStage.setScene(new Scene(homeController.getComponent()));
 				primaryStage.setTitle(homeController.getTitle());
 				primaryStage.show();
@@ -64,7 +68,7 @@ public class ControllerExecuteStart extends Application {
 		}
 		if (controllerName == "SearchResultController") {
 			try {
-				SearchResultController searchResultController = new SearchResultController();
+				SearchResultController searchResultController = new SearchResultController(userSession);
 				primaryStage.setScene(new Scene(searchResultController.getComponent()));
 				primaryStage.setTitle(searchResultController.getTitle());
 				primaryStage.show();
@@ -95,28 +99,6 @@ public class ControllerExecuteStart extends Application {
 				Runtime.getRuntime().exit(0);
 			}
 		}
-//		if (controllerName == "RenewBookController") {
-//			try {
-//				RenewBookController renewBookController = new RenewBookController();
-//				primaryStage.setScene(new Scene(renewBookController.getComponent()));
-//				primaryStage.setTitle(renewBookController.getTitle());
-//				primaryStage.show();
-//			} catch (Exception e) {
-//				System.out.println("Error in creating controller object.");
-//				Runtime.getRuntime().exit(0);
-//			}
-//		}
-		if (controllerName == "LibrarianHomeController") {
-		try {
-			LibrarianHomeController librarianHomeController = new LibrarianHomeController();
-			primaryStage.setScene(new Scene(librarianHomeController.getComponent()));
-			primaryStage.setTitle(librarianHomeController.getTitle());
-			primaryStage.show();
-		} catch (Exception e) {
-			System.out.println("Error in creating controller object.");
-			Runtime.getRuntime().exit(0);
-		}
-	}	
 		if (controllerName == "InventoryManagementController") {
 		try {
 			InventoryManagementController inventoryManagementController = new InventoryManagementController();

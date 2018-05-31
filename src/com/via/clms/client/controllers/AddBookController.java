@@ -2,6 +2,7 @@ package com.via.clms.client.controllers;
 
 import java.io.File;
 
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
@@ -24,8 +25,6 @@ import javafx.scene.layout.VBox;
 
 public class AddBookController implements Controller {
 	
-	Window windowInstance;
-
 	private GridPane mainPane;
 	private GridPane picturePane;
 	private GridPane picturePanePlusBookDetails;
@@ -53,9 +52,22 @@ public class AddBookController implements Controller {
 	
 	private Button btn1AddBook;
 	private Button btn2Cancel;
+	
+	private Window windowInstance;
+	private UserSession userSession;
 
-	public AddBookController() {
+	public AddBookController(UserSession userSession) {
+		this.userSession = userSession;
+	}
 
+	@Override
+	public String getTitle() {
+		return "Add a book";
+	}
+
+	@Override
+	public Parent getComponent() {
+		
 		tf1BookName = new TextField();
 		tf2BookAuthor = new TextField();
 		tf3BookYear = new TextField();
@@ -79,15 +91,6 @@ public class AddBookController implements Controller {
 		operationsSection = new HBox();
 		descriptionPanePlusOperations = new GridPane();
 
-	}
-
-	@Override
-	public String getTitle() {
-		return "Add a book";
-	}
-
-	@Override
-	public Parent getComponent() {
 		
 		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();

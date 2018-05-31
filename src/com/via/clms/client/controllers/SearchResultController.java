@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.via.clms.client.controllers.containers.ClickListener;
 import com.via.clms.client.controllers.containers.SearchResultTable;
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
 import com.via.clms.client.views.Window;
@@ -73,7 +74,17 @@ public class SearchResultController implements Controller {
 	private Button btn6HomeSection;
 	private Button btn7MyProfile;
 
-	public SearchResultController() {
+	private UserSession userSession;
+	
+	public SearchResultController(UserSession userSession) {
+		this.userSession = userSession;
+	}
+
+	public String getTitle() {
+		return "Results from book search";
+	}
+
+	public Parent getComponent() {
 
 		mainPane = new GridPane();
 		searchPane = new GridPane();
@@ -128,14 +139,7 @@ public class SearchResultController implements Controller {
 		bookListResultsSection = new VBox();
 		innerFooterUserActionsSection = new HBox();
 
-	}
-
-	public String getTitle() {
-		return "Results from book search";
-	}
-
-	public Parent getComponent() {
-
+		
 		mainPane.setAlignment(Pos.CENTER);
 		mainPane.setPadding(new Insets(20, 5, 20, 5));
 		
@@ -286,7 +290,7 @@ public class SearchResultController implements Controller {
 					alertFailiure.setContentText("Please select a book!");
 					alertFailiure.showAndWait();
 				} else {
-					ViewBookDetailsController bookDetails = new ViewBookDetailsController();
+					ViewBookDetailsController bookDetails = new ViewBookDetailsController(userSession);
 					Window w = new DialogWindow(bookDetails);
 					w.open();
 				}
