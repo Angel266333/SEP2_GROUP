@@ -1,10 +1,13 @@
 package com.via.clms.client.controllers;
 
 import java.io.File;
+import java.rmi.RemoteException;
 
+import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.proxy.ILibraryService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,10 +15,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -23,25 +26,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class CreateLibraryController implements Controller {
-	
+
 	private GridPane mainPane;
 	private GridPane picturePane;
 	private GridPane picturePanePlusUserDetails;
 	private VBox innerPictureSectionLibraryDetails;
 	private HBox innerPictureSectionButtonActionsSection;
 	private Window window;
-	
+
 	private TextField tf1LibraryName;
 	private TextField tf2LibraryLocation;
-	
+
 	private Label lbl1LibraryName;
 	private Label lbl2LibraryLocation;
-	
+
 	private Button btn1CreateLibrary;
 	private Button btn2Cancel;
 
 	private UserSession userSession;
-	
+
 	public CreateLibraryController(UserSession userSession) {
 		this.userSession = userSession;
 	}
@@ -53,7 +56,7 @@ public class CreateLibraryController implements Controller {
 
 	@Override
 	public Parent getComponent() {
-		
+
 		tf1LibraryName = new TextField();
 		tf2LibraryLocation = new TextField();
 
@@ -65,8 +68,9 @@ public class CreateLibraryController implements Controller {
 		picturePanePlusUserDetails = new GridPane();
 		innerPictureSectionLibraryDetails = new VBox();
 		innerPictureSectionButtonActionsSection = new HBox();
-		
-		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+
+		final File f = new File(
+				ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
@@ -76,38 +80,51 @@ public class CreateLibraryController implements Controller {
 		Image imageDir = new Image(outputPath);
 		ImageView viewImg = new ImageView();
 		viewImg.setImage(imageDir);
-		
+
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
-		
+
 		btn1CreateLibrary = new Button("Create library");
 		btn2Cancel = new Button("Cancel");
 
 		btn1CreateLibrary.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent arg0) {
-				if (tf1LibraryName.getText().isEmpty() 
-					|| tf2LibraryLocation.getText().isEmpty()) {
+				if (tf1LibraryName.getText().isEmpty() || tf2LibraryLocation.getText().isEmpty()) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("No information was filled in");
 					alertFailiure.setContentText("Please fill in all fields!");
 					alertFailiure.showAndWait();
 				} else {
-				// TODO - Execute function ---> Adding a library
+					try {
+						ILibraryService service = (ILibraryService) ServiceManager.getService("library");
+						service.createLibrary(userSession.token, tf1LibraryName.getText(),
+								tf2LibraryLocation.getText());
+						Alert alertInformation = new Alert(AlertType.INFORMATION);
+						alertInformation.setTitle("Success");
+						alertInformation.setHeaderText("Library created");
+						alertInformation.setContentText("New library successfully created!");
+						alertInformation.showAndWait();
+					} catch (RuntimeException | RemoteException e) {
+						Alert alertFailiure = new Alert(AlertType.ERROR);
+						alertFailiure.setTitle("Error Dialog");
+						alertFailiure.setHeaderText("Duplicate library detected");
+						alertFailiure.setContentText("Please enter a valid library name!");
+						alertFailiure.showAndWait();
+					}
 				}
-				
 			}
 		});
-		
+
 		btn2Cancel.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent arg0) {
 				window.close();
 			}
 		});
-		
+
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 
 		mainPane.setAlignment(Pos.CENTER);
@@ -115,27 +132,28 @@ public class CreateLibraryController implements Controller {
 
 		picturePane.setAlignment(Pos.CENTER);
 		picturePane.add(viewImg, 0, 0);
-		
+
 		innerPictureSectionLibraryDetails.setAlignment(Pos.CENTER_LEFT);
 		innerPictureSectionLibraryDetails.setPadding(new Insets(5, 0, 0, 0));
-		
+
 		innerPictureSectionButtonActionsSection.setAlignment(Pos.CENTER);
 		innerPictureSectionButtonActionsSection.setPadding(new Insets(15, 0, 0, 0));
-		
+
 		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
-		
-		innerPictureSectionLibraryDetails.getChildren().addAll(lbl1LibraryName, tf1LibraryName, lbl2LibraryLocation, tf2LibraryLocation);
+
+		innerPictureSectionLibraryDetails.getChildren().addAll(lbl1LibraryName, tf1LibraryName, lbl2LibraryLocation,
+				tf2LibraryLocation);
 		innerPictureSectionLibraryDetails.setSpacing(5);
 
 		innerPictureSectionButtonActionsSection.getChildren().addAll(btn1CreateLibrary, btn2Cancel);
 		innerPictureSectionButtonActionsSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\
-		
+
 		picturePanePlusUserDetails.add(picturePane, 0, 0);
 		picturePanePlusUserDetails.add(innerPictureSectionLibraryDetails, 0, 1);
 		picturePanePlusUserDetails.add(innerPictureSectionButtonActionsSection, 0, 2);
-		
+
 		mainPane.add(picturePanePlusUserDetails, 0, 0);
 
 		return mainPane;
@@ -153,7 +171,7 @@ public class CreateLibraryController implements Controller {
 
 	@Override
 	public void onWindowRefresh(Window win) {
-		
+
 	}
 
 	@Override
@@ -163,7 +181,7 @@ public class CreateLibraryController implements Controller {
 
 	@Override
 	public void onWindowPause(Window win) {
-		
+
 	}
 
 }

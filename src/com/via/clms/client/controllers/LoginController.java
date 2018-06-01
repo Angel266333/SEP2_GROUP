@@ -149,7 +149,7 @@ public class LoginController extends ResultController<UserSession> {
 
 				} else {
 					if (lid < 0) {
-						lid = libraryids[ cb1Libraries.getSelectionModel().getSelectedIndex() ];
+						lid = libraryids[ getLibrarySelectedIndex() ];
 					}
 
 					// Get the cpr and password from the input fields
