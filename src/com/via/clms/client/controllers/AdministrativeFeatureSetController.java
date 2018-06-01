@@ -87,7 +87,7 @@ public class AdministrativeFeatureSetController implements Controller {
 	private Button btn10AddBook;
 	private Button btn11ModifyBook;
 	private Button btn13RemoveBook;
-	private Button btn12BookToLibraryAssociation;
+	private Button btn14BookToLibraryAssociation;
 	
 	private UserSession userSession;
 	
@@ -143,7 +143,7 @@ public class AdministrativeFeatureSetController implements Controller {
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 		
 		mainPane.setAlignment(Pos.CENTER);
-		mainPane.setPadding(new Insets(20, 15, 20, 15));
+		mainPane.setPadding(new Insets(-20, 15, 20, 50));
 		
 		librariesLeftPane.setPadding(new Insets(0, 10, 0, 10));
 		
@@ -182,7 +182,7 @@ public class AdministrativeFeatureSetController implements Controller {
 		btn10AddBook = new Button("Add book");
 		btn11ModifyBook = new Button("Edit book details");
 		btn13RemoveBook = new Button("Remove book");
-		btn12BookToLibraryAssociation = new Button("Associate book with library");
+		btn14BookToLibraryAssociation = new Button("Associate book with library");
 		
 		btn4RemoveLibrary.setStyle("-fx-color: #FF9999");
 		btn8RemoveUser.setStyle("-fx-color: #FF9999");
@@ -450,7 +450,7 @@ public class AdministrativeFeatureSetController implements Controller {
 		currentBooksSection.getChildren().addAll(lbl5Books, innerCurrentBooksSection, bookTableScrollPane);
 		currentBooksSection.setSpacing(5);
 		
-		innerBookOperationsSection.getChildren().addAll(btn10AddBook, btn11ModifyBook, btn12BookToLibraryAssociation);
+		innerBookOperationsSection.getChildren().addAll(btn10AddBook, btn11ModifyBook, btn14BookToLibraryAssociation);
 		innerBookOperationsSection.setSpacing(5);
 		
 		bookOperationsSection.getChildren().addAll(lbl6BookOperations, innerBookOperationsSection, btn13RemoveBook);

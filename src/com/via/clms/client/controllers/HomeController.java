@@ -103,7 +103,7 @@ public class HomeController implements Controller {
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 
 		mainPane.setAlignment(Pos.CENTER);
-		mainPane.setPadding(new Insets(20, 5, 20, 5));
+		mainPane.setPadding(new Insets(-20, 5, 20, 5));
 
 		searchPane.setAlignment(Pos.TOP_LEFT);
 		searchPane.setPadding(new Insets(0, 0, 10, 0));
@@ -147,7 +147,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				/*String resultParse = tf1Search.getText();
+				String resultParse = tf1Search.getText();
 				if (tf1Search.getText().isEmpty()) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
@@ -157,11 +157,11 @@ public class HomeController implements Controller {
 				} else {
 					window.launchController(new RentBookController());
 
-					SearchResultController src = new SearchResultController();
+					SearchResultController src = new SearchResultController(null);
 					Window w = new DialogWindow(src);
 					src.tf1Search.setText(resultParse);
 					w.open();
-				}*/
+				}
 
 			}
 		});
@@ -196,7 +196,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				// window.launchController(new ProfileController(session));
+				window.launchController(new ProfileController(session));
 			}
 
 		});

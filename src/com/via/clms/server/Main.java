@@ -12,8 +12,10 @@ import java.util.StringTokenizer;
 import com.via.clms.Log;
 import com.via.clms.Utils;
 import com.via.clms.server.services.DatabaseService;
+import com.via.clms.server.services.LibraryService;
 import com.via.clms.server.services.Service;
 import com.via.clms.server.services.UserService;
+import com.via.clms.shared.Library;
 
 /**
  * 
@@ -31,6 +33,7 @@ public class Main {
 	 */
 	static {
 		SERVICES.put("database", DatabaseService.class);
+		SERVICES.put("library", LibraryService.class);
 		SERVICES.put("user", UserService.class);
 	}
 

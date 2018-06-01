@@ -112,20 +112,17 @@ public class SearchResultController implements Controller {
 		cb1BookGenre = new ComboBox<String>();
 		cb1BookGenre.setPromptText("Book genre");
 		cb1BookGenre.setPrefWidth(160);
-		cb1BookGenre.getItems().addAll("Action", "Thriller", "Comedy", "Horror", "Sci-Fi", "Culture", "History",
-				"Fantasy", "Mythology");
+		cb1BookGenre.getItems().addAll(setBookGenres());
 
 		cb2BookYear = new ComboBox<String>();
 		cb2BookYear.setPromptText("Book year");
 		cb2BookYear.setPrefWidth(160);
-		cb2BookYear.getItems().addAll("2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009",
-				"2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "Before 2000");
+		cb2BookYear.getItems().addAll(setBookYear());
 
 		cb3BookLanguage = new ComboBox<String>();
 		cb3BookLanguage.setPromptText("Book language");
 		cb3BookLanguage.setPrefWidth(160);
-		cb3BookLanguage.getItems().addAll("English", "Danish", "Bulgarian", "German", "Dutch", "French", "Russian",
-				"Polish");
+		cb3BookLanguage.getItems().addAll(setBookYear());
 
 		cb4BookLibraryLocation = new ComboBox<String>();
 		cb4BookLibraryLocation.setPromptText("Book location");
@@ -237,13 +234,9 @@ public class SearchResultController implements Controller {
 					Alert promptConfirmation = new Alert(AlertType.CONFIRMATION);
 					promptConfirmation.setTitle("Book rent confirm");
 					promptConfirmation.setHeaderText("Rent selected books");
-					promptConfirmation.setContentText("You are about to rent the following books:\n"
-							+ "getUserBookSelections()" + " \n" + "Continue?");
-					if (isRentPossible()) {
+					promptConfirmation.setContentText("You are about to rent the selected books. Continue?");
 						Optional<ButtonType> result = promptConfirmation.showAndWait();
 						if (result.get() == ButtonType.OK) {
-							// Has to perform an if-statement that checks if rent is possible and get book
-							// time frame.
 							Alert alertSuccess = new Alert(AlertType.INFORMATION);
 							alertSuccess.setTitle("Information Dialog");
 							alertSuccess.setHeaderText("Selected books have been successfully rented");
@@ -258,18 +251,17 @@ public class SearchResultController implements Controller {
 						alertFailiure.setTitle("Error Dialog");
 						alertFailiure.setHeaderText("Selected book rental error");
 						alertFailiure.setContentText("Could not rent selected books!");
-						alertFailiure.showAndWait();
+						alertFailiure.show();
 					}
-				} else {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("No selected books");
 					alertFailiure.setContentText("Please select a book first!");
-					alertFailiure.showAndWait();
+					alertFailiure.show();
 				}
 
 			}
-		});
+		);
 
 		btn5ViewBookDetails.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -312,7 +304,7 @@ public class SearchResultController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 
-				ProfileController prc = new ProfileController(0);
+				ProfileController prc = new ProfileController(userSession);
 				Window w = new DialogWindow(prc);
 				w.open();
 
@@ -388,11 +380,6 @@ public class SearchResultController implements Controller {
 		return cb4BookLibraryLocation.getSelectionModel().getSelectedIndex();
 	}
 
-	public boolean isRentPossible() {
-		// TODO - Future implementation where the system checks if the user is eligible for rent.
-		return true;
-	}
-
 	public boolean filterSelectionGuard() {
 		if (getCb1BookGenreFilterSelection() == -1 && getCb2BookYear() == -1 && getCb3BookLanguage() == -1
 				&& getCb4BookLibraryLocation() == -1) {
@@ -415,6 +402,17 @@ public class SearchResultController implements Controller {
 		return true;
 	}
 
+	public String[] setBookGenres() {
+		return null;
+	}
+	
+	public String[] setBookYear() {
+		return null;
+	}
+	
+	public String[] setBookLocation() {
+		return null;
+	}
 
 	@Override
 	public void onWindowOpen(Window win) {

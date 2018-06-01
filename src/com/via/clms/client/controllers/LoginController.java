@@ -140,7 +140,7 @@ public class LoginController extends ResultController<UserSession> {
 					alertFailiure.setHeaderText("Login information fields empty");
 					alertFailiure.setContentText("Please fill in all fields!");
 					alertFailiure.showAndWait();
-				} else if (lid < 0 && cb1Libraries.getSelectionModel().getSelectedIndex() == -1) {
+				} else if (lid < 0 && getLibrarySelectedIndex() == -1) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Library not selected");
@@ -161,7 +161,7 @@ public class LoginController extends ResultController<UserSession> {
 					try {
 						// Get the users token, if the information is valid
 						byte[] token = service.getUserToken(Long.parseLong(cpr), passwd);
-
+						
 						// If the information is valid, pass the token to the caller
 						if (token != null) {
 							if (service.checkPermissions(token, lid, IUserService.ROLE_LOGIN)) {
@@ -296,15 +296,15 @@ public class LoginController extends ResultController<UserSession> {
 		libraryids = new int[ libraries.length + 1 ];
 		libraryids[0] = 0;
 
-		String[] demoList = new String[ libraries.length + 1 ];
-		demoList[0] = new String("Global Access");
+		String[] libraryList = new String[ libraries.length + 1 ];
+		libraryList[0] = new String("Global Access");
 		
 		for (int i=0, x=1; i < libraries.length; i++, x++) {
 			libraryids[x] = libraries[i].lid;
-			demoList[x] = libraries[i].name;
+			libraryList[x] = libraries[i].name;
 		}
 		
-		return demoList;
+		return libraryList;
 	}
 
 	public int getLibrarySelectedIndex() {

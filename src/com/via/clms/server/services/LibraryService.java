@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.via.clms.Log;
 import com.via.clms.proxy.ILibraryService;
 import com.via.clms.proxy.IUserService;
 import com.via.clms.server.ServiceManager;
@@ -72,6 +73,22 @@ public class LibraryService implements ILibraryService, Service {
 		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = dbs.query(q, length, offset);
 		ArrayList<Library> lbrList = new ArrayList<>();
+		
+		String b = "SELECT COUNT(*) FROM Libraries LIMIT ? OFFSET ?";
+		ResultSet resultSecond = dbs.query(b, length, offset);
+		try {
+			resultSecond.next();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			System.out.println("" + resultSecond.getInt(1));
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try {
 			while(result.next()) {
 			int lLid = result.getInt(1);
@@ -83,7 +100,7 @@ public class LibraryService implements ILibraryService, Service {
 			lbrList.toArray(lbrArray);
 			return lbrArray;
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			Log.error(e);
 			return null;
 		}
 	}
