@@ -10,7 +10,9 @@ import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.ResultController;
 import com.via.clms.client.views.Window;
+import com.via.clms.proxy.ILibraryService;
 import com.via.clms.proxy.IUserService;
+import com.via.clms.shared.Library;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -281,19 +283,31 @@ public class LoginController extends ResultController<UserSession> {
 	}
 
 	public String[] setLibraries() {
+		ILibraryService service = (ILibraryService) ServiceManager.getService("library");
+		Library[] libraries = new Library[0];
+		
+		try {
+			libraries = service.getLibraries(0, 50);
+			
+		} catch (RemoteException e) {
+			Log.error(e);
+		}
 
-		libraryids = new int[1];
+		libraryids = new int[ libraries.length + 1 ];
 		libraryids[0] = 0;
 
-		// TODO - Demo - get list from database.
-		String[] demoList = new String[4];
+		String[] demoList = new String[ libraries.length + 1 ];
 		demoList[0] = new String("Global Access");
+		
+		for (int i=0, x=1; i < libraries.length; i++, x++) {
+			libraryids[x] = libraries[i].lid;
+			demoList[x] = libraries[i].name;
+		}
+		
 		return demoList;
-
 	}
 
 	public int getLibrarySelectedIndex() {
 		return cb1Libraries.getSelectionModel().getSelectedIndex();
 	}
-
 }
