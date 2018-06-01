@@ -1,5 +1,3 @@
-package com.via.clms.client.controllers;
-
 import com.via.clms.client.controllers.containers.UserSession;
 
 import javafx.application.Application;

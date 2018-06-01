@@ -1,5 +1,3 @@
-package com.via.clms.client.controllers;
-
 import java.util.Scanner;
 
 public class ControllerExecute {
