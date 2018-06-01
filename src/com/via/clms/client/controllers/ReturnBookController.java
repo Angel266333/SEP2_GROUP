@@ -4,6 +4,7 @@ import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.proxy.IInventoryService;
 import com.via.clms.server.services.InventoryService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -53,7 +54,7 @@ public class ReturnBookController implements Controller {
 					try {
 
 						int bookId = Integer.parseInt(bookIDText.getText());
-						InventoryService service = (InventoryService) ServiceManager.getService("inventory");
+						IInventoryService service = (IInventoryService) ServiceManager.getService("inventory");
 
 						service.removeRental(bookId);
 						
