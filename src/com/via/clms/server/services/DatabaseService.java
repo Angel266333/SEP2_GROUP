@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Types;
@@ -214,10 +215,12 @@ public class DatabaseService implements Service {
 			
 			return statement.executeUpdate();
 			
-		} catch (Exception e) {
-			Log.error(e);
+		} catch (SQLException e) {
+			if (e.getSQLState() != null) {
+			throw new RuntimeException("Statement insertion error");
+			}
 		}
-		
+
 		return -1;
 	}
 }
