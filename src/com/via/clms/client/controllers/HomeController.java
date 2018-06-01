@@ -156,11 +156,6 @@ public class HomeController implements Controller {
 					alertFailiure.showAndWait();
 				} else {
 					window.launchController(new RentBookController());
-
-					SearchResultController src = new SearchResultController(null);
-					Window w = new DialogWindow(src);
-					src.tf1Search.setText(resultParse);
-					w.open();
 				}
 
 			}
@@ -179,7 +174,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				window.launchController(new ReturnBookController());
+				window.launchController(new ReturnBookController(session));
 			}
 
 		});

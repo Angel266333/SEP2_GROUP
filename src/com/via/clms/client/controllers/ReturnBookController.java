@@ -1,6 +1,7 @@
 package com.via.clms.client.controllers;
 import com.via.clms.Log;
 import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 import com.via.clms.server.services.InventoryService;
@@ -16,8 +17,12 @@ import javafx.scene.layout.GridPane;
 
 public class ReturnBookController implements Controller {
 	private GridPane mainPane;
+	
+	UserSession session;
 
-	public ReturnBookController() {
+	public ReturnBookController(UserSession session) {
+		
+		this.session = session;
 
 		mainPane = new GridPane();
 

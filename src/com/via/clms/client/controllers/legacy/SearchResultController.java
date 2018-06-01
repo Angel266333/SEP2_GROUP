@@ -76,8 +76,7 @@ public class SearchResultController implements Controller {
 
 	private UserSession userSession;
 	
-	public SearchResultController(UserSession userSession) {
-		this.userSession = userSession;
+	public SearchResultController() {
 	}
 
 	public String getTitle() {
