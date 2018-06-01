@@ -9,15 +9,32 @@ import javafx.scene.Parent;
  * 
  */
 public abstract class StackController implements Controller, WindowListener {
-
+	
+	/**
+	 * 
+	 */
+	private static class StackElement {
+		
+		/** * */
+		public final Controller controller;
+		
+		/** * */
+		public final Parent view;
+		
+		/**
+		 * 
+		 */
+		public StackElement(Controller controller, Parent view) {
+			this.controller = controller;
+			this.view = view;
+		}
+	}
+	
 	/** * */
-	private final List<Controller> mStack = new ArrayList<Controller>();
-
+	private final List<StackElement> mElements = new ArrayList<StackElement>();
+	
 	/** * */
-	private final List<Parent> mViews = new ArrayList<Parent>();
-
-	/** * */
-	private Controller mCurrentController;
+	private Controller mController;
 
 	/** * */
 	private Window mWindow;
@@ -26,30 +43,32 @@ public abstract class StackController implements Controller, WindowListener {
 	 * 
 	 */
 	public StackController(Controller mainController) {
-		mCurrentController = mainController;
+		mController = mainController;
 	}
 
 	/**
 	 * 
 	 */
 	protected final boolean isStacked() {
-		return mStack.size() > 1;
+		return mElements.size() > 1;
 	}
 
 	/**
 	 * 
 	 */
 	protected final Controller popStack() {
-		if (mStack.size() > 1) {
-			mCurrentController.onWindowPause(mWindow);
-			mCurrentController.onWindowClose(mWindow);
-			Controller prevController = mStack.remove(mStack.size() - 1);
-			Parent prevView = mViews.remove(mViews.size() - 1);
+		if (mElements.size() > 1) {
+			mController.onWindowPause(mWindow);
+			mController.onWindowClose(mWindow);
+			
+			int prev = mElements.size() - 1;
+			mElements.remove(prev--);
+			
+			StackElement stacked = mElements.get(prev);
+			onStackChanged(stacked.view, stacked.controller);
 
-			onStackChanged(prevView, prevController);
-
-			mCurrentController = prevController;
-			mCurrentController.onWindowResume(mWindow);
+			mController = stacked.controller;
+			mController.onWindowResume(mWindow);
 		}
 
 		return null;
@@ -59,28 +78,27 @@ public abstract class StackController implements Controller, WindowListener {
 	 * 
 	 */
 	protected final void pushStack(Controller controller) {
-		if (mCurrentController != null) {
-			mCurrentController.onWindowPause(mWindow);
+		if (mController != null && mElements.size() > 0) {
+			mController.onWindowPause(mWindow);
 		}
 
 		Parent view = controller.getComponent();
+		StackElement stacked = new StackElement(controller, view);
 
-		mStack.add(controller);
-		mViews.add(view);
-
+		mElements.add(stacked);
 		onStackChanged(view, controller);
 
-		mCurrentController = controller;
-		mCurrentController.onWindowOpen(mWindow);
-		mCurrentController.onWindowResume(mWindow);
-		mCurrentController.onWindowRefresh(mWindow);
+		mController = controller;
+		mController.onWindowOpen(mWindow);
+		mController.onWindowResume(mWindow);
+		mController.onWindowRefresh(mWindow);
 	}
 
 	/**
 	 * 
 	 */
 	protected final Controller getCurrentStack() {
-		return mCurrentController;
+		return mController;
 	}
 
 	/**
@@ -97,7 +115,7 @@ public abstract class StackController implements Controller, WindowListener {
 	public void onWindowOpen(Window win) {
 		mWindow = win;
 
-		pushStack(mCurrentController);
+		pushStack(mController);
 	}
 
 	/**
@@ -105,12 +123,11 @@ public abstract class StackController implements Controller, WindowListener {
 	 */
 	@Override
 	public void onWindowClose(Window win) {
-		for (int i = mStack.size() - 1; i >= 0; i--) {
-			mStack.get(i).onWindowClose(mWindow);
+		for (int i = mElements.size() - 1; i >= 0; i--) {
+			mElements.get(i).controller.onWindowClose(mWindow);
 		}
 
-		mStack.clear();
-		mViews.clear();
+		mElements.clear();
 	}
 
 	/**
@@ -118,7 +135,7 @@ public abstract class StackController implements Controller, WindowListener {
 	 */
 	@Override
 	public void onWindowRefresh(Window win) {
-		mCurrentController.onWindowRefresh(mWindow);
+		mController.onWindowRefresh(mWindow);
 	}
 
 	/**
@@ -126,7 +143,7 @@ public abstract class StackController implements Controller, WindowListener {
 	 */
 	@Override
 	public void onWindowResume(Window win) {
-		mCurrentController.onWindowResume(mWindow);
+		mController.onWindowResume(mWindow);
 	}
 
 	/**
@@ -134,7 +151,7 @@ public abstract class StackController implements Controller, WindowListener {
 	 */
 	@Override
 	public void onWindowPause(Window win) {
-		mCurrentController.onWindowPause(mWindow);
+		mController.onWindowPause(mWindow);
 	}
 
 	/**
@@ -143,8 +160,8 @@ public abstract class StackController implements Controller, WindowListener {
 	@Override
 	public boolean onLaunchController(Controller controller) {
 		// We should support nested Window Listeners
-		if (!(mCurrentController instanceof WindowListener)
-				|| !((WindowListener) mCurrentController).onLaunchController(controller)) {
+		if (!(mController instanceof WindowListener)
+				|| !((WindowListener) mController).onLaunchController(controller)) {
 
 			pushStack(controller);
 		}
@@ -158,7 +175,7 @@ public abstract class StackController implements Controller, WindowListener {
 	@Override
 	public boolean onRequestExit() {
 		// We should support nested Window Listeners
-		if (!(mCurrentController instanceof WindowListener) || !((WindowListener) mCurrentController).onRequestExit()) {
+		if (!(mController instanceof WindowListener) || !((WindowListener) mController).onRequestExit()) {
 
 			if (isStacked()) {
 				popStack();

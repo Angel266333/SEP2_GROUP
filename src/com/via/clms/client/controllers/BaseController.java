@@ -51,14 +51,14 @@ public class BaseController extends StackController {
 	@Override
 	public void onStackChanged(Parent view, Controller controller) {
 		getWindow().setTitle(controller.getTitle());
-		if (vBox.getChildren().size() > 1) {
+		
+		while (vBox.getChildren().size() > 1) {
 			vBox.getChildren().remove(1);
 		}
-		vBox.getChildren().add(view);
 		
-		if (isStacked()) {
-			mBack.setVisible(true);
-		}
+		vBox.getChildren().add(view);
+		mBack.setVisible(isStacked());
+
 		getWindow().resize();
 		
 	}
