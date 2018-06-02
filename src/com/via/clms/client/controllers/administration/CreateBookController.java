@@ -1,10 +1,12 @@
-package com.via.clms.client.controllers;
+package com.via.clms.client.controllers.administration;
 
 import java.io.File;
 
+import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.server.services.LibraryService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,7 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class AddBookController implements Controller {
+public class CreateBookController implements Controller {
 	
 	private GridPane mainPane;
 	private GridPane picturePane;
@@ -56,7 +58,7 @@ public class AddBookController implements Controller {
 	private Window windowInstance;
 	private UserSession userSession;
 
-	public AddBookController(UserSession userSession) {
+	public CreateBookController(UserSession userSession) {
 		this.userSession = userSession;
 	}
 
@@ -92,7 +94,7 @@ public class AddBookController implements Controller {
 		descriptionPanePlusOperations = new GridPane();
 
 		
-		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(CreateBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
@@ -122,7 +124,7 @@ public class AddBookController implements Controller {
 				alertFailiure.setContentText("Please fill in all fields!");
 				alertFailiure.showAndWait();
 			} else {
-			// TODO - Execute function ---> Adding book to library
+			
 			}
 			}
 		});

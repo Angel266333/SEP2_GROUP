@@ -1,4 +1,4 @@
-package com.via.clms.client.controllers;
+package com.via.clms.client.controllers.administration;
 
 import java.io.File;
 
@@ -34,12 +34,12 @@ public class EditBookDetailsController implements Controller {
 	private HBox operationsSection;
 	private GridPane descriptionPanePlusOperations;
 
-	private TextField tf1BookName;
-	private TextField tf2BookAuthor;
-	private TextField tf3BookYear;
-	private TextField tf4BookISBN;
+	public TextField tf1BookName;
+	public TextField tf2BookAuthor;
+	public TextField tf3BookYear;
+	public TextField tf4BookISBN;
 	
-	private TextArea tAR5BookDescription;
+	public TextArea tAR5BookDescription;
 
 	private Label lbl1BookName;
 	private Label lbl2BookAuthor;
@@ -63,7 +63,7 @@ public class EditBookDetailsController implements Controller {
 
 	@Override
 	public String getTitle() {
-		return "Edit a book";
+		return "Book tools";
 	}
 
 	@Override
@@ -177,6 +177,8 @@ public class EditBookDetailsController implements Controller {
 
 		return mainPane;
 	}
+	
+	
 
 	@Override
 	public void onWindowOpen(Window win) {

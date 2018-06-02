@@ -86,7 +86,7 @@ public class ViewBookDetailsController implements Controller {
 		descriptionSection = new VBox();
 		descriptionPane = new GridPane();
 		
-		final File f = new File(AddBookController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		final File f = new File(ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");

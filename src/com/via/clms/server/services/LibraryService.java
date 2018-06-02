@@ -47,8 +47,11 @@ public class LibraryService implements ILibraryService, Service {
 	}
 	
 	@Override
-	public Library getLibraryByLID(int lid) throws RemoteException {
+	public Library[] getLibraryByLID(int lid) throws RemoteException {
 		IUserService userService = (IUserService) ServiceManager.getService("user");
+	
+		ArrayList<Library> lbrList = new ArrayList<>();
+		
 		String q = "SELECT * FROM Libraries WHERE cLid = ?;";
 		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
 		ResultSet result = dbs.query(q, lid);
@@ -57,13 +60,15 @@ public class LibraryService implements ILibraryService, Service {
 				int lLid = result.getInt(1);
 				String lName = result.getString(2);
 				String lLocation = result.getString(3);
-				return new Library(lLid, lName, lLocation);
+				lbrList.add(new Library(lLid, lName, lLocation));	
 			}
+			Library[] lbrArray = new Library[lbrList.size()];
+			lbrList.toArray(lbrArray);
+			return lbrArray;
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			Log.error(e);
 			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -79,13 +84,6 @@ public class LibraryService implements ILibraryService, Service {
 		try {
 			resultSecond.next();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			System.out.println("" + resultSecond.getInt(1));
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		

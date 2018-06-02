@@ -1,4 +1,4 @@
-package com.via.clms.client.controllers;
+package com.via.clms.client.controllers.administration;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -25,13 +25,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class CreateLibraryController implements Controller {
+public class EditLibraryDetailsController implements Controller {
 
 	private GridPane mainPane;
 	private GridPane picturePane;
-	private GridPane picturePanePlusUserDetails;
+	private GridPane picturePanePlusLibraryDetails;
 	private VBox innerPictureSectionLibraryDetails;
 	private HBox innerPictureSectionButtonActionsSection;
+	
 	private Window window;
 
 	private TextField tf1LibraryName;
@@ -42,35 +43,33 @@ public class CreateLibraryController implements Controller {
 
 	private Button btn1CreateLibrary;
 	private Button btn2Cancel;
-
+	private Button btn3DeleteLibrary;
+	
 	private UserSession userSession;
 
-	public CreateLibraryController(UserSession userSession) {
+	public EditLibraryDetailsController(UserSession userSession) {
 		this.userSession = userSession;
 	}
 
 	@Override
 	public String getTitle() {
-		return "Create a library";
+		return "Library tools";
 	}
 
 	@Override
 	public Parent getComponent() {
-
-		tf1LibraryName = new TextField();
-		tf2LibraryLocation = new TextField();
 
 		lbl1LibraryName = new Label("Library name:");
 		lbl2LibraryLocation = new Label("Library location:");
 
 		mainPane = new GridPane();
 		picturePane = new GridPane();
-		picturePanePlusUserDetails = new GridPane();
+		picturePanePlusLibraryDetails = new GridPane();
 		innerPictureSectionLibraryDetails = new VBox();
 		innerPictureSectionButtonActionsSection = new HBox();
 
 		final File f = new File(
-				ViewBookDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+				EditLibraryDetailsController.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String filePath = f.toString();
 		String removeInvalidTargetPath = "bin";
 		String synchronizedPath = filePath.replace(removeInvalidTargetPath, "src");
@@ -83,8 +82,11 @@ public class CreateLibraryController implements Controller {
 
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
-		btn1CreateLibrary = new Button("Create library");
+		btn1CreateLibrary = new Button("Edit library");
 		btn2Cancel = new Button("Cancel");
+		btn3DeleteLibrary = new Button("Delete this library");
+		
+		btn3DeleteLibrary.setStyle("-fx-background-color: #FF6060");
 
 		btn1CreateLibrary.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -124,6 +126,19 @@ public class CreateLibraryController implements Controller {
 				window.close();
 			}
 		});
+		
+		btn3DeleteLibrary.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+					Alert alertConformation = new Alert(AlertType.CONFIRMATION);
+					alertConformation.setTitle("Confirm remove");
+					alertConformation.setHeaderText("Remove selected library");
+					alertConformation.setContentText("You are about to remove a library. Continue?");
+					alertConformation.showAndWait();
+			}
+		});
+
 
 		// \\/\\/\\/\\/\\-=Pane Alignment=-//\\/\\/\\/\\/\\
 
@@ -144,19 +159,27 @@ public class CreateLibraryController implements Controller {
 		innerPictureSectionLibraryDetails.getChildren().addAll(lbl1LibraryName, tf1LibraryName, lbl2LibraryLocation,
 				tf2LibraryLocation);
 		innerPictureSectionLibraryDetails.setSpacing(5);
-
-		innerPictureSectionButtonActionsSection.getChildren().addAll(btn1CreateLibrary, btn2Cancel);
+		
+		innerPictureSectionButtonActionsSection.getChildren().addAll(btn1CreateLibrary, btn2Cancel, btn3DeleteLibrary);
 		innerPictureSectionButtonActionsSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\
 
-		picturePanePlusUserDetails.add(picturePane, 0, 0);
-		picturePanePlusUserDetails.add(innerPictureSectionLibraryDetails, 0, 1);
-		picturePanePlusUserDetails.add(innerPictureSectionButtonActionsSection, 0, 2);
+		picturePanePlusLibraryDetails.add(picturePane, 0, 0);
+		picturePanePlusLibraryDetails.add(innerPictureSectionLibraryDetails, 0, 1);
+		picturePanePlusLibraryDetails.add(innerPictureSectionButtonActionsSection, 0, 2);
 
-		mainPane.add(picturePanePlusUserDetails, 0, 0);
+		mainPane.add(picturePanePlusLibraryDetails, 0, 0);
 
 		return mainPane;
+	}
+	
+	public void setLibraryName(String name) {
+		tf1LibraryName = new TextField(name);
+	}
+	
+	public void setLibraryLocation(String location) {
+		tf2LibraryLocation = new TextField(location);
 	}
 
 	@Override

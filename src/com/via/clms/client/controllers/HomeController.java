@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import com.via.clms.Log;
 import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.administration.AdministrativeFeatureSetController;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.DialogWindow;
