@@ -31,12 +31,7 @@ public class Window {
 	 * This is invoked by {@link #open()}
 	 */
 	protected void initializeWindow() {
-		mStage = new Stage();
-		
-        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-        mStage.setX((primScreenBounds.getWidth() - mStage.getWidth()) / 2); 
-        mStage.setY((primScreenBounds.getHeight() - mStage.getHeight()) / 4);  
-		
+		mStage = new Stage();		
 		mStage.setScene(
 				new Scene(
 						mController.getComponent()		
@@ -89,6 +84,8 @@ public class Window {
 			public void run() {
 				if (mStage != null) {
 					mStage.sizeToScene();
+					
+					boundsCheck();
 				}
 			}
 		});
@@ -110,9 +107,28 @@ public class Window {
 				if (mStage != null) {
 					mStage.setHeight(height);
 					mStage.setWidth(width);
+					
+					boundsCheck();
 				}
 			}
 		});
+	}
+	
+	/**
+	 * 
+	 */
+	protected void boundsCheck() {
+		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+		double rightBound = mStage.getX() + mStage.getWidth();
+		double buttomBound = mStage.getY() + mStage.getHeight();
+		
+		if (rightBound > primScreenBounds.getWidth()) {
+			mStage.setX( primScreenBounds.getWidth() - mStage.getWidth() );
+		}
+		
+		if (buttomBound > primScreenBounds.getHeight()) {
+			mStage.setY( primScreenBounds.getHeight() - mStage.getHeight() );
+		}
 	}
 
 	/**
