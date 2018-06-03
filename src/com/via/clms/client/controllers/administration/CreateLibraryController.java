@@ -87,7 +87,7 @@ public class CreateLibraryController implements Controller {
 		btn2Cancel = new Button("Cancel");
 
 		btn1CreateLibrary.setOnAction(new EventHandler<ActionEvent>() {
-
+			
 			@Override
 			public void handle(ActionEvent arg0) {
 				if (tf1LibraryName.getText().isEmpty() || tf2LibraryLocation.getText().isEmpty()) {
@@ -99,8 +99,7 @@ public class CreateLibraryController implements Controller {
 				} else {
 					try {
 						ILibraryService service = (ILibraryService) ServiceManager.getService("library");
-						service.createLibrary(userSession.token, tf1LibraryName.getText(),
-								tf2LibraryLocation.getText());
+						service.createLibrary(userSession.token, tf1LibraryName.getText(), tf2LibraryLocation.getText());
 						Alert alertInformation = new Alert(AlertType.INFORMATION);
 						alertInformation.setTitle("Success");
 						alertInformation.setHeaderText("Library created");

@@ -269,8 +269,8 @@ public class HomeController implements Controller {
 	}
 
 	private String getNotifications() {
-		// Example String value
-		return "Current books status: Within rental period";
+		// TODO - Future implementation
+		return "Current rental status: ";
 	}
 
 	@Override

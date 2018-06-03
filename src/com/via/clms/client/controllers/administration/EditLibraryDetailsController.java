@@ -3,11 +3,13 @@ package com.via.clms.client.controllers.administration;
 import java.io.File;
 import java.rmi.RemoteException;
 
+import com.via.clms.Log;
 import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 import com.via.clms.proxy.ILibraryService;
+import com.via.clms.shared.Library;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -41,11 +43,12 @@ public class EditLibraryDetailsController implements Controller {
 	private Label lbl1LibraryName;
 	private Label lbl2LibraryLocation;
 
-	private Button btn1CreateLibrary;
+	private Button btn1EditLibrary;
 	private Button btn2Cancel;
 	private Button btn3DeleteLibrary;
 	
 	private UserSession userSession;
+	private AdministrativeFeatureSetController admCntrl;
 
 	public EditLibraryDetailsController(UserSession userSession) {
 		this.userSession = userSession;
@@ -82,13 +85,13 @@ public class EditLibraryDetailsController implements Controller {
 
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 
-		btn1CreateLibrary = new Button("Edit library");
+		btn1EditLibrary = new Button("Edit library");
 		btn2Cancel = new Button("Cancel");
 		btn3DeleteLibrary = new Button("Delete this library");
 		
 		btn3DeleteLibrary.setStyle("-fx-background-color: #FF6060");
 
-		btn1CreateLibrary.setOnAction(new EventHandler<ActionEvent>() {
+		btn1EditLibrary.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -101,6 +104,15 @@ public class EditLibraryDetailsController implements Controller {
 				} else {
 					try {
 						ILibraryService service = (ILibraryService) ServiceManager.getService("library");
+						Library[] library = service.getLibraryByLID(admCntrl.getSearchIndex());
+						if (tf1LibraryName.getText() == library[0].name) {
+							Alert alertFailiure = new Alert(AlertType.ERROR);
+							alertFailiure.setTitle("Error Dialog");
+							alertFailiure.setHeaderText("Library already exists");
+							alertFailiure.setContentText("Please enter a valid library name!");
+							alertFailiure.showAndWait();
+						}
+						else {
 						service.createLibrary(userSession.token, tf1LibraryName.getText(),
 								tf2LibraryLocation.getText());
 						Alert alertInformation = new Alert(AlertType.INFORMATION);
@@ -108,12 +120,9 @@ public class EditLibraryDetailsController implements Controller {
 						alertInformation.setHeaderText("Library created");
 						alertInformation.setContentText("New library successfully created!");
 						alertInformation.showAndWait();
+						}
 					} catch (RuntimeException | RemoteException e) {
-						Alert alertFailiure = new Alert(AlertType.ERROR);
-						alertFailiure.setTitle("Error Dialog");
-						alertFailiure.setHeaderText("Duplicate library detected");
-						alertFailiure.setContentText("Please enter a valid library name!");
-						alertFailiure.showAndWait();
+						Log.error(e);
 					}
 				}
 			}
@@ -129,6 +138,7 @@ public class EditLibraryDetailsController implements Controller {
 		
 		btn3DeleteLibrary.setOnAction(new EventHandler<ActionEvent>() {
 
+			ILibraryService service = (ILibraryService) ServiceManager.getService("library");
 			@Override
 			public void handle(ActionEvent arg0) {
 					Alert alertConformation = new Alert(AlertType.CONFIRMATION);
@@ -136,6 +146,26 @@ public class EditLibraryDetailsController implements Controller {
 					alertConformation.setHeaderText("Remove selected library");
 					alertConformation.setContentText("You are about to remove a library. Continue?");
 					alertConformation.showAndWait();
+					try {
+						Library[] library = service.getLibraryByName(tf1LibraryName.getText());
+						int returnedResult = library[0].lid;
+						boolean result = service.deleteLibrary(userSession.token, returnedResult);
+						if (result == true) {
+							Alert alertInformation = new Alert(AlertType.INFORMATION);
+							alertInformation.setTitle("Successfully deleted");
+							alertInformation.setHeaderText("Removed library");
+							alertInformation.setContentText("Library successfully removed!");
+							alertInformation.showAndWait();
+						}
+						btn1EditLibrary.setDisable(true);
+						btn3DeleteLibrary.setDisable(true);
+					} catch (RemoteException e) {
+						Alert alertFailiure = new Alert(AlertType.ERROR);
+						alertFailiure.setTitle("Error Dialog");
+						alertFailiure.setHeaderText("Could not delete library");
+						alertFailiure.setContentText("¯\\_(=))_/¯");
+						alertFailiure.showAndWait();
+					}
 			}
 		});
 
@@ -160,7 +190,7 @@ public class EditLibraryDetailsController implements Controller {
 				tf2LibraryLocation);
 		innerPictureSectionLibraryDetails.setSpacing(5);
 		
-		innerPictureSectionButtonActionsSection.getChildren().addAll(btn1CreateLibrary, btn2Cancel, btn3DeleteLibrary);
+		innerPictureSectionButtonActionsSection.getChildren().addAll(btn1EditLibrary, btn2Cancel, btn3DeleteLibrary);
 		innerPictureSectionButtonActionsSection.setSpacing(5);
 
 		// \\/\\/\\/\\/\\-=Paneception=-//\\/\\/\\/\\/\\

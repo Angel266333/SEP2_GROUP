@@ -1,7 +1,9 @@
 package com.via.clms.client.views;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -30,6 +32,11 @@ public class Window {
 	 */
 	protected void initializeWindow() {
 		mStage = new Stage();
+		
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        mStage.setX((primScreenBounds.getWidth() - mStage.getWidth()) / 2); 
+        mStage.setY((primScreenBounds.getHeight() - mStage.getHeight()) / 4);  
+		
 		mStage.setScene(
 				new Scene(
 						mController.getComponent()		

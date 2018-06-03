@@ -70,6 +70,32 @@ public class LibraryService implements ILibraryService, Service {
 			return null;
 		}
 	}
+	
+	@Override
+	public Library[] getLibraryByName(String name) throws RemoteException {
+		IUserService userService = (IUserService) ServiceManager.getService("user");
+	
+		ArrayList<Library> lbrList = new ArrayList<>();
+		
+		String q = "SELECT * FROM Libraries WHERE cName = ?;";
+		DatabaseService dbs = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = dbs.query(q, name);
+		try {
+			while(result.next()) {
+				int lLid = result.getInt(1);
+				String lName = result.getString(2);
+				String lLocation = result.getString(3);
+				lbrList.add(new Library(lLid, lName, lLocation));	
+			}
+			Library[] lbrArray = new Library[lbrList.size()];
+			lbrList.toArray(lbrArray);
+			return lbrArray;
+		} catch (SQLException e) {
+			Log.error(e);
+			return null;
+		}
+	}
+	
 
 	@Override
 	public Library[] getLibraries(int offset, int length) throws RemoteException {

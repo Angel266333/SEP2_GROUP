@@ -93,9 +93,9 @@ public class AdministrativeFeatureSetController implements Controller {
 	private Button btn5SearchBooksByISBN;
 	private Button btn6AddBook;
 
-	private int inputSearchLibraryID;
-	private int inputSearchUserCPR;
-	private int inputSearchBookISBN;
+	public int inputSearchLibraryID;
+	public int inputSearchUserCPR;
+	public int inputSearchBookISBN;
 
 	private UserSession userSession;
 
@@ -206,9 +206,19 @@ public class AdministrativeFeatureSetController implements Controller {
 							libraries = service.getLibraries(0, Integer.MAX_VALUE);
 
 							if (inputSearchLibraryID == 0) {
+								try {
 								library = libraries[i];
+								} catch (ArrayIndexOutOfBoundsException e) {
+									Alert alertFailiure = new Alert(AlertType.ERROR);
+									alertFailiure.setTitle("Error Dialog");
+									alertFailiure.setHeaderText("Library does not exist");
+									alertFailiure.setContentText("Could not find library!");
+									alertFailiure.showAndWait();
+									return;
+								}
 							} else {
-								library = libraries[inputSearchLibraryID - 1];
+								setSearchIndex(i--);
+								library = libraries[inputSearchLibraryID];
 							}
 
 						} catch (RemoteException e) {
@@ -224,7 +234,7 @@ public class AdministrativeFeatureSetController implements Controller {
 
 					@Override
 					public void click(int i) {
-						// TODO
+						setSearchIndex(i);
 					}
 				});
 
@@ -252,7 +262,16 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.showAndWait();
 				} else {
 				ILibraryService service = (ILibraryService) ServiceManager.getService("library");
+				try {
 				inputSearchLibraryID = Integer.parseInt(tf1SearchLibraries.getText());
+				} catch (NumberFormatException e) {
+					Alert alertFailiure = new Alert(AlertType.ERROR);
+					alertFailiure.setTitle("Error Dialog");
+					alertFailiure.setHeaderText("Search failiure");
+					alertFailiure.setContentText("Please enter valid search criteria!");
+					alertFailiure.showAndWait();
+					return;
+				}
 				try {
 					Library[] library = service.getLibraryByLID(inputSearchLibraryID);
 					libraryTable.populate(library);
@@ -459,6 +478,14 @@ public class AdministrativeFeatureSetController implements Controller {
 		} catch (RemoteException e) {
 			Log.error(e);
 		}
+	}
+	
+	public void setSearchIndex(int i) {
+		inputSearchLibraryID = i;
+	}
+	
+	public int getSearchIndex() {
+		return ++inputSearchLibraryID;
 	}
 	
 	public void populateUserTableOnWindowLoad() {
