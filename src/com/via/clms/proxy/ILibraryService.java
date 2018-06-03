@@ -13,6 +13,7 @@ import com.via.clms.shared.Library;
 public interface ILibraryService extends Remote {
 
 	public boolean createLibrary(byte[] reqToken, String name, String location) throws RemoteException;
+	public boolean modifyLibrary(byte[] reqToken, int lid) throws RemoteException;
 	public boolean deleteLibrary(byte[] reqToken, int lid) throws RemoteException;
 	public Library[] getLibraryByLID(int lid) throws RemoteException;
 	public Library[] getLibraryByName(String name) throws RemoteException;

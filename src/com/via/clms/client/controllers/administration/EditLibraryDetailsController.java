@@ -48,7 +48,8 @@ public class EditLibraryDetailsController implements Controller {
 	private Button btn3DeleteLibrary;
 	
 	private UserSession userSession;
-	private AdministrativeFeatureSetController admCntrl;
+	
+	private String initialLibrary;
 
 	public EditLibraryDetailsController(UserSession userSession) {
 		this.userSession = userSession;
@@ -95,6 +96,9 @@ public class EditLibraryDetailsController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
+				
+				int newLid = 0;
+				
 				if (tf1LibraryName.getText().isEmpty() || tf2LibraryLocation.getText().isEmpty()) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
@@ -104,25 +108,31 @@ public class EditLibraryDetailsController implements Controller {
 				} else {
 					try {
 						ILibraryService service = (ILibraryService) ServiceManager.getService("library");
-						Library[] library = service.getLibraryByLID(admCntrl.getSearchIndex());
-						if (tf1LibraryName.getText() == library[0].name) {
+						Library[] foundLibrary = null;
+						foundLibrary = service.getLibraryByName(initialLibrary);
+						if (tf1LibraryName.getText() == foundLibrary[0].name) {
 							Alert alertFailiure = new Alert(AlertType.ERROR);
 							alertFailiure.setTitle("Error Dialog");
-							alertFailiure.setHeaderText("Library already exists");
-							alertFailiure.setContentText("Please enter a valid library name!");
+							alertFailiure.setHeaderText("Duplicate library name");
+							alertFailiure.setContentText("Please enter a unique library name!");
 							alertFailiure.showAndWait();
+						} else if (tf1LibraryName.getText() != foundLibrary[0].name){
+						service.deleteLibrary(userSession.token, foundLibrary[0].lid);
+						service.createLibrary(userSession.token, tf1LibraryName.getText(), tf2LibraryLocation.getText());
+						Library[] newLibraryID = null;
+						newLibraryID = service.getLibraryByName(tf1LibraryName.getText());
+						newLid = newLibraryID[0].lid;
 						}
-						else {
-						service.createLibrary(userSession.token, tf1LibraryName.getText(),
-								tf2LibraryLocation.getText());
 						Alert alertInformation = new Alert(AlertType.INFORMATION);
-						alertInformation.setTitle("Success");
-						alertInformation.setHeaderText("Library created");
-						alertInformation.setContentText("New library successfully created!");
+						alertInformation.setTitle("Successfully edited library");
+						alertInformation.setHeaderText("Edits successful");
+						alertInformation.setContentText("Library successfully edited! New ID is: " + newLid);
 						alertInformation.showAndWait();
-						}
-					} catch (RuntimeException | RemoteException e) {
-						Log.error(e);
+						btn1EditLibrary.setDisable(true);
+						btn3DeleteLibrary.setDisable(true);
+						
+					} catch (RemoteException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -205,6 +215,7 @@ public class EditLibraryDetailsController implements Controller {
 	}
 	
 	public void setLibraryName(String name) {
+		initialLibrary = name;
 		tf1LibraryName = new TextField(name);
 	}
 	
