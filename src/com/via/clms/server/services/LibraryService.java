@@ -137,5 +137,4 @@ public class LibraryService implements ILibraryService, Service {
 	@Override
 	public void onShutdown() {
 	}
-
 }

@@ -90,7 +90,7 @@ public class LoginController extends ResultController<UserSession> {
 
 		labelStyle = "-fx-font-weight: bold";
 
-		lbl1UserName = new Label("User Name:");
+		lbl1UserName = new Label("CPR number:");
 		lbl1UserName.setPadding(new Insets(5, 0, 0, 0));
 		lbl1UserName.setStyle(labelStyle);
 		lbl2UserPassword = new Label("Password:");
