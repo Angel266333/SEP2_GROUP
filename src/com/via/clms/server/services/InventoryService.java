@@ -24,7 +24,7 @@ public class InventoryService implements IInventoryService, Service {
 		 {
 		 return null;
 		 }
-		String q = "SELECT * FROM `BookRental` WHERE `cBid` = ? AND `cLid` = ?;";
+		String q = "SELECT * FROM BookRental WHERE cBid = ? AND cLid = ?;";
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookRental> brList = new ArrayList<>();
 		try {
@@ -52,7 +52,7 @@ public class InventoryService implements IInventoryService, Service {
 		 if (!userService.checkToken(reqToken)) {
 		 return null;
 		 }
-		String q = "SELECT * FROM `BookReservation` WHERE `cUid` = ? AND `cLid` = ?;";
+		String q = "SELECT * FROM BookReservation WHERE cUid = ? AND cLid = ?;";
 		ResultSet result = dbs.query(q, uid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
 		try {
@@ -79,7 +79,7 @@ public class InventoryService implements IInventoryService, Service {
 		 {
 		 return null;
 		 }
-		String q = "SELECT * FROM `BookReservation` WHERE `cBid` = ? AND `cLid` = ?;";
+		String q = "SELECT * FROM BookReservation WHERE cBid = ? AND cLid = ?;";
 		ResultSet result = dbs.query(q, bid, lid);
 		ArrayList<BookReservation> brList = new ArrayList<>();
 		try {
@@ -117,14 +117,14 @@ public class InventoryService implements IInventoryService, Service {
 	}
 
 	private int fullAddBook(int lid, Book book) throws RemoteException {
-		String q = "INSERT INTO `Books` (cTitle, cISBN, cDescription, cImage, cRelease, cAuthor) VALUES(?, ?, ?, ?, ?, ?);";
+		String q = "INSERT INTO Books (cTitle, cISBN, cDescription, cImage, cRelease, cAuthor) VALUES(?, ?, ?, ?, ?, ?);";
 		int r = dbs.execute(q, book.title, book.ISBN, book.description, book.image, book.release, book.author);
 		int s = simpleAddBook(lid, book);
 		return r * s;
 	}
 
 	private int simpleAddBook(int lid, Book book) {
-		String q = "UPDATE `BookInventory` SET `cInventory` = `cInventory + 1` WHERE `cBid` = ?;";
+		String q = "UPDATE BookInventory SET cInventory = cInventory + 1 WHERE cBid = ?;";
 		return dbs.execute(q, book.bid);
 	}
 
@@ -135,7 +135,7 @@ public class InventoryService implements IInventoryService, Service {
 		 {
 		 return -1;
 		 }
-		String q = "UPDATE `BookInventory` SET `cInventory` = `cInventory - 1` WHERE `cBid` = ? AND `cLid` = ? AND `cInventory` != 0;";
+		String q = "UPDATE BookInventory SET cInventory = cInventory - 1 WHERE cBid = ? AND cLid = ? AND cInventory != 0;";
 		return dbs.execute(q, bid, lid);
 	}
 
@@ -146,7 +146,7 @@ public class InventoryService implements IInventoryService, Service {
 		 return -1;
 		 }
 
-		String q = "INSERT INTO `BookReservations` VALUES(?, ?, ?);";
+		String q = "INSERT INTO BookReservations VALUES(?, ?, ?);";
 		return dbs.execute(q, bid, lid, uid);
 	}
 
@@ -161,7 +161,7 @@ public class InventoryService implements IInventoryService, Service {
 		
 		 }
 
-		String q = "INSERT INTO `BookRentals` VALUES(?, ?, ?);";
+		String q = "INSERT INTO BookRentals VALUES(?, ?, ?);";
 
 		return dbs.execute(q, bid, lid, uid);
 
@@ -178,7 +178,7 @@ public class InventoryService implements IInventoryService, Service {
 		
 		 }
 
-		String q = "REMOVE * FROM `BookReservations` WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;";
+		String q = "REMOVE * FROM BookReservations WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;";
 
 		return dbs.execute(q, bid, lid, uid);
 
@@ -187,7 +187,7 @@ public class InventoryService implements IInventoryService, Service {
 	@Override
 	public int removeRental(int bid) throws RemoteException {
 
-		String q = "REMOVE * FROM `BookRentals` WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;;";
+		String q = "REMOVE * FROM BookRentals WHERE 'cbid' = ? AND 'clid' = ? AND cuid = ? ;;";
 
 		return dbs.execute(q, bid);
 
@@ -198,7 +198,7 @@ public class InventoryService implements IInventoryService, Service {
 			ArrayList<Book> bookList = new ArrayList<>();
 			while (result.next()) {
 				int bid = result.getInt(1);
-				String q = "SELECT * FROM `Books` WHERE `cBid`=?;";
+				String q = "SELECT * FROM Books WHERE cBid=?;";
 				ResultSet rs = dbs.query(q, bid);
 				if (rs.next()) {
 					String title = rs.getString(2);
@@ -227,7 +227,7 @@ public class InventoryService implements IInventoryService, Service {
 		 return null;
 		 }
 
-		String q = "SELECT * FROM `BookInventory` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+		String q = "SELECT * FROM BookInventory OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
 		ResultSet result = dbs.query(q, offset, length);
 		return bookArrayBuild(result);
 	}
@@ -242,7 +242,7 @@ public class InventoryService implements IInventoryService, Service {
 			return getAllBooks(reqToken, offset, length);
 		}
 
-		String q = "SELECT * FROM `BookInventory` WHERE `cLid` = ?  LIMIT ? OFFSET ?;";
+		String q = "SELECT * FROM BookInventory WHERE cLid = ?  LIMIT ? OFFSET ?;";
 		ResultSet result = dbs.query(q, lid, length, offset);
 		return bookArrayBuild(result);
 	}
@@ -253,7 +253,7 @@ public class InventoryService implements IInventoryService, Service {
 		 if (!userService.checkToken(reqToken)) {
 		 return null;
 		 }
-		String q = "SELECT * FROM `BookInventory` WHERE `cLid`=?;";
+		String q = "SELECT * FROM BookInventory WHERE cLid=?;";
 		ResultSet rs = dbs.query(q, lid);
 		Book[] books = bookArrayBuild(rs);
 		ArrayList<Book> result = new ArrayList<>();
@@ -273,7 +273,7 @@ public class InventoryService implements IInventoryService, Service {
 		 if (!userService.checkToken(reqToken)) {
 		 return null;
 		 }
-		String q = "SELECT * FROM `Books` WHERE `cIsbn`=? LIMIT 1;";
+		String q = "SELECT * FROM Books WHERE cIsbn=? LIMIT 1;";
 		ResultSet rs = dbs.query(q, isbn);
 		try {
 			if (!rs.next()) {
@@ -302,14 +302,14 @@ public class InventoryService implements IInventoryService, Service {
 		long end = cal.getTime().toInstant().getEpochSecond();
 
 		try {
-			String q = "SELECT `cBid` FROM `Books` WHERE `cRelease` BETWEEN ? AND ?;";
+			String q = "SELECT cBid FROM Books WHERE cRelease BETWEEN ? AND ?;";
 			ResultSet rs = dbs.query(q, begin, end);
 			ArrayList<Integer> bids = new ArrayList<>();
 			while (rs.next()) {
 				bids.add(rs.getInt(1));
 			}
 
-			q = "SELECT * FROM `BookInventory` WHERE `cLid`=?;";
+			q = "SELECT * FROM BookInventory WHERE cLid=?;";
 			rs = dbs.query(q, lid);
 			Book[] books = bookArrayBuild(rs);
 
@@ -339,7 +339,7 @@ public class InventoryService implements IInventoryService, Service {
 		 return null;
 		 }
 
-		String q = "SELECT * FROM `Books` WHERE `cBid`=?;";
+		String q = "SELECT * FROM Books WHERE cBid=?;";
 		ResultSet rs = dbs.query(q, bid);
 		try {
 			if (!rs.next()) {
@@ -364,7 +364,7 @@ public class InventoryService implements IInventoryService, Service {
 		 {
 		 return null;
 		 }
-		String q = "SELECT * FROM `BookRental` WHERE `cLid` = ? AND `cUid` = ?;";
+		String q = "SELECT * FROM BookRental WHERE cLid = ? AND cUid = ?;";
 		ResultSet result = dbs.query(q, lid, uid);
 		ArrayList<BookRental> brList = new ArrayList<>();
 		try {

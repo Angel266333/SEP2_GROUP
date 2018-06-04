@@ -216,6 +216,7 @@ public class DatabaseService implements Service {
 			return statement.executeUpdate();
 			
 		} catch (SQLException e) {
+			Log.error(e);
 			if (e.getSQLState() != null) {
 			throw new RuntimeException("Statement insertion error");
 			}

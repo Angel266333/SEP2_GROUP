@@ -144,6 +144,7 @@ public class CreateBookController implements Controller {
 						cal.set(Calendar.DAY_OF_MONTH, ld.getDayOfMonth());
 						long release = cal.getTime().getTime();
 						Book b = new Book(-1, name, -1, "" + isbn, tAR5BookDescription.getText(), release, author, null);
+						b.image = "";
 						((IInventoryService) ServiceManager.getService("inventory")).addBook(userSession.token, userSession.lid, b);
 					} catch(NumberFormatException e) {
 						Alert alert = new Alert(AlertType.ERROR);

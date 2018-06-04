@@ -331,26 +331,6 @@ public class AdministrativeFeatureSetController implements Controller {
 
 		});
 
-//		btn5RemoveUser.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				if (inputSearchUserCPR == 0) {
-//					Alert alertFailiure = new Alert(AlertType.ERROR);
-//					alertFailiure.setTitle("Error Dialog");
-//					alertFailiure.setHeaderText("No selected user");
-//					alertFailiure.setContentText("Please select a user first!");
-//					alertFailiure.showAndWait();
-//				} else {
-//					Alert alertConformation = new Alert(AlertType.CONFIRMATION);
-//					alertConformation.setTitle("Confirm remove");
-//					alertConformation.setHeaderText("Remove selected book");
-//					alertConformation.setContentText("You are about to remove a user. Continue?");
-//					alertConformation.showAndWait();
-//				}
-//			}
-//		});
-
 		btn5SearchBooksByISBN.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -393,25 +373,6 @@ public class AdministrativeFeatureSetController implements Controller {
 			}
 		});
 
-//		btn8RemoveBook.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				if (inputSearchBookISBN == 0) {
-//					Alert alertFailiure = new Alert(AlertType.ERROR);
-//					alertFailiure.setTitle("Error Dialog");
-//					alertFailiure.setHeaderText("No selected book");
-//					alertFailiure.setContentText("Please select a book first!");
-//					alertFailiure.showAndWait();
-//				} else {
-//					Alert alertConformation = new Alert(AlertType.CONFIRMATION);
-//					alertConformation.setTitle("Confirm remove");
-//					alertConformation.setHeaderText("Remove selected book");
-//					alertConformation.setContentText("You are about to remove a book. Continue?");
-//					alertConformation.showAndWait();
-//				}
-//			}
-//		});
 
 		innerCurrentLibrariesSection.getChildren().addAll(tf1SearchLibraries, btn1SearchLibrariesByID);
 		innerCurrentLibrariesSection.setSpacing(5);
