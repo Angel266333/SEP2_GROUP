@@ -3,22 +3,31 @@ package com.via.clms.client.controllers;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
 
+import com.via.clms.shared.Book;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+
+import java.sql.Date;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Calendar;
 
 /**
  * 
  */
 public class BookOverviewController implements Controller {
-
+	Book book;
 	/**
 	 * 
 	 */
-	public BookOverviewController(/* Some book object goes here */) {
-
+	public BookOverviewController(Book book) {
+		this.book = book;
 	}
 
 	/**
@@ -26,7 +35,7 @@ public class BookOverviewController implements Controller {
 	 */
 	@Override
 	public String getTitle() {
-		return "A Book"; // Should return the title from the book object
+		return book.title;
 	}
 
 	/**
@@ -34,59 +43,39 @@ public class BookOverviewController implements Controller {
 	 */
 	@Override
 	public Parent getComponent() {
-		Label titleLabel = new Label("Author");
-		titleLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14;");
+		GridPane mainPane = new GridPane();
 
-		Label authorLabel = new Label("Author");
-		authorLabel.setStyle("-fx-font-weight: bold");
+		Insets insets = new Insets(0, 5, 0, 2);
+		Label lTitle = new Label("Title:");
+		lTitle.setStyle("-fx-font-weight: bold");
+		lTitle.setPadding(insets);
+		Label lAuthor = new Label("Author:");
+		lAuthor.setStyle("-fx-font-weight: bold");
+		lAuthor.setPadding(insets);
+		Label lIsbn = new Label("ISBN:");
+		lIsbn.setStyle("-fx-font-weight: bold");
+		lIsbn.setPadding(insets);
+		Label lRelease = new Label("Release:");
+		lRelease.setStyle("-fx-font-weight: bold");
+		lRelease.setPadding(insets);
 
-		Label isbnLabel = new Label("ISBN");
-		isbnLabel.setStyle("-fx-font-weight: bold");
+		mainPane.addRow(0, lTitle, new Label(limitString(book.title)));
+		mainPane.add(new Separator(Orientation.HORIZONTAL), 0, 1, 2, 1);
+		mainPane.addRow(2, lAuthor, new Label(limitString(book.author)));
+		mainPane.add(new Separator(Orientation.HORIZONTAL), 0, 3, 2, 1);
+		mainPane.addRow(4, lIsbn, new Label(book.ISBN));
+		mainPane.add(new Separator(Orientation.HORIZONTAL), 0, 5, 2, 1);
+		mainPane.addRow(6, lRelease, new Label(formatDate(book.release)));
 
-		Label what1Label = new Label("What!?");
-		what1Label.setStyle("-fx-font-weight: bold");
+		TextArea descArea = new TextArea();
+		descArea.setPrefRowCount(15);
+		descArea.setEditable(false);
+		descArea.setText(book.description);
 
-		Label what2Label = new Label("What!?");
-		what2Label.setStyle("-fx-font-weight: bold");
-
-		Label descLabel = new Label("Description");
-		what2Label.setStyle("-fx-font-weight: bold");
-
-		Label authorValue = new Label("Some value");
-		Label isbnValue = new Label("Some value");
-		Label what1Value = new Label("Some value");
-		Label what2Value = new Label("Some value");
-		TextArea descValue = new TextArea();
-
-		Button btn = new Button("Save");
-
-		GridPane innerGrid = new GridPane();
-
-		innerGrid.add(authorLabel, 0, 0);
-		innerGrid.add(authorValue, 1, 0);
-
-		innerGrid.add(isbnLabel, 2, 0);
-		innerGrid.add(isbnValue, 3, 0);
-
-		innerGrid.add(what1Label, 0, 1);
-		innerGrid.add(what1Value, 1, 1);
-
-		innerGrid.add(what2Label, 2, 1);
-		innerGrid.add(what2Value, 3, 1);
-
-		GridPane descGrid = new GridPane();
-
-		descGrid.add(descLabel, 0, 0);
-		descGrid.add(descValue, 0, 1);
-
-		GridPane mainGrid = new GridPane();
-		mainGrid.add(titleLabel, 0, 0);
-		mainGrid.add(innerGrid, 0, 1);
-		mainGrid.add(descGrid, 0, 2);
-		mainGrid.add(btn, 0, 3);
-
-		return mainGrid;
+		mainPane.add(descArea, 0, 7, 2, 1);
+		return mainPane;
 	}
+
 
 	/**
 	 * 
@@ -120,5 +109,20 @@ public class BookOverviewController implements Controller {
 	@Override
 	public void onWindowPause(Window win) {
 
+	}
+
+	private String formatDate(long time) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(Date.from(Instant.ofEpochSecond(time)));
+		return "" + cal.get(Calendar.YEAR);
+	}
+
+	private static String limitString(String s) {
+		if(s.length() > 40) {
+			char[] c = s.toCharArray();
+			char[] n = Arrays.copyOf(c, 37);
+			return String.copyValueOf(n) + "...";
+		}
+		return s;
 	}
 }
