@@ -1,6 +1,7 @@
 package com.via.clms.client.controllers;
 
 import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.containers.ClickListener;
 import com.via.clms.client.controllers.containers.RentalsTable;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
@@ -8,14 +9,14 @@ import com.via.clms.client.views.Window;
 
 import com.via.clms.proxy.IInventoryService;
 import com.via.clms.proxy.IUserService;
+import com.via.clms.server.services.Service;
 import com.via.clms.shared.Book;
 import com.via.clms.shared.BookRental;
 import com.via.clms.shared.User;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 import java.rmi.RemoteException;
@@ -26,6 +27,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ProfileController implements Controller {
+	Window window = null;
 	private GridPane mainPane;
 	private ScrollPane rentalPane;
 	private RentalsTable rentalsTable;
@@ -34,6 +36,7 @@ public class ProfileController implements Controller {
 
 	UserSession session;
 	User currentUser;
+	ArrayList<Book> loadedBooks = new ArrayList<>();
 
 	public ProfileController(UserSession session) {
 		this.session = session;
@@ -59,6 +62,17 @@ public class ProfileController implements Controller {
 		}
 		rentalPane = new ScrollPane();
 		rentalsTable = new RentalsTable();
+		rentalsTable.setListener(new ClickListener() {
+			@Override
+			public void click(int i) {
+
+			}
+
+			@Override
+			public void doubleClick(int i) {
+				window.launchController(new BookOverviewController(loadedBooks.get(i)));
+			}
+		});
 		rentalPane.setContent(rentalsTable);
 		rentalsTable.populate(getRentals());
 
@@ -77,6 +91,12 @@ public class ProfileController implements Controller {
 		TextField emailTextField = new TextField();
 		emailTextField.setPrefColumnCount(20);
 		emailTextField.setText(currentUser.email);
+		TextField currentPassTextField = new PasswordField();
+		currentPassTextField.setPrefColumnCount(20);
+		TextField newPassTextField = new PasswordField();
+		newPassTextField.setPrefColumnCount(20);
+		TextField newPassRepeatTextField = new PasswordField();
+		newPassRepeatTextField.setPrefColumnCount(20);
 
 		//Buttons
 		emailUpdateButton = new Button("Update");
@@ -90,14 +110,58 @@ public class ProfileController implements Controller {
 		mainPane.add(emailTextField, 0, 3);
 		mainPane.add(emailUpdateButton, 1, 3);
 		mainPane.add(rentalPane, 0, 4, 2, 1);
-		mainPane.add(changePasswordButton, 0, 5);
+		mainPane.addRow(5, new Label("Current password"), currentPassTextField);
+		mainPane.addRow(6, new Label("New password"), newPassTextField);
+		mainPane.addRow(7, new Label("Repeat"), newPassRepeatTextField);
+		mainPane.add(changePasswordButton, 1, 8);
+
+		emailUpdateButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				String oldEmail = currentUser.email;
+				currentUser.email = emailTextField.getText();
+				try {
+					if(!((IUserService) ServiceManager.getService("user")).updateUser(session.token, currentUser)) {
+						currentUser.email = oldEmail;
+						alertError("Unable to set email");
+					}
+				} catch(RemoteException e) {
+					currentUser.email = oldEmail;
+					alertError("Connection error");
+				}
+			}
+		});
+
+		changePasswordButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				try {
+					String newPass = newPassTextField.getText();
+					String repeat = newPassRepeatTextField.getText();
+					String currentPass = currentPassTextField.getText();
+					if(!newPass.equals(repeat)) {
+						alertError("Entered passwords do not match");
+						return;
+					}
+					byte[] newToken = ((IUserService) ServiceManager.getService("user")).updateUserPasswd(session.token, currentUser.uid, currentPass, newPass);
+					if(newToken != null) {
+						session = new UserSession(newToken, session.cpr, session.lid);
+					}
+					else {
+						alertError("Unable to set password.\nCheck that you entered your password correctly.");
+					}
+				} catch(RemoteException e) {
+					alertError("Connection error");
+				}
+			}
+		});
 
 		return mainPane;
 	}
 
 	@Override
 	public void onWindowOpen(Window window) {
-
+		this.window = window;
 	}
 
 	@Override
@@ -121,6 +185,7 @@ public class ProfileController implements Controller {
 	}
 
 	private String[][] getRentals() {
+		loadedBooks.clear();
 		try {
 			ArrayList<String[]> resultArray = new ArrayList<>();
 			BookRental[] r = ((IInventoryService) ServiceManager.getService("inventory")).getRentalsByUID(session.token, session.lid, currentUser.uid);
@@ -140,7 +205,9 @@ public class ProfileController implements Controller {
 
 	private String[] formatRental(BookRental b) throws RemoteException {
 		String[] s = new String[3];
-		s[0] = ((IInventoryService) ServiceManager.getService("inventory")).getBookByBID(session.token, b.bid).title;
+		Book book = ((IInventoryService) ServiceManager.getService("inventory")).getBookByBID(session.token, b.bid);
+		loadedBooks.add(book);
+		s[0] = book.title;
 		s[1] = formatDate(b.timeoffset + b.timelength);
 		if(Instant.now().getEpochSecond() > b.timeoffset + b.timelength) {
 			s[2] = "Yes";
@@ -158,5 +225,11 @@ public class ProfileController implements Controller {
 		String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.ENGLISH);
 		int year = cal.get(Calendar.YEAR);
 		return "" + day + "-" + month + "-" + year;
+	}
+
+	private void alertError(String s) {
+		Alert alert = new Alert(Alert.AlertType.NONE, s, ButtonType.OK);
+		alert.setTitle("Error");
+		alert.showAndWait();
 	}
 }
