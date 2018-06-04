@@ -156,7 +156,7 @@ public class HomeController implements Controller {
 					alertFailiure.setContentText("Please enter a book title!");
 					alertFailiure.showAndWait();
 				} else {
-					window.launchController(new RentBookController());
+					window.launchController(new RentBookController(session));
 				}
 
 			}
