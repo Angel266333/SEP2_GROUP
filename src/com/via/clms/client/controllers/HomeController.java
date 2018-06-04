@@ -166,7 +166,7 @@ public class HomeController implements Controller {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				window.launchController(new RentBookController());
+				window.launchController(new RentBookController(session));
 			}
 
 		});
