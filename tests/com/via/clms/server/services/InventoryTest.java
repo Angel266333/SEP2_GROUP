@@ -2,21 +2,17 @@ package com.via.clms.server.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.util.ArrayList;
 
 import org.junit.BeforeClass;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.via.clms.proxy.IInventoryService;
 import com.via.clms.shared.Book;
 import com.via.clms.shared.BookRental;
-import com.via.clms.shared.BookReservation;
-import com.via.clms.shared.Library;
 import com.via.clms.shared.User;
 
 class InventoryTest {
