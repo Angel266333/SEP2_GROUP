@@ -370,9 +370,15 @@ public class AdministrativeFeatureSetController implements Controller {
 					alertFailiure.setContentText("Please enter valid search criteria!");
 					alertFailiure.showAndWait();
 				} else {
-					Book[] books = new Book[1];
-					books[0] = new Book(1010, "CLMS Guide", 40, "999", "getDescription", 2018, "An author", "Horsens");
-					bookTable.populate(books);
+					try {
+						Book book = ((IInventoryService) ServiceManager.getService("inventory")).getBookByISBN(userSession.token, userSession.lid, tf3Output);
+						bookTable.populate(new Book[] {book});
+					} catch(Exception e) {
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setContentText("Failed to get book from server.");
+						alert.showAndWait();
+					}
 				}
 			}
 		});
