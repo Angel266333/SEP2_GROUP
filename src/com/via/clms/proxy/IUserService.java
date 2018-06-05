@@ -79,6 +79,21 @@ public interface IUserService extends Remote {
 	boolean checkPermissions(byte[] token, int libraryid, int roles) throws RemoteException;
 	
 	/**
+	 * Check a specific users permission flags
+	 * 
+	 * This method can be used to check if any library includes 
+	 * specific permissions for a user. 
+	 * 
+	 * @param token
+	 * 		The session token
+	 * 
+	 * @param roles
+	 * 		One or more flags to match against. 
+	 * 		Multiple flags can be merged via logical operations
+	 */
+	boolean checkPermissions(byte[] token, int roles) throws RemoteException;
+	
+	/**
 	 * Get the permission bit flag for a specific user
 	 * 
 	 * The permissions is relative to a specific library. 

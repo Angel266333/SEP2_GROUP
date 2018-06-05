@@ -153,6 +153,38 @@ public class UserService implements IUserService, Service {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean checkPermissions(byte[] token, int roles) {
+		String tokenStr = Utils.tokenToString(token);
+		
+		if (mSpecialTokens.containsKey(tokenStr)) {
+			return (mSpecialTokens.get(tokenStr).roles & roles) == roles;
+		}
+		
+		DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+		ResultSet result = db.query("SELECT ur.cRole " +
+				"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid " +
+				"WHERE u.cToken = ?", tokenStr);
+		
+		try {
+			int perms = 0;
+			
+			while (result.next()) {
+				perms |= result.getInt("cRole");
+			}
+
+			return (perms & roles) == roles;
+			
+		} catch (SQLException e) {
+			Log.error(e);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int getPermissions(byte[] token, int uid, int libraryid) {
 		if (checkToken(token)) {
 			DatabaseService db = (DatabaseService) ServiceManager.getService("database");

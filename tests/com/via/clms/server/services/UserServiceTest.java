@@ -172,9 +172,15 @@ public class UserServiceTest {
 	@Test
 	public void checkPermissionsTest() {
 		UserService user = (UserService) ServiceManager.getService("user");
+		
 		Assert.assertEquals(true, user.checkPermissions(
 				mToken,
 				0,
+				IUserService.ROLE_LOGIN
+		));
+		
+		Assert.assertEquals(true, user.checkPermissions(
+				mToken,
 				IUserService.ROLE_LOGIN
 		));
 	}
