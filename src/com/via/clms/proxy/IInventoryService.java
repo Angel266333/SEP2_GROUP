@@ -22,7 +22,7 @@ public interface IInventoryService extends Remote {
 	int addReservation(byte[] reqToken, int lid, int bid, int uid) throws RemoteException;
 	public int addRental(byte[] reqToken, int lid, int bid, int uid) throws RemoteException;
 	public int removeReservation(byte[] reqToken, int lid, int bid, int uid) throws RemoteException;
-	public int removeRental(int bid) throws RemoteException;
+	public int removeRental(byte[] reqToken, int bid, int lid, int uid) throws RemoteException;
 	public Book[] getAllBooks(byte[] reqToken, int offset, int length) throws RemoteException;
 
 }

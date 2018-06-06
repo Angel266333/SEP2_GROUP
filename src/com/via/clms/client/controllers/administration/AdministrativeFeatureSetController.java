@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import com.via.clms.Log;
 import com.via.clms.client.ServiceManager;
+import com.via.clms.client.controllers.ViewBookDetailsController;
 import com.via.clms.client.controllers.containers.BookTable;
 import com.via.clms.client.controllers.containers.ClickListener;
 import com.via.clms.client.controllers.containers.LibraryTable;
@@ -43,6 +44,7 @@ public class AdministrativeFeatureSetController implements Controller {
 	UserTable userTable;
 	BookTable bookTable;
 	Window windowInstance;
+	Book[] loadedBooks;
 
 	private GridPane mainPane;
 	private GridPane librariesLeftPane;
@@ -133,7 +135,19 @@ public class AdministrativeFeatureSetController implements Controller {
 
 		libraryTable = new LibraryTable();
 		userTable = new UserTable();
+
 		bookTable = new BookTable();
+		bookTable.setListener(new ClickListener() {
+			@Override
+			public void click(int i) {
+
+			}
+
+			@Override
+			public void doubleClick(int i) {
+				windowInstance.launchController(new ViewBookDetailsController(userSession, loadedBooks[i]));
+			}
+		});
 		
 		populateLibraryTableOnWindowLoad();
 		populateUserTableOnWindowLoad();
@@ -336,6 +350,12 @@ public class AdministrativeFeatureSetController implements Controller {
 			@Override
 			public void handle(ActionEvent arg0) {
 				String tf3Output = tf3SearchBooksByISBN.getText();
+
+				if(tf3Output.isEmpty()) {
+					populateBookTableOnWindowLoad();
+					return;
+				}
+
 				boolean atLeastOneAlpha = tf3Output.matches(".*[a-zA-Z]+.*");
 				if (atLeastOneAlpha) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
@@ -352,6 +372,7 @@ public class AdministrativeFeatureSetController implements Controller {
 				} else {
 					try {
 						Book book = ((IInventoryService) ServiceManager.getService("inventory")).getBookByISBN(userSession.token, userSession.lid, tf3Output);
+						loadedBooks = new Book[] {book};
 						bookTable.populate(new Book[] {book});
 					} catch(Exception e) {
 						Alert alert = new Alert(AlertType.ERROR);
@@ -433,6 +454,8 @@ public class AdministrativeFeatureSetController implements Controller {
 		mainPane.add(userOperationsMiddlePane, 1, 0);
 		mainPane.add(bookOperationsRightPane, 2, 0);
 
+		populateBookTableOnWindowLoad();
+
 		return mainPane;
 
 	}
@@ -461,7 +484,12 @@ public class AdministrativeFeatureSetController implements Controller {
 		
 		
 	public void populateBookTableOnWindowLoad() {
-		//TODO
+		try {
+			loadedBooks = ((IInventoryService) ServiceManager.getService("inventory")).getAllBooks(userSession.token, 0, 20);
+			bookTable.populate(loadedBooks);
+		} catch(RemoteException e) {
+			return;
+		}
 	}
 	
 
@@ -469,7 +497,7 @@ public class AdministrativeFeatureSetController implements Controller {
 
 	@Override
 	public void onWindowOpen(Window win) {
-
+		windowInstance = win;
 	}
 
 	@Override

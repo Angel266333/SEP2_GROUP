@@ -3,6 +3,7 @@ package com.via.clms.client.controllers;
 import com.via.clms.client.ServiceManager;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
+import com.via.clms.client.views.ResultListener;
 import com.via.clms.client.views.Window;
 
 import com.via.clms.proxy.IInventoryService;
@@ -19,16 +20,36 @@ import javafx.scene.layout.*;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class RentBookController implements Controller {
 	UserSession session;
-	User currentUser;
+	User currentUser = null;
 	TextArea outputArea;
+	UserSession loanerSession = null;
+	LoanerLoginController loanerLogin;
 
 	public RentBookController(UserSession session) {
 		this.session = session;
+		loanerLogin = new LoanerLoginController(session);
+		loanerLogin.setResultListener(new ResultListener<UserSession>() {
+			@Override
+			public void onReturnResult(UserSession result) {
+				loanerSession = result;
+				if(loanerSession == null) {
+					return;
+				}
+				try {
+					currentUser = ((IUserService) ServiceManager.getService("user")).getUserByCPR(session.token, loanerSession.cpr);
+				} catch(RemoteException e) {
+					showAlert("Login Failed");
+				}
+			}
+		});
 	}
 
 	@Override
@@ -38,11 +59,9 @@ public class RentBookController implements Controller {
 
 	@Override
 	public Parent getComponent() {
-		try {
-			currentUser = ((IUserService) ServiceManager.getService("user")).getUserByCPR(session.token, session.cpr);
-		} catch(RemoteException e) {
-			return new Label("Failed to load user");
-		}
+		Window lw = new Window(loanerLogin);
+		lw.open();
+
 		GridPane mainPane = new GridPane();
 
 		TextField isbnField = new TextField();
@@ -62,6 +81,10 @@ public class RentBookController implements Controller {
 		rentButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				if(loanerSession == null) {
+					showAlert("Not logged in.\nGo back and login.");
+					return;
+				}
 				rentBook(isbnField.getText());
 			}
 		});
@@ -102,12 +125,12 @@ public class RentBookController implements Controller {
 				outputArea.appendText("Failed to find book\n");
 				return;
 			}
-			int i = service.addRental(session.token, session.lid, book.bid, currentUser.uid);
+			int i = service.addRental(loanerSession.token, session.lid, book.bid, currentUser.uid);
 			if(i < 1) {
-				outputArea.appendText("Book could not be rented.\nContact staff");
+				outputArea.appendText("Book could not be rented.\nContact staff\n");
 				return;
 			}
-			outputArea.appendText("You rented: \n" + book.title + "\nAuthor: " + book.author + "\nISBN: " + book.ISBN + "\nReturn before: " + getReturnDate());
+			outputArea.appendText("You rented: \n" + book.title + "\nAuthor: " + book.author + "\nISBN: " + book.ISBN + "\nReturn before: " + getReturnDate() + "\n");
 		} catch(RemoteException e) {
 			outputArea.appendText("Connection error.\n");
 		}
@@ -115,11 +138,17 @@ public class RentBookController implements Controller {
 
 	private String getReturnDate() {
 		Calendar cal = Calendar.getInstance();
-		long now = Instant.now().getEpochSecond();
-		cal.setTime(Date.from(Instant.ofEpochSecond(now + 2678400L)));//30 days rental counting the day of rental
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.ENGLISH);
 		int year = cal.get(Calendar.YEAR);
-		return "" + day + "-" + "-" + month + "-" + year;
+		int month = cal.get(Calendar.MONTH);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		LocalDate ld = LocalDate.of(year, month + 1, day).plusDays(30);
+		return "" + ld.getDayOfMonth() + ". " + ld.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH) + " " + ld.getYear();
+	}
+
+	private void showAlert(String s) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Error");
+		alert.setContentText(s);
+		alert.showAndWait();
 	}
 }

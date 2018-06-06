@@ -224,4 +224,57 @@ public class DatabaseService implements Service {
 
 		return -1;
 	}
+		public int executeReturnKey(String sql, Object... vars) {
+		try {
+			PreparedStatement statement = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+			for (int i=0,x=1; i < vars.length; i++,x++) {
+				if (vars[i] == null) {
+					statement.setNull(x, Types.NULL);
+
+				} else if (vars[i] instanceof String) {
+					statement.setString(x, (String) vars[i]);
+
+				} else if (vars[i] instanceof Integer) {
+					statement.setInt(x, (Integer) vars[i]);
+
+				} else if (vars[i] instanceof Long) {
+					statement.setLong(x, (Long) vars[i]);
+
+				} else if (vars[i] instanceof Double) {
+					statement.setDouble(x, (Double) vars[i]);
+
+				} else if (vars[i] instanceof Float) {
+					statement.setFloat(x, (Float) vars[i]);
+
+				} else if (vars[i] instanceof Date) {
+					statement.setDate(x, (Date) vars[i]);
+
+				} else if (vars[i] instanceof Time) {
+					statement.setTime(x, (Time) vars[i]);
+
+				} else {
+					throw new RuntimeException("Invalid variable type");
+				}
+			}
+
+			int r = statement.executeUpdate();
+			if(r == 0) {
+				return 0;
+			}
+			ResultSet rs = statement.getGeneratedKeys();
+			if(!rs.next()) {
+				return 0;
+			}
+			return rs.getInt(1);
+
+		} catch (SQLException e) {
+			Log.error(e);
+			if (e.getSQLState() != null) {
+				throw new RuntimeException("Statement insertion error");
+			}
+		}
+
+		return -1;
+	}
 }
