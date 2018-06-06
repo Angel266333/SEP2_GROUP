@@ -27,8 +27,8 @@ public class DatabaseSetup {
 	private static final String TPL_USERS = "CREATE TABLE IF NOT EXISTS Users (\n" + 
 			"    cUid serial NOT NULL,\n" + 
 			"    cCpr bigint NOT NULL,\n" + 
-			"    cName varchar(255) NOT NULL,\n" + 
-			"    cEmail varchar(255) NOT NULL,\n" + 
+			"    cName varchar(255),\n" + 
+			"    cEmail varchar(255),\n" + 
 			"    cToken varchar(255) NOT NULL,\n" + 
 			"    PRIMARY KEY (cUid),\n" + 
 			"    UNIQUE (cCpr,cToken)\n" + 

@@ -412,6 +412,20 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public boolean addUser(byte[] token, long cpr, String passwd) {
+		if (getUserByCPR(token, cpr) == null && checkPermissions(token, IUserService.ROLE_USERMGR)) {
+			String tokenStr = Utils.tokenToString( generateUserToken(cpr, passwd) );
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			
+			try {
+				db.execute("INSERT INTO Users (cCpr, cToken) VALUES (?,?)", cpr, tokenStr);
+				
+				return true;
+				
+			} catch (Exception e) {
+				Log.error(e);
+			}
+		}
+		
 		return false;
 	}
 
@@ -420,6 +434,19 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public boolean updateUser(byte[] token, User data) {
+		if (getUserByCPR(token, data.cpr) != null && checkPermissions(token, IUserService.ROLE_USERMGR)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			
+			try {
+				db.execute("UPDATE Users SET cCpr=?, cName=?, cEmail=? WHERE cUid=?", data.cpr, data.name, data.email, data.uid);
+				
+				return true;
+				
+			} catch (Exception e) {
+				Log.error(e);
+			}
+		}
+		
 		return false;
 	}
 
@@ -428,6 +455,23 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public byte[] updateUserPasswd(byte[] token, int uid, String oldPasswd, String newPasswd) {
+		User user = getUserByUID(token, uid);
+		
+		if (user != null && checkPermissions(token, IUserService.ROLE_USERMGR)) {
+			byte[] tokenByt = generateUserToken(user.cpr, newPasswd);
+			String tokenStr = Utils.tokenToString( tokenByt );
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			
+			try {
+				db.execute("UPDATE Users SET cToken=? WHERE cUid=?", tokenStr, user.uid);
+				
+				return tokenByt;
+				
+			} catch (Exception e) {
+				Log.error(e);
+			}
+		}
+		
 		return null;
 	}
 	
@@ -436,6 +480,27 @@ public class UserService implements IUserService, Service {
 	 */
 	@Override
 	public boolean updateUserPermissions(byte[] token, int uid, int libraryid, int role) {
+		User user = getUserByUID(token, uid);
+		
+		if (user != null && checkPermissions(token, libraryid, IUserService.ROLE_USERMGR)) {
+			DatabaseService db = (DatabaseService) ServiceManager.getService("database");
+			ResultSet result = db.query("SELECT ur.cRole " +
+					"FROM UserRoles ur JOIN Users u ON u.cUid = ur.cUid " +
+					"WHERE u.cUid = ? AND ur.cLid = ?", uid, libraryid);
+			
+			try {
+				if (result.next()) {
+					db.execute("UPDATE UserRoles SET cRole=? WHERE cUid=? AND cLid=?", role, uid, libraryid);
+					
+				} else {
+					db.execute("INSERT INTO UserRoles (cRole, cUid, cLid) VALUES (?,?,?)", role, uid, libraryid);
+				}
+				
+			} catch (SQLException e) {
+				Log.error(e);
+			}
+		}
+		
 		return false;
 	}
 }
