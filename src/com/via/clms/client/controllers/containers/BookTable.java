@@ -13,7 +13,7 @@ public class BookTable extends ClickableTable<Book> {
 
 	@Override
 	public Label[] makeLabels(Book dataElement) {
-		Label[] bookLabels = new Label[7];
+		Label[] bookLabels = new Label[6];
 		bookLabels[0] = new Label("" + dataElement.ISBN);
 		bookLabels[1] = new Label("" + dataElement.bid);
 		bookLabels[2] = new Label(dataElement.title);
@@ -33,7 +33,7 @@ public class BookTable extends ClickableTable<Book> {
 
 	@Override
 	public Label[] makeHeaderLabels() {
-		Label[] bookLabels = new Label[7];
+		Label[] bookLabels = new Label[6];
 		bookLabels[0] = new Label("ISBN");
 		bookLabels[1] = new Label("ID");
 		bookLabels[2] = new Label("Title");
