@@ -39,6 +39,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class AdministrativeFeatureSetController implements Controller {
+	
+	User[] mUsers;
 
 	LibraryTable libraryTable;
 	UserTable userTable;
@@ -307,29 +309,56 @@ public class AdministrativeFeatureSetController implements Controller {
 				w.open();
 			}
 		});
+		
+		userTable.setListener(new ClickListener() {
+			
+			@Override
+			public void doubleClick(int i) {
+				Window w = new Window(new EditUserController(userSession, mUsers[i]));
+				w.open();
+			}
+			
+			@Override
+			public void click(int i) {
+				
+			}
+		});
 
 		btn3SearchUsersByCPR.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				String tf2Output = tf2SearchUsersByCPR.getText();
-				boolean atLeastOneAlpha = tf2Output.matches(".*[a-zA-Z]+.*");
-				if (atLeastOneAlpha) {
+				boolean match = tf2Output.matches("^\\d+$");
+				if (!match) {
 					Alert alertFailiure = new Alert(AlertType.ERROR);
 					alertFailiure.setTitle("Error Dialog");
 					alertFailiure.setHeaderText("Search failiure");
 					alertFailiure.setContentText("Please enter only numbers!");
 					alertFailiure.showAndWait();
-				} else if (tf2SearchUsersByCPR.getText().isEmpty()) {
-					Alert alertFailiure = new Alert(AlertType.ERROR);
-					alertFailiure.setTitle("Error Dialog");
-					alertFailiure.setHeaderText("Search failiure");
-					alertFailiure.setContentText("Please enter valid search criteria!");
-					alertFailiure.showAndWait();
+
 				} else {
+					IUserService uservice = (IUserService) ServiceManager.getService("user");
 					User[] users = new User[1];
-					users[0] = new User(0001);
-					userTable.populate(users);
+					
+					try {
+						users[0] = uservice.getUserByCPR(userSession.token, Long.parseLong(tf2Output));
+						
+						if (users[0] == null) {
+							Alert alertFailiure = new Alert(AlertType.ERROR);
+							alertFailiure.setTitle("Error Dialog");
+							alertFailiure.setHeaderText("Search failiure");
+							alertFailiure.setContentText("No user found that matches this CPR!");
+							alertFailiure.showAndWait();
+							
+						} else {
+							mUsers = users;
+							userTable.populate(users);
+						}
+						
+					} catch (Exception e) {
+						Log.error(e);
+					}
 				}
 			}
 		});

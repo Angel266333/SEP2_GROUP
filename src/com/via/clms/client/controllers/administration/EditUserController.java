@@ -5,6 +5,7 @@ import java.io.File;
 import com.via.clms.client.controllers.containers.UserSession;
 import com.via.clms.client.views.Controller;
 import com.via.clms.client.views.Window;
+import com.via.clms.shared.User;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,11 +13,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -47,9 +48,11 @@ public class EditUserController implements Controller {
 	
 	private Button btn1CreateUser;
 	private Button btn2Cancel;
+	private User user;
 	
-	public EditUserController(UserSession userSession) {
+	public EditUserController(UserSession userSession, User user) {
 		this.userSession = userSession;
+		this.user = user;
 	}
 
 	@Override
