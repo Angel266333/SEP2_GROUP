@@ -508,7 +508,13 @@ public class AdministrativeFeatureSetController implements Controller {
 	}
 	
 	public void populateUserTableOnWindowLoad() {
-		//TODO
+		IUserService service = (IUserService) ServiceManager.getService("user");
+		try {
+			User[] users = service.getUsers(userSession.token, 0, Integer.MAX_VALUE);
+			userTable.populate(users);
+		} catch (RemoteException e) {
+			Log.error(e);
+		}
 	}
 		
 		
