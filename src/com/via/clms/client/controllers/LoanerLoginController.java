@@ -39,7 +39,7 @@ public class LoanerLoginController extends ResultController<UserSession> {
 		TextField userTf = new TextField();
 		userTf.setPrefColumnCount(15);
 
-		TextField passTf = new TextField();
+		TextField passTf = new PasswordField();
 		passTf.setPrefColumnCount(15);
 
 		Label infoL = new Label("Login to use this feature.");
