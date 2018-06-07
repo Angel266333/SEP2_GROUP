@@ -53,6 +53,7 @@ public class HomeController implements Controller {
 	private Button btn6MyProfile;
 	private Button btn7Lock;
 	private Button btn8Unlock;
+	private Button btn9Logout;
 
 	private UserSession session;
 
@@ -141,6 +142,7 @@ public class HomeController implements Controller {
 		btn6MyProfile = new Button("My Profile");
 		btn7Lock = new Button("Lock session");
 		btn8Unlock = new Button("Unlock session");
+		btn9Logout = new Button("Logout");
 
 		// \\/\\/\\/\\/\\-=Event Handlers=-//\\/\\/\\/\\/\\
 
@@ -231,6 +233,14 @@ public class HomeController implements Controller {
 			}
 
 		});
+		
+		btn9Logout.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				LoanerLoginController.logout();
+			}
+		});
 
 		// \\/\\/\\/\\/\\-=Objects To Box Containers=-//\\/\\/\\/\\/\\
 
@@ -240,7 +250,8 @@ public class HomeController implements Controller {
 		actionSection.getChildren().addAll(btn2Rent, btn3Return, btn4Renew, btn5GodMode);
 		actionSection.setSpacing(5);
 
-		userNotificationsSection.getChildren().addAll(lbl3Notifications, tf2Notifications);
+		userNotificationsSection.getChildren().addAll(lbl3Notifications, tf2Notifications, btn9Logout);
+		userNotificationsSection.setSpacing(5);
 
 		userProfileSection.getChildren().addAll(btn6MyProfile, btn7Lock, btn8Unlock);
 		userProfileSection.setSpacing(5);
