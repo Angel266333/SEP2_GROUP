@@ -139,7 +139,11 @@ public class InventoryService implements IInventoryService, Service {
 
 	private int simpleAddBook(int lid, Book book) {
 		String q = "UPDATE BookInventory SET cInventory = cInventory + 1 WHERE cBid = ?;";
-		return dbs.execute(q, book.bid);
+		int i = dbs.execute(q, book.bid);
+		if(i == 0) {
+			return 0;
+		}
+		return book.bid;
 	}
 
 	@Override
@@ -255,7 +259,25 @@ public class InventoryService implements IInventoryService, Service {
 
 		String q = "SELECT * FROM Books LIMIT ? OFFSET ?;";
 		ResultSet result = dbs.query(q, length, offset);
-		return bookArrayBuild(result);
+		ArrayList<Book> books = new ArrayList<>();
+		try {
+			while(result.next()) {
+				int bid = result.getInt(1);
+				String title = result.getString(2);
+				String Isbn = result.getString(3);
+				String desc = result.getString(4);
+				String img = result.getString(5);
+				long rls = result.getLong(6);
+				String author = result.getString(7);
+				Book book = new Book(bid, title, -1, Isbn, desc, rls, author, null);
+				books.add(book);
+			}
+			Book[] res = new Book[books.size()];
+			books.toArray(res);
+			return res;
+		} catch(Exception e) {
+			return null;
+		}
 	}
 
 	@Override
