@@ -137,6 +137,7 @@ public class HomeController implements Controller {
 		btn2Rent = new Button("Rent");
 		btn3Return = new Button("Return");
 		btn4Renew = new Button("Renew");
+		btn4Renew.setDisable(true);
 		btn5GodMode = new Button("Administrative features");
 		btn5GodMode.setVisible(false);
 		btn6MyProfile = new Button("My Profile");
