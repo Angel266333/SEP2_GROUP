@@ -91,7 +91,7 @@ public class EditUserController implements Controller {
 		
 		// \\/\\/\\/\\/\\-=Buttons=-//\\/\\/\\/\\/\\
 		
-		btn1CreateUser = new Button("Create user");
+		btn1CreateUser = new Button("Edit user");
 		btn2Cancel = new Button("Cancel");
 
 		btn1CreateUser.setOnAction(new EventHandler<ActionEvent>() {
@@ -107,7 +107,7 @@ public class EditUserController implements Controller {
 						alertFailiure.setContentText("Please fill in all fields!");
 						alertFailiure.showAndWait();
 					} else {
-					// TODO - Execute function ---> Creating a new user
+					// TODO - Execute function ---> Editying a user
 					}
 			}
 		});
