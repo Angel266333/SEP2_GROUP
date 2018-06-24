@@ -331,20 +331,21 @@ public class UserService implements IUserService, Service {
 			ResultSet result = db.query("SELECT * FROM Users LIMIT ? OFFSET ?", length, offset);
 			
 			try {
-				User[] users = new User[ result.getFetchSize() ];
-				int i=0;
-				
+				ArrayList<User> uList = new ArrayList<>();
+
 				while (result.next()) {
 					User user = new User(result.getInt("cUid"));
 					user.cpr = result.getLong("cCpr");
 					user.name = result.getString("cName");
 					user.email = result.getString("cEmail");
-					
-					users[i++] = user;
+					uList.add(user);
 				}
-				
+
+				User[] users = new User[uList.size()];
+				uList.toArray(users);
 				return users;
 				
+
 			} catch (SQLException e) {
 				Log.error(e);
 			}
